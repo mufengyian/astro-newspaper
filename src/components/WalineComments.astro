@@ -1,0 +1,99 @@
+---
+import "@waline/client/waline.css";
+import { hasWalineServerUrl, siteConfig } from "../config";
+import { resolveLocale } from "../utils/i18n";
+import { stripBasePath } from "../utils/routing";
+
+interface Props {
+	enabled?: boolean;
+}
+
+const locale = resolveLocale(Astro.currentLocale);
+const { enabled = true } = Astro.props;
+const canRenderWaline = enabled && hasWalineServerUrl();
+const title = locale === "en" ? "Comments" : "评论";
+const description = locale === "en" ? "Join the discussion." : "欢迎留下你的看法。";
+const commentsPath = stripBasePath(Astro.url.pathname).replace(/\/$/, "") || "/";
+const walineLang = locale === "en" ? "en" : "zh-CN";
+---
+
+{
+	canRenderWaline && (
+		<section class="comments-section" aria-labelledby="comments-title">
+			<div class="comments-section__header">
+				<h2 id="comments-title">{title}</h2>
+				<p>{description}</p>
+			</div>
+
+			<div
+				class="comments-shell"
+				data-waline-root={canRenderWaline ? "true" : undefined}
+				data-waline-server={siteConfig.comments.serverURL}
+				data-waline-path={commentsPath}
+				data-waline-lang={walineLang}
+			>
+				<div class="comments-shell__inner" data-waline-thread></div>
+			</div>
+		</section>
+	)
+}
+
+{
+	canRenderWaline && (
+		<script is:inline>
+			(() => {
+				const destroyWaline = () => {
+					if (window.__newspaperWaline?.destroy) {
+						window.__newspaperWaline.destroy();
+					}
+					window.__newspaperWaline = null;
+				};
+
+				const mountWaline = async () => {
+					destroyWaline();
+
+					const root = document.querySelector("[data-waline-root='true']");
+					if (!(root instanceof HTMLElement)) {
+						return;
+					}
+
+					const thread = root.querySelector("[data-waline-thread]");
+					if (!(thread instanceof HTMLElement)) {
+						return;
+					}
+
+					const { init } = await import("@waline/client");
+					window.__newspaperWaline = init({
+						el: thread,
+						serverURL: root.dataset.walineServer || "",
+						path: root.dataset.walinePath || window.location.pathname,
+						lang: root.dataset.walineLang || "zh-CN",
+						dark: "html[data-theme='dark']",
+						meta: ["nick", "mail", "link"],
+						requiredMeta: ["nick", "mail"],
+						login: "enable",
+						commentSorting: "latest",
+						pageSize: 10,
+						reaction: false,
+					});
+				};
+
+				if (!window.__newspaperWalineBound) {
+					window.__newspaperWalineBound = true;
+					document.addEventListener("astro:before-swap", destroyWaline);
+					document.addEventListener("astro:page-load", () => {
+						void mountWaline();
+					});
+				}
+
+				if (document.readyState === "loading") {
+					document.addEventListener("DOMContentLoaded", () => {
+						void mountWaline();
+					}, { once: true });
+				} else {
+					void mountWaline();
+				}
+			})();
+		</script>
+	)
+}

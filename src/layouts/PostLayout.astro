@@ -1,0 +1,127 @@
+---
+import { Picture } from "astro:assets";
+import type { MarkdownHeading } from "astro";
+import { hasPublicSiteUrl, hasWalineServerUrl, siteConfig } from "../config";
+import Breadcrumbs from "../components/Breadcrumbs.astro";
+import PostMeta from "../components/PostMeta.astro";
+import PostNavLinks from "../components/PostNavLinks.astro";
+import ReadingProgress from "../components/ReadingProgress.astro";
+import RelatedPosts from "../components/RelatedPosts.astro";
+import TableOfContents from "../components/TableOfContents.astro";
+import TagPill from "../components/TagPill.astro";
+import WalineComments from "../components/WalineComments.astro";
+import { getDictionary, resolveLocale } from "../utils/i18n";
+import { getArchivePermalink, getHomePermalink } from "../utils/routing";
+import { getPostPermalink, type PostEntry } from "../utils/posts";
+import MainLayout from "./MainLayout.astro";
+
+interface Props {
+	post: PostEntry;
+	headings: MarkdownHeading[];
+	relatedPosts?: PostEntry[];
+	newerPost?: PostEntry;
+	olderPost?: PostEntry;
+}
+
+const locale = resolveLocale(Astro.currentLocale);
+const dictionary = getDictionary(locale);
+const { post, headings, relatedPosts = [], newerPost, olderPost } = Astro.props;
+
+const absoluteUrl = hasPublicSiteUrl()
+	? new URL(getPostPermalink(locale, post), siteConfig.siteUrl).href
+	: undefined;
+const shareTitle = encodeURIComponent(post.data.title);
+const shareUrl = absoluteUrl ? encodeURIComponent(absoluteUrl) : undefined;
+const shouldRenderComments = post.data.comments && hasWalineServerUrl();
+---
+
+<MainLayout
+	title={post.data.title}
+	description={post.data.excerpt}
+	image={post.data.cover?.src}
+	type="article"
+	publishedTime={post.data.publishDate}
+	updatedTime={post.data.updatedDate}
+	tags={post.data.tags}
+>
+	<ReadingProgress />
+
+	<article class="post-single">
+		<header class="post-header">
+			<Breadcrumbs
+				items={[
+					{ label: dictionary.post.breadcrumbHome, href: getHomePermalink(locale) },
+					{ label: dictionary.post.breadcrumbPosts, href: getArchivePermalink(locale) },
+					{ label: post.data.title },
+				]}
+			/>
+			<h1 class="post-title" transition:name={`title-${post.id}`}>{post.data.title}</h1>
+			<div class="post-description">{post.data.excerpt}</div>
+			<PostMeta post={post} />
+		</header>
+
+		{post.data.cover && (
+			<figure class="entry-cover entry-cover--single">
+				<Picture
+					src={post.data.cover}
+					alt={post.data.coverAlt ?? post.data.title}
+					widths={[960, 1280, 1680]}
+					sizes="(max-width: 1100px) 100vw, 960px"
+					formats={["avif", "webp"]}
+					quality={90}
+					layout="constrained"
+				/>
+			</figure>
+		)}
+
+		<TableOfContents headings={headings} />
+
+		<div class="post-content">
+			<slot />
+		</div>
+
+		<footer class="post-footer">
+			<ul class="post-tags">
+				{post.data.tags.map((tag) => (
+					<li>
+						<TagPill tag={tag} />
+					</li>
+				))}
+			</ul>
+
+			{
+				shareUrl && (
+					<ul class="share-buttons">
+						<li>
+							<a
+								href={`https://twitter.com/intent/tweet?text=${shareTitle}&url=${shareUrl}`}
+								target="_blank"
+								rel="noreferrer"
+							>
+								{dictionary.post.shareOnX}
+							</a>
+						</li>
+						<li>
+							<a
+								href={`https://www.linkedin.com/sharing/share-offsite/?url=${shareUrl}`}
+								target="_blank"
+								rel="noreferrer"
+							>
+								{dictionary.post.shareOnLinkedIn}
+							</a>
+						</li>
+						<li>
+							<a href={`mailto:?subject=${shareTitle}&body=${shareUrl}`}>{dictionary.post.shareByEmail}</a>
+						</li>
+					</ul>
+				)
+			}
+
+			{shouldRenderComments && <WalineComments enabled={true} />}
+
+			<PostNavLinks newerPost={newerPost} olderPost={olderPost} />
+		</footer>
+
+		<RelatedPosts posts={relatedPosts} />
+	</article>
+</MainLayout>

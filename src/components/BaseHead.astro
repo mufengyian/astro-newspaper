@@ -1,0 +1,149 @@
+---
+import { hasPublicSiteUrl, siteConfig } from "../config";
+import { getDictionary, getOgLocale, resolveLocale } from "../utils/i18n";
+import { getCanonicalPath, getLocaleAlternates, withBase } from "../utils/routing";
+
+interface Props {
+	title?: string;
+	description?: string;
+	image?: string;
+	canonical?: string;
+	type?: "website" | "article";
+	publishedTime?: Date;
+	updatedTime?: Date;
+	tags?: string[];
+}
+
+const locale = resolveLocale(Astro.currentLocale);
+const dictionary = getDictionary(locale);
+const {
+	title,
+	description = dictionary.site.description,
+	image,
+	canonical,
+	type = "website",
+	publishedTime,
+	updatedTime,
+	tags = [],
+} = Astro.props;
+
+const pageTitle = title ? `${title} | ${siteConfig.title}` : `${siteConfig.title} | ${dictionary.site.tagline}`;
+const publicSiteUrl = hasPublicSiteUrl() ? siteConfig.siteUrl : undefined;
+const canonicalUrl = publicSiteUrl
+	? canonical
+		? new URL(canonical, publicSiteUrl).href
+		: getCanonicalPath(locale, Astro.url.pathname)
+	: undefined;
+const socialImagePath = withBase("social-card.svg");
+const socialImage = publicSiteUrl ? new URL(image ?? socialImagePath, publicSiteUrl).href : undefined;
+const alternateLocales = publicSiteUrl ? getLocaleAlternates(Astro.url.pathname) : [];
+
+const themeScript = String.raw`(() => {
+	const storageKey = "newspaper-theme";
+	const root = document.documentElement;
+
+	const readPreference = () => {
+		try {
+			return localStorage.getItem(storageKey) || "light";
+		} catch (error) {
+			console.warn("[newspaper] Failed to read theme preference.", error);
+			return "light";
+		}
+	};
+
+	const applyTheme = (preference) => {
+		root.dataset.themePreference = preference;
+		root.dataset.theme = preference;
+		root.style.colorScheme = preference;
+	};
+
+	window.__getNewspaperTheme = () => root.dataset.themePreference || readPreference();
+	window.__applyNewspaperTheme = () => {
+		applyTheme(readPreference());
+	};
+	window.__setNewspaperTheme = (preference) => {
+		try {
+			localStorage.setItem(storageKey, preference);
+		} catch (error) {
+			console.warn("[newspaper] Failed to persist theme preference.", error);
+		}
+
+		applyTheme(preference);
+		window.dispatchEvent(new CustomEvent("newspaper:themechange", { detail: preference }));
+	};
+
+	window.__applyNewspaperTheme();
+})();`;
+
+const structuredData =
+	publicSiteUrl && type === "article" && title && publishedTime
+		? {
+				"@context": "https://schema.org",
+				"@type": "BlogPosting",
+				headline: title,
+				description,
+				...(socialImage ? { image: [socialImage] } : {}),
+				datePublished: publishedTime.toISOString(),
+				...(updatedTime ? { dateModified: updatedTime.toISOString() } : {}),
+				author: {
+					"@type": "Person",
+					name: siteConfig.author.name,
+				},
+				publisher: {
+					"@type": "Person",
+					name: siteConfig.author.name,
+				},
+				mainEntityOfPage: canonicalUrl,
+				inLanguage: locale,
+				keywords: tags.join(", "),
+			}
+		: publicSiteUrl
+			? {
+					"@context": "https://schema.org",
+					"@type": "WebSite",
+					name: siteConfig.title,
+					description,
+					url: publicSiteUrl,
+					inLanguage: locale,
+				}
+			: undefined;
+---
+
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="generator" content={Astro.generator} />
+<meta name="description" content={description} />
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#F7FAFC" />
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#171923" />
+<link rel="icon" type="image/svg+xml" href={withBase("favicon.svg")} />
+<link rel="icon" href={withBase("favicon.ico")} />
+{canonicalUrl && <link rel="canonical" href={canonicalUrl} />}
+{!publicSiteUrl && <meta name="robots" content="noindex, nofollow" />}
+
+{canonicalUrl && <meta property="og:type" content={type} />}
+{canonicalUrl && <meta property="og:title" content={pageTitle} />}
+{canonicalUrl && <meta property="og:description" content={description} />}
+{canonicalUrl && <meta property="og:url" content={canonicalUrl} />}
+{socialImage && <meta property="og:image" content={socialImage} />}
+{canonicalUrl && <meta property="og:site_name" content={siteConfig.title} />}
+{canonicalUrl && <meta property="og:locale" content={getOgLocale(locale)} />}
+
+{canonicalUrl && <meta name="twitter:card" content="summary_large_image" />}
+{canonicalUrl && <meta name="twitter:title" content={pageTitle} />}
+{canonicalUrl && <meta name="twitter:description" content={description} />}
+{socialImage && <meta name="twitter:image" content={socialImage} />}
+
+{publishedTime && canonicalUrl && <meta property="article:published_time" content={publishedTime.toISOString()} />}
+{updatedTime && canonicalUrl && <meta property="article:modified_time" content={updatedTime.toISOString()} />}
+{type === "article" && canonicalUrl && <meta property="article:author" content={siteConfig.author.name} />}
+{canonicalUrl && tags.map((tag) => <meta property="article:tag" content={tag} />)}
+
+{
+	alternateLocales.map(({ locale: alternateLocale, absoluteUrl }) =>
+		absoluteUrl ? <link rel="alternate" hreflang={alternateLocale} href={absoluteUrl} /> : null,
+	)
+}
+
+<title>{pageTitle}</title>
+<script is:inline set:html={themeScript}></script>
+{structuredData && <script is:inline type="application/ld+json" set:html={JSON.stringify(structuredData)}></script>}

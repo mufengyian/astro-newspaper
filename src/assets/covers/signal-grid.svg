@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 760" role="img" aria-label="Signal grid cover">
+  <defs>
+    <linearGradient id="sg" x1="122" y1="88" x2="1048" y2="690" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#f6e2bf" />
+      <stop offset="0.55" stop-color="#f3c587" />
+      <stop offset="1" stop-color="#cfdae6" />
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="760" fill="#f5efe4" />
+  <rect x="32" y="32" width="1136" height="696" rx="36" fill="url(#sg)" />
+  <g stroke="#20405f" stroke-opacity="0.22">
+    <path d="M72 184h1056M72 292h1056M72 400h1056M72 508h1056" />
+    <path d="M180 72v616M372 72v616M564 72v616M756 72v616M948 72v616" />
+  </g>
+  <path d="M146 514c105-164 218-230 337-198 122 33 202 125 306 134 106 8 201-68 265-167" fill="none" stroke="#16324f" stroke-linecap="round" stroke-width="18" />
+  <circle cx="312" cy="376" r="26" fill="#f08f52" />
+  <circle cx="640" cy="457" r="34" fill="#16324f" />
+  <circle cx="910" cy="318" r="30" fill="#f7f0e4" stroke="#16324f" stroke-width="8" />
+</svg>

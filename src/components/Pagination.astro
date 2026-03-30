@@ -1,0 +1,50 @@
+---
+import { getDictionary, resolveLocale } from "../utils/i18n";
+
+interface Props {
+	currentPage: number;
+	totalPages: number;
+	firstPageUrl?: string;
+	pageUrlPattern?: string;
+}
+
+const locale = resolveLocale(Astro.currentLocale);
+const dictionary = getDictionary(locale);
+const {
+	currentPage,
+	totalPages,
+	firstPageUrl = "/",
+	pageUrlPattern = "/page/{page}",
+} = Astro.props;
+const navigationLabel = locale === "en" ? "Pagination" : "分页";
+
+function getPageUrl(page: number) {
+	return page <= 1 ? firstPageUrl : pageUrlPattern.replace("{page}", String(page));
+}
+---
+
+{
+	totalPages > 1 && (
+		<nav class="pagination" aria-label={navigationLabel}>
+			{currentPage > 1 ? (
+				<a class="prev" href={getPageUrl(currentPage - 1)} data-astro-prefetch="hover">
+					{dictionary.pagination.previous}
+				</a>
+			) : (
+				<span class="pagination__spacer" aria-hidden="true"></span>
+			)}
+
+			<span class="pagination__meta">
+				{dictionary.pagination.summary(currentPage, totalPages)}
+			</span>
+
+			{currentPage < totalPages ? (
+				<a class="next" href={getPageUrl(currentPage + 1)} data-astro-prefetch="hover">
+					{dictionary.pagination.next}
+				</a>
+			) : (
+				<span class="pagination__spacer" aria-hidden="true"></span>
+			)}
+		</nav>
+	)
+}

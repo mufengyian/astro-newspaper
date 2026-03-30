@@ -1,0 +1,47 @@
+---
+import { Picture } from "astro:assets";
+import { resolveLocale } from "../utils/i18n";
+import PostMeta from "./PostMeta.astro";
+import { getPostPermalink, type PostEntry } from "../utils/posts";
+
+interface Props {
+	post: PostEntry;
+}
+
+const locale = resolveLocale(Astro.currentLocale);
+const { post } = Astro.props;
+const href = getPostPermalink(locale, post);
+const entryLabel =
+	locale === "en" ? `Open post: ${post.data.title}` : `查看文章：${post.data.title}`;
+---
+
+<article class="post-entry">
+	{post.data.cover && (
+		<div class="entry-cover">
+			<Picture
+				src={post.data.cover}
+				alt={post.data.coverAlt ?? post.data.title}
+				widths={[720, 1040, 1480]}
+				sizes="(max-width: 768px) 100vw, 720px"
+				formats={["avif", "webp"]}
+				quality={86}
+				layout="constrained"
+			/>
+		</div>
+	)}
+
+	<header class="entry-header">
+		<h2>
+			<a href={href} transition:name={`title-${post.id}`} data-astro-prefetch="viewport">
+				{post.data.title}
+			</a>
+		</h2>
+	</header>
+	<div class="entry-content">
+		<p>{post.data.excerpt}</p>
+	</div>
+	<footer class="entry-footer">
+		<PostMeta post={post} />
+	</footer>
+	<a class="entry-link" href={href} aria-label={entryLabel} data-astro-prefetch="viewport"></a>
+</article>

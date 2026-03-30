@@ -1,0 +1,34 @@
+---
+import type { GetStaticPaths } from "astro";
+import { getCollection } from "astro:content";
+import PostFeed from "../../../components/PostFeed.astro";
+import MainLayout from "../../../layouts/MainLayout.astro";
+import { getDictionary } from "../../../utils/i18n";
+import { getPostsByTag, getSortedPosts, getTagIndex } from "../../../utils/posts";
+
+const locale = "en" as const;
+const dictionary = getDictionary(locale);
+
+export const getStaticPaths = (async () => {
+	const posts = getSortedPosts(await getCollection("posts"), "en");
+	return getTagIndex(posts).map((tag) => ({
+		params: { tag: tag.slug },
+		props: { tagName: tag.name, posts: getPostsByTag(posts, tag.slug) },
+	}));
+}) satisfies GetStaticPaths;
+
+const { tagName, posts } = Astro.props;
+---
+
+<MainLayout
+	title={`${dictionary.tags.title} · ${tagName}`}
+	description={dictionary.tags.pageDescription(tagName)}
+	bodyClass="list"
+>
+	<header class="page-header">
+		<h1>#{tagName}</h1>
+		<p>{dictionary.tags.relatedDescription}</p>
+	</header>
+
+	<PostFeed posts={posts} />
+</MainLayout>

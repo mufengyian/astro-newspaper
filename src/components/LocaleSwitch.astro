@@ -1,0 +1,22 @@
+---
+import { getDictionary, resolveLocale } from "../utils/i18n";
+import { getLocaleAlternates } from "../utils/routing";
+
+const locale = resolveLocale(Astro.currentLocale);
+const dictionary = getDictionary(locale);
+const alternateLocales = getLocaleAlternates(Astro.url.pathname);
+---
+
+<div class="locale-switch" aria-label={dictionary.langSwitchLabel}>
+	{alternateLocales.map(({ locale: alternateLocale, relativeUrl }) => (
+		alternateLocale === locale ? (
+			<span class="locale-switch__current" aria-current="page">
+				{alternateLocale === "zh-cn" ? "Zh" : "En"}
+			</span>
+		) : (
+			<a class="locale-switch__link" href={relativeUrl} data-astro-prefetch="hover">
+				{alternateLocale === "zh-cn" ? "Zh" : "En"}
+			</a>
+		)
+	))}
+</div>

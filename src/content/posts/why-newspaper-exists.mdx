@@ -1,0 +1,63 @@
+---
+title: 开始使用 newspaper
+excerpt: 介绍目录结构、必须修改的配置项和本地预览方式。
+publishDate: 2026-03-29
+updatedDate: 2026-03-29
+featured: true
+category: 使用说明
+tags:
+  - Astro
+  - 入门
+  - 主题
+  - 配置
+authors:
+  - JiU
+cover: ../../assets/covers/paper-constellation.svg
+coverAlt: 深蓝色几何插图
+---
+
+这篇文章用来快速确认主题已经跑起来，并说明哪些地方需要优先改成你自己的信息。
+
+## 先改哪些文件
+
+- `src/config.ts`：站点标题、描述、导航和分页数量。
+- `astro.config.mjs`：站点域名和 Markdown 配置。
+- `src/content/posts`：示例文章可以直接删掉或改成自己的内容。
+
+## 本地常用命令
+
+```bash
+npm install
+npm run dev
+npm run build
+```
+
+如果只是预览主题效果，`npm run dev` 就够了。准备部署前再跑一次 `npm run build`。
+
+## 文章地址怎么生成
+
+文章链接来自文件名，例如：
+
+- `src/content/posts/why-newspaper-exists.mdx`
+- 最终地址是 `/posts/why-newspaper-exists/`
+
+如果你在意 URL，可读性最直接的做法就是从文件名开始整理。
+
+## frontmatter 最少需要什么
+
+下面这几个字段最常用：
+
+```yaml
+title: 文章标题
+excerpt: 列表摘要
+publishDate: 2026-03-29
+tags:
+  - Astro
+  - 主题
+```
+
+`featured`、`category` 和 `cover` 都是可选项，不写也能正常渲染。
+
+## 什么时候开始换成自己的内容
+
+建议先保留几篇示例文章，把首页、分页、搜索、标签和文章页都点一遍，确认布局没问题，再批量替换。

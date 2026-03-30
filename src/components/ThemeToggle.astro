@@ -1,0 +1,117 @@
+---
+import { getDictionary, resolveLocale } from "../utils/i18n";
+
+const locale = resolveLocale(Astro.currentLocale);
+const dictionary = getDictionary(locale);
+---
+
+<button
+	id="theme-toggle"
+	type="button"
+	data-theme-toggle
+	data-theme-label={dictionary.theme.label}
+	data-theme-light={dictionary.theme.light}
+	data-theme-dark={dictionary.theme.dark}
+	aria-label={dictionary.theme.label}
+	title={dictionary.theme.label}
+	transition:persist
+>
+	<svg
+		id="moon"
+		xmlns="http://www.w3.org/2000/svg"
+		width="18"
+		height="18"
+		viewBox="0 0 24 24"
+		fill="none"
+		stroke="currentColor"
+		stroke-width="2"
+		stroke-linecap="round"
+		stroke-linejoin="round"
+		aria-hidden="true"
+	>
+		<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+	</svg>
+	<svg
+		id="sun"
+		xmlns="http://www.w3.org/2000/svg"
+		width="18"
+		height="18"
+		viewBox="0 0 24 24"
+		fill="none"
+		stroke="currentColor"
+		stroke-width="2"
+		stroke-linecap="round"
+		stroke-linejoin="round"
+		aria-hidden="true"
+	>
+		<circle cx="12" cy="12" r="5"></circle>
+		<line x1="12" y1="1" x2="12" y2="3"></line>
+		<line x1="12" y1="21" x2="12" y2="23"></line>
+		<line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+		<line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+		<line x1="1" y1="12" x2="3" y2="12"></line>
+		<line x1="21" y1="12" x2="23" y2="12"></line>
+		<line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+		<line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+	</svg>
+</button>
+
+<script>
+	function nextTheme(current: string) {
+		return current === "dark" ? "light" : "dark";
+	}
+
+	function getThemeLabel(button: HTMLButtonElement, state: string) {
+		if (state === "dark") return button.dataset.themeLight || "Light mode";
+		return button.dataset.themeDark || "Dark mode";
+	}
+
+	function updateButtons() {
+		const state =
+			window.__getNewspaperTheme?.() ||
+			document.documentElement.dataset.themePreference ||
+			"light";
+
+		document.querySelectorAll<HTMLButtonElement>("[data-theme-toggle]").forEach((button) => {
+			const currentLabel = getThemeLabel(button, state);
+			const baseLabel = button.dataset.themeLabel || "Switch theme";
+			button.setAttribute("aria-label", `${baseLabel}: ${currentLabel}`);
+			button.setAttribute("title", currentLabel);
+		});
+	}
+
+	function initThemeToggle() {
+		window.__applyNewspaperTheme?.();
+
+		document.querySelectorAll<HTMLButtonElement>("[data-theme-toggle]").forEach((button) => {
+			if (button.dataset.bound === "true") return;
+			button.dataset.bound = "true";
+			button.addEventListener("click", () => {
+				const current =
+					window.__getNewspaperTheme?.() ||
+					document.documentElement.dataset.themePreference ||
+					"light";
+				window.__setNewspaperTheme?.(nextTheme(current));
+				updateButtons();
+			});
+		});
+
+		updateButtons();
+	}
+
+	if (!window.__newspaperThemeToggleBound) {
+		window.__newspaperThemeToggleBound = true;
+		document.addEventListener("astro:page-load", initThemeToggle);
+	}
+
+	if (!window.__newspaperThemeChangeBound) {
+		window.__newspaperThemeChangeBound = true;
+		window.addEventListener("newspaper:themechange", updateButtons);
+	}
+
+	if (document.readyState === "loading") {
+		document.addEventListener("DOMContentLoaded", initThemeToggle, { once: true });
+	} else {
+		initThemeToggle();
+	}
+</script>

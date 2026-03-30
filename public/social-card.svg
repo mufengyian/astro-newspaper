@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" role="img" aria-label="newspaper social card">
+  <defs>
+    <linearGradient id="bg" x1="120" y1="80" x2="1080" y2="550" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#f7ecda" />
+      <stop offset="0.55" stop-color="#f0d2a8" />
+      <stop offset="1" stop-color="#d7e3f0" />
+    </linearGradient>
+    <linearGradient id="ink" x1="280" y1="120" x2="880" y2="540" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#14263a" />
+      <stop offset="1" stop-color="#375b7f" />
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="#f5efe4" />
+  <rect x="52" y="52" width="1096" height="526" rx="34" fill="url(#bg)" />
+  <circle cx="965" cy="150" r="115" fill="#f39f68" opacity="0.2" />
+  <circle cx="1030" cy="460" r="148" fill="#2c5b88" opacity="0.18" />
+  <rect x="112" y="116" width="200" height="42" rx="21" fill="#fff9ef" opacity="0.9" />
+  <text x="144" y="145" fill="#16324f" font-size="24" font-family="Manrope, 'Segoe UI', sans-serif" font-weight="700">Astro Theme</text>
+  <text x="110" y="270" fill="url(#ink)" font-size="98" font-family="Newsreader, Georgia, serif" font-weight="700">newspaper</text>
+  <text x="110" y="350" fill="#33485d" font-size="40" font-family="Manrope, 'Segoe UI', sans-serif">Elegant, modern, high-performance publishing for Astro 6.</text>
+  <text x="110" y="422" fill="#556a80" font-size="30" font-family="Manrope, 'Segoe UI', sans-serif">Elegant publishing for modern Astro sites.</text>
+  <path d="M784 162h206c17.673 0 32 14.327 32 32v164c0 17.673-14.327 32-32 32H826l-82 58V194c0-17.673 14.327-32 32-32Z" fill="#16324f" opacity="0.9" />
+  <path d="M815 225h140M815 271h140M815 317h98" stroke="#f8f3ea" stroke-linecap="round" stroke-width="14" />
+</svg>

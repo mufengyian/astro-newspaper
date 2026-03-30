@@ -1,0 +1,56 @@
+---
+title: 写文章：frontmatter 与 MDX
+excerpt: 展示文章 frontmatter、标题层级、代码块和表格写法。
+publishDate: 2026-03-26
+updatedDate: 2026-03-26
+category: 内容编写
+tags:
+  - MDX
+  - Frontmatter
+  - 写作
+  - 内容
+authors:
+  - JiU
+cover: ../../assets/covers/tangent-frame.svg
+coverAlt: 深色波浪和圆点插图
+---
+
+每篇文章都来自 `src/content/posts` 目录，支持 `.md` 和 `.mdx`。
+
+## frontmatter 字段参考
+
+| 字段 | 作用 | 是否必填 |
+| --- | --- | --- |
+| `title` | 文章标题 | 是 |
+| `excerpt` | 列表摘要 | 是 |
+| `publishDate` | 发布时间 | 是 |
+| `tags` | 标签数组 | 否 |
+| `featured` | 是否首页置顶 | 否 |
+| `cover` | 文章封面 | 否 |
+
+## 标题层级
+
+文章页会自动根据标题生成目录，所以建议从二级标题开始组织内容：
+
+```md
+## 第一节
+### 小节
+```
+
+## MDX 什么时候有用
+
+如果只是普通文章，Markdown 就够了。  
+如果你想插入组件、局部交互或自定义内容块，再换成 MDX 更合适。
+
+## 一个简单示例
+
+```mdx
+---
+title: 示例
+publishDate: 2026-03-26
+---
+
+## 段落
+
+这里是正文。
+```

@@ -1,0 +1,17 @@
+---
+import { resolveLocale } from "../utils/i18n";
+import { getTagPermalink } from "../utils/posts";
+
+interface Props {
+	tag: string;
+	count?: number;
+}
+
+const locale = resolveLocale(Astro.currentLocale);
+const { tag, count } = Astro.props;
+---
+
+<a class="tag-pill" href={getTagPermalink(locale, tag)} data-astro-prefetch="hover">
+	<span>#{tag}</span>
+	{typeof count === "number" && <span class="tag-pill__count">{count}</span>}
+</a>

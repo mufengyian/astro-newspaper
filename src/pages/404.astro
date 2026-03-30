@@ -1,0 +1,23 @@
+---
+import MainLayout from "../layouts/MainLayout.astro";
+import { getDictionary } from "../utils/i18n";
+import { getArchivePermalink, getHomePermalink } from "../utils/routing";
+
+const locale = "zh-cn" as const;
+const dictionary = getDictionary(locale);
+---
+
+<MainLayout title={dictionary.notFound.title} description={dictionary.notFound.description}>
+	<section class="page-header">
+		<h1>404</h1>
+		<p>{dictionary.notFound.body}</p>
+		<div class="button-row">
+			<a class="button button--primary" href={getHomePermalink(locale)} data-astro-prefetch="hover">
+				{dictionary.notFound.goHome}
+			</a>
+			<a class="button" href={getArchivePermalink(locale)} data-astro-prefetch="hover">
+				{dictionary.notFound.viewArchive}
+			</a>
+		</div>
+	</section>
+</MainLayout>

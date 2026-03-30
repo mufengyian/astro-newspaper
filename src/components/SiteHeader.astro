@@ -1,0 +1,66 @@
+---
+import { siteConfig } from "../config";
+import { getDictionary, resolveLocale } from "../utils/i18n";
+import {
+	getAboutPermalink,
+	getArchivePermalink,
+	getHomePermalink,
+	getSearchPermalink,
+	getTagsPermalink,
+	stripBasePath,
+} from "../utils/routing";
+import LocaleSwitch from "./LocaleSwitch.astro";
+import ThemeToggle from "./ThemeToggle.astro";
+
+const locale = resolveLocale(Astro.currentLocale);
+const dictionary = getDictionary(locale);
+const pathname = stripBasePath(Astro.url.pathname).replace(/\/$/, "") || "/";
+const navigation = [
+	{ label: dictionary.navigation.home, href: getHomePermalink(locale) },
+	{ label: dictionary.navigation.archive, href: getArchivePermalink(locale) },
+	{ label: dictionary.navigation.tags, href: getTagsPermalink(locale) },
+	{ label: dictionary.navigation.search, href: getSearchPermalink(locale) },
+	{ label: dictionary.navigation.about, href: getAboutPermalink(locale) },
+];
+
+function isActive(href: string) {
+	const target = stripBasePath(href).replace(/\/$/, "") || "/";
+	return target === "/" ? pathname === "/" : pathname === target || pathname.startsWith(`${target}/`);
+}
+---
+
+<a class="skip-link" href="#main-content">{dictionary.skipToContent}</a>
+
+<header class="header">
+	<nav class="nav" aria-label={dictionary.navigation.label}>
+		<div class="logo">
+			<a
+				class="logo__brand"
+				href={getHomePermalink(locale)}
+				transition:name="site-brand"
+				data-astro-prefetch="hover"
+			>
+				{siteConfig.title}
+			</a>
+			<div class="logo-switches">
+				<ThemeToggle />
+				<span class="logo-switches__divider" aria-hidden="true">|</span>
+				<LocaleSwitch />
+			</div>
+		</div>
+
+		<ul id="menu">
+			{navigation.map((item) => (
+				<li>
+					<a
+						href={item.href}
+						aria-current={isActive(item.href) ? "page" : undefined}
+						data-astro-prefetch="hover"
+					>
+						<span class:list={{ active: isActive(item.href) }}>{item.label}</span>
+					</a>
+				</li>
+			))}
+		</ul>
+	</nav>
+</header>

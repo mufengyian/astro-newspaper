@@ -1,0 +1,56 @@
+---
+import { ClientRouter } from "astro:transitions";
+import BaseHead from "../components/BaseHead.astro";
+import BackToTop from "../components/BackToTop.astro";
+import CopyCodeScript from "../components/CopyCodeScript.astro";
+import SiteFooter from "../components/SiteFooter.astro";
+import SiteHeader from "../components/SiteHeader.astro";
+import "../styles/global.css";
+import { siteConfig } from "../config";
+import { getHtmlLang, resolveLocale } from "../utils/i18n";
+
+interface Props {
+	title?: string;
+	description?: string;
+	image?: string;
+	canonical?: string;
+	type?: "website" | "article";
+	publishedTime?: Date;
+	updatedTime?: Date;
+	tags?: string[];
+	bodyClass?: string;
+}
+
+const props = Astro.props;
+const locale = resolveLocale(Astro.currentLocale);
+---
+
+<!doctype html>
+<html lang={getHtmlLang(locale)}>
+	<head>
+		<BaseHead
+			title={props.title}
+			description={props.description}
+			image={props.image}
+			canonical={props.canonical}
+			type={props.type}
+			publishedTime={props.publishedTime}
+			updatedTime={props.updatedTime}
+			tags={props.tags}
+		/>
+		<ClientRouter />
+		<slot name="head" />
+	</head>
+
+	<body class:list={[props.bodyClass, `font-preset-${siteConfig.typography.preset}`]}>
+		<SiteHeader />
+
+		<main id="main-content" class="main">
+			<slot />
+		</main>
+
+		<SiteFooter />
+		<BackToTop />
+		<CopyCodeScript />
+	</body>
+</html>

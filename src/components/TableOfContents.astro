@@ -1,0 +1,34 @@
+---
+import type { MarkdownHeading } from "astro";
+import { getDictionary, resolveLocale } from "../utils/i18n";
+
+interface Props {
+	headings: MarkdownHeading[];
+}
+
+const locale = resolveLocale(Astro.currentLocale);
+const dictionary = getDictionary(locale);
+const { headings } = Astro.props;
+const visibleHeadings = headings.filter((heading) => heading.depth >= 2 && heading.depth <= 4);
+---
+
+{
+	visibleHeadings.length > 0 && (
+		<section class="toc">
+			<details open>
+				<summary>
+					<span class="details">{dictionary.post.tocTitle}</span>
+				</summary>
+				<div class="inner">
+					<ul>
+						{visibleHeadings.map((heading) => (
+							<li class={`depth-${heading.depth}`}>
+								<a href={`#${heading.slug}`}>{heading.text}</a>
+							</li>
+						))}
+					</ul>
+				</div>
+			</details>
+		</section>
+	)
+}

@@ -1,0 +1,243 @@
+---
+import { getDictionary, resolveLocale } from "../utils/i18n";
+import { getSearchIndexPermalink } from "../utils/routing";
+
+const locale = resolveLocale(Astro.currentLocale);
+const dictionary = getDictionary(locale);
+const searchEndpoint = getSearchIndexPermalink(locale);
+const searchMessages = {
+	loading: dictionary.search.loading,
+	matches:
+		locale === "en"
+			? "__COUNT__ matches for “__QUERY__”."
+			: "“__QUERY__” 共命中 __COUNT__ 条结果。",
+	emptyTitle: dictionary.search.emptyTitle,
+	emptyDescription: dictionary.search.emptyDescription,
+	unavailableTitle: dictionary.search.unavailableTitle,
+	unavailableDescription: dictionary.search.unavailableDescription,
+	openLabel: locale === "en" ? "Open " : "打开 ",
+	metaSeparator: " · ",
+};
+---
+
+<section data-search-root data-search-endpoint={searchEndpoint}>
+	<div id="searchbox">
+		<label class="sr-only" for="search-input">{dictionary.search.label}</label>
+		<input
+			id="search-input"
+			type="search"
+			placeholder={dictionary.search.placeholder}
+			autocomplete="off"
+		/>
+	</div>
+
+	<p class="search-status" data-search-status hidden></p>
+	<ul id="searchResults" data-search-results hidden></ul>
+</section>
+
+<script is:inline type="application/json" data-search-messages set:html={JSON.stringify(searchMessages)}></script>
+
+<script>
+	import Fuse from "fuse.js";
+
+	interface SearchEntry {
+		title: string;
+		excerpt: string;
+		category: string;
+		tags: string[];
+		url: string;
+		published: string;
+		publishedLabel: string;
+		readingMinutesLabel: string;
+		body: string;
+	}
+
+	type SearchResult = { item: SearchEntry };
+
+	function escapeHtml(value: string) {
+		return value
+			.replaceAll("&", "&amp;")
+			.replaceAll("<", "&lt;")
+			.replaceAll(">", "&gt;")
+			.replaceAll('"', "&quot;")
+			.replaceAll("'", "&#39;");
+	}
+
+	function initSearch() {
+		const root = document.querySelector<HTMLElement>("[data-search-root]");
+		if (!root || root.dataset.ready === "true") return;
+		root.dataset.ready = "true";
+
+		const input = root.querySelector<HTMLInputElement>("#search-input");
+		const status = root.querySelector<HTMLElement>("[data-search-status]");
+		const results = root.querySelector<HTMLElement>("[data-search-results]");
+		const messagesNode = document.querySelector<HTMLScriptElement>("[data-search-messages]");
+
+		if (!input || !status || !results || !messagesNode?.textContent) return;
+
+		const messages = JSON.parse(messagesNode.textContent) as Record<string, string>;
+		const searchEndpoint = root.dataset.searchEndpoint || "/search.json";
+		let activeIndex = 0;
+		let entries: SearchEntry[] | null = null;
+		let fuse: Fuse<SearchEntry> | null = null;
+		let loadPromise: Promise<void> | null = null;
+
+		const setActive = (index: number) => {
+			const items = Array.from(results.querySelectorAll<HTMLLIElement>("li"));
+			if (items.length === 0) return;
+			activeIndex = Math.max(0, Math.min(index, items.length - 1));
+			items.forEach((item, itemIndex) => {
+				item.classList.toggle("focus", itemIndex === activeIndex);
+			});
+		};
+
+		const syncQuery = (query: string) => {
+			const url = new URL(window.location.href);
+			if (query) {
+				url.searchParams.set("q", query);
+			} else {
+				url.searchParams.delete("q");
+			}
+			history.replaceState({}, "", url);
+		};
+
+		const clearResults = () => {
+			status.hidden = true;
+			results.hidden = true;
+			status.textContent = "";
+			results.innerHTML = "";
+			activeIndex = 0;
+		};
+
+		const ensureIndex = async () => {
+			if (fuse) return;
+			if (!loadPromise) {
+				loadPromise = (async () => {
+					status.hidden = false;
+					status.textContent = messages.loading;
+
+					const response = await fetch(searchEndpoint);
+					entries = (await response.json()) as SearchEntry[];
+					fuse = new Fuse(entries, {
+						includeScore: true,
+						threshold: 0.32,
+						ignoreLocation: true,
+						keys: [
+							{ name: "title", weight: 0.45 },
+							{ name: "excerpt", weight: 0.2 },
+							{ name: "body", weight: 0.15 },
+							{ name: "category", weight: 0.08 },
+							{ name: "tags", weight: 0.12 },
+						],
+					});
+				})();
+			}
+
+			await loadPromise;
+		};
+
+		const renderResults = (items: SearchResult[], query: string) => {
+			status.hidden = false;
+			results.hidden = false;
+
+			if (items.length === 0) {
+				status.textContent = messages.matches.replace("__QUERY__", query).replace("__COUNT__", "0");
+				results.innerHTML = `<li class="search-empty"><strong>${escapeHtml(messages.emptyTitle)}</strong><p>${escapeHtml(messages.emptyDescription)}</p></li>`;
+				activeIndex = 0;
+				return;
+			}
+
+			status.textContent = messages.matches
+				.replace("__QUERY__", query)
+				.replace("__COUNT__", String(items.length));
+
+			results.innerHTML = items
+				.map(({ item }, index) => {
+					const metaSegments = [item.publishedLabel, item.readingMinutesLabel];
+					if (item.category) {
+						metaSegments.push(item.category);
+					}
+
+					return `
+						<li${index === 0 ? ' class="focus"' : ""}>
+							<div class="search-result-title">${escapeHtml(item.title)}</div>
+							<div class="search-result-meta">
+								${metaSegments.map(escapeHtml).join(messages.metaSeparator)}
+							</div>
+							<p class="search-result-excerpt">${escapeHtml(item.excerpt)}</p>
+							<a href="${item.url}" aria-label="${escapeHtml(messages.openLabel)}${escapeHtml(item.title)}"></a>
+						</li>
+					`;
+				})
+				.join("");
+			activeIndex = 0;
+		};
+
+		const runSearch = async (query: string) => {
+			if (!query) {
+				clearResults();
+				return;
+			}
+
+			try {
+				await ensureIndex();
+				const matched = fuse ? (fuse.search(query).slice(0, 10) as SearchResult[]) : [];
+				renderResults(matched, query);
+			} catch (error) {
+				console.error("[newspaper] Failed to load the search index.", error);
+				status.hidden = false;
+				results.hidden = false;
+				status.textContent = messages.unavailableTitle;
+				results.innerHTML = `<li class="search-empty"><strong>${escapeHtml(messages.unavailableTitle)}</strong><p>${escapeHtml(messages.unavailableDescription)}</p></li>`;
+			}
+		};
+
+		input.addEventListener("input", () => {
+			const query = input.value.trim();
+			syncQuery(query);
+			void runSearch(query);
+		});
+
+		input.addEventListener("keydown", (event) => {
+			const items = Array.from(results.querySelectorAll<HTMLLIElement>("li"));
+			if (items.length === 0) return;
+
+			if (event.key === "ArrowDown") {
+				event.preventDefault();
+				setActive(activeIndex + 1);
+			}
+
+			if (event.key === "ArrowUp") {
+				event.preventDefault();
+				setActive(activeIndex - 1);
+			}
+
+			if (event.key === "Enter") {
+				const link = items[activeIndex]?.querySelector<HTMLAnchorElement>("a");
+				if (link) {
+					event.preventDefault();
+					link.click();
+				}
+			}
+		});
+
+		const initialQuery = new URL(window.location.href).searchParams.get("q")?.trim() ?? "";
+		if (initialQuery) {
+			input.value = initialQuery;
+			void runSearch(initialQuery);
+		} else {
+			clearResults();
+		}
+	}
+
+	if (!window.__newspaperSearchBound) {
+		window.__newspaperSearchBound = true;
+		document.addEventListener("astro:page-load", initSearch);
+	}
+
+	if (document.readyState === "loading") {
+		document.addEventListener("DOMContentLoaded", initSearch, { once: true });
+	} else {
+		initSearch();
+	}
+</script>

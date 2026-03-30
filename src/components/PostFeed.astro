@@ -1,0 +1,36 @@
+---
+import type { PostEntry } from "../utils/posts";
+import Pagination from "./Pagination.astro";
+import PostCard from "./PostCard.astro";
+
+interface Props {
+	posts: PostEntry[];
+	currentPage?: number;
+	totalPages?: number;
+	firstPageUrl?: string;
+	pageUrlPattern?: string;
+}
+
+const {
+	posts,
+	currentPage = 1,
+	totalPages = 1,
+	firstPageUrl = "/",
+	pageUrlPattern = "/page/{page}",
+} = Astro.props;
+---
+
+<section class="posts-feed">
+	<div class="posts-grid" data-posts-list>
+		{posts.map((post) => (
+			<PostCard post={post} />
+		))}
+	</div>
+
+	<Pagination
+		currentPage={currentPage}
+		totalPages={totalPages}
+		firstPageUrl={firstPageUrl}
+		pageUrlPattern={pageUrlPattern}
+	/>
+</section>

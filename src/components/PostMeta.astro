@@ -1,0 +1,26 @@
+---
+import { formatDate, formatMachineDate } from "../utils/date";
+import { getDictionary, resolveLocale } from "../utils/i18n";
+import { getReadingMinutes, type PostEntry } from "../utils/posts";
+
+interface Props {
+	post: PostEntry;
+}
+
+const locale = resolveLocale(Astro.currentLocale);
+const dictionary = getDictionary(locale);
+const { post } = Astro.props;
+const readingMinutes = getReadingMinutes(post);
+---
+
+<div class="post-meta">
+	<time datetime={formatMachineDate(post.data.publishDate)}>{formatDate(post.data.publishDate, locale)}</time>
+	<span aria-hidden="true">&middot;</span>
+	<span>{dictionary.reading.minutes(readingMinutes)}</span>
+	{post.data.category && (
+		<>
+			<span aria-hidden="true">&middot;</span>
+			<span>{post.data.category}</span>
+		</>
+	)}
+</div>

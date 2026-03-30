@@ -1,0 +1,17 @@
+---
+import { siteConfig } from "../config";
+import { getDictionary, resolveLocale } from "../utils/i18n";
+
+const locale = resolveLocale(Astro.currentLocale);
+const dictionary = getDictionary(locale);
+---
+
+<footer class="footer">
+	<span>&copy; {new Date().getFullYear()} {siteConfig.author.name}</span>
+	<span>&middot;</span>
+	<span>{siteConfig.title}</span>
+	<span>&middot;</span>
+	<span>
+		{dictionary.footer.builtWith} <a href="https://astro.build" target="_blank" rel="noreferrer">Astro</a>
+	</span>
+</footer>

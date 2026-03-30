@@ -1,0 +1,40 @@
+---
+import { resolveLocale } from "../utils/i18n";
+
+const locale = resolveLocale(Astro.currentLocale);
+const label = locale === "en" ? "Back to top" : "回到顶部";
+---
+
+<button class="top-link" type="button" aria-label={label} title={label} data-top-link>
+	<span aria-hidden="true">↑</span>
+</button>
+
+<script>
+	function initBackToTop() {
+		const button = document.querySelector<HTMLButtonElement>("[data-top-link]");
+		if (!button || button.dataset.bound === "true") return;
+		button.dataset.bound = "true";
+
+		const toggleVisibility = () => {
+			button.classList.toggle("is-visible", window.scrollY > 520);
+		};
+
+		button.addEventListener("click", () => {
+			window.scrollTo({ top: 0, behavior: "smooth" });
+		});
+
+		window.addEventListener("scroll", toggleVisibility, { passive: true });
+		toggleVisibility();
+	}
+
+	if (!window.__newspaperBackToTopBound) {
+		window.__newspaperBackToTopBound = true;
+		document.addEventListener("astro:page-load", initBackToTop);
+	}
+
+	if (document.readyState === "loading") {
+		document.addEventListener("DOMContentLoaded", initBackToTop, { once: true });
+	} else {
+		initBackToTop();
+	}
+</script>
