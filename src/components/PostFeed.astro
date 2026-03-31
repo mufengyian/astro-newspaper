@@ -9,6 +9,7 @@ interface Props {
 	totalPages?: number;
 	firstPageUrl?: string;
 	pageUrlPattern?: string;
+	variant?: "default" | "narrow";
 }
 
 const {
@@ -17,11 +18,12 @@ const {
 	totalPages = 1,
 	firstPageUrl = "/",
 	pageUrlPattern = "/page/{page}",
+	variant = "default",
 } = Astro.props;
 ---
 
-<section class="posts-feed">
-	<div class="posts-grid" data-posts-list>
+<section class:list={["posts-feed", variant === "narrow" && "posts-feed--narrow"]}>
+	<div class:list={["posts-grid", variant === "narrow" && "posts-grid--narrow"]} data-posts-list>
 		{posts.map((post) => (
 			<PostCard post={post} />
 		))}

@@ -3,8 +3,8 @@
 	gap: var(--gap);
 }
 
-body.home .posts-feed,
-body.home .posts-grid {
+.posts-feed--narrow,
+.posts-grid--narrow {
 	max-width: var(--home-feed-width);
 	margin-inline: auto;
 }

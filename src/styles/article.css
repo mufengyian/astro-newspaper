@@ -462,6 +462,41 @@
 	grid-template-columns: 1fr;
 }
 
+.related-posts__item {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) auto;
+	align-items: center;
+	gap: 0;
+}
+
+.related-posts__body {
+	min-width: 0;
+}
+
+.related-posts__item .entry-header,
+.related-posts__item .entry-content,
+.related-posts__item .entry-footer {
+	padding-inline: 24px;
+}
+
+.related-posts__item .entry-header {
+	padding-top: 22px;
+}
+
+.related-posts__item .entry-content {
+	margin: 8px 0 0;
+	-webkit-line-clamp: 2;
+}
+
+.related-posts__item .entry-footer {
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+	padding-top: 22px;
+	padding-bottom: 22px;
+	white-space: nowrap;
+}
+
 .archive-posts {
 	display: grid;
 	gap: 24px;

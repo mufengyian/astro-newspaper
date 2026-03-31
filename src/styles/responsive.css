@@ -91,6 +91,15 @@
 	.post-nav__item--next {
 		text-align: left;
 	}
+
+	.related-posts__item {
+		grid-template-columns: 1fr;
+	}
+
+	.related-posts__item .entry-footer {
+		justify-content: flex-start;
+		padding-top: 0;
+	}
 }
 
 @media (hover: none) {
