@@ -12,7 +12,7 @@ export async function GET() {
 		return new Response(null, { status: 204 });
 	}
 
-	const posts = getSortedPosts(await getCollection("posts"), locale);
+	const posts = getSortedPosts(await getCollection("posts"));
 
 	return rss({
 		title: siteConfig.title,

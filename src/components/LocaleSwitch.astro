@@ -1,10 +1,12 @@
 ---
 import { getDictionary, resolveLocale } from "../utils/i18n";
 import { getLocaleAlternates } from "../utils/routing";
+import { translationKeyStore } from "../utils/context";
 
+const translationKey = translationKeyStore.get();
 const locale = resolveLocale(Astro.currentLocale);
 const dictionary = getDictionary(locale);
-const alternateLocales = getLocaleAlternates(Astro.url.pathname);
+const alternateLocales = await getLocaleAlternates(Astro.url.pathname, translationKey);
 ---
 
 <div class="locale-switch" aria-label={dictionary.langSwitchLabel}>

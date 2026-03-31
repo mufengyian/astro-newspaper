@@ -5,6 +5,7 @@ publishDate: 2026-03-30
 locale: zh-cn
 featured: true
 translationKey: welcome-to-newspaper
+cover: ../../assets/covers/craft-wave.svg
 ---
 
 Newspaper 是一个为写作者、发布者和内容创作者打造的 Astro 博客主题。它将简洁、耐读的设计与一系列强大的功能相结合，助您创建一个美观且高性能的网站。

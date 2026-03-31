@@ -22,9 +22,13 @@ interface Props {
 	olderPost?: PostEntry;
 }
 
+import { translationKeyStore } from "../utils/context";
+
 const locale = resolveLocale(Astro.currentLocale);
 const dictionary = getDictionary(locale);
 const { post, headings, relatedPosts = [], newerPost, olderPost } = Astro.props;
+
+translationKeyStore.set(post.data.translationKey);
 
 
 const shouldRenderComments = post.data.comments && hasWalineServerUrl();
@@ -41,6 +45,7 @@ const WalineComments = shouldRenderComments
 	publishedTime={post.data.publishDate}
 	updatedTime={post.data.updatedDate}
 	tags={post.data.tags}
+	translationKey={post.data.translationKey}
 >
 	<ReadingProgress />
 

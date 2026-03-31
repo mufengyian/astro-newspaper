@@ -88,8 +88,38 @@ export function getRssPermalink(locale: SiteLocale) {
 	return getLocalizedPath(locale, "rss.xml");
 }
 
-export function getLocaleAlternates(pathname: string) {
+import { getCollection } from "astro:content";
+
+let _posts: CollectionEntry<"posts">[];
+
+async function getPosts() {
+	if (!_posts) {
+		_posts = await getCollection("posts", ({ data }) => import.meta.env.DEV || !data.draft);
+	}
+	return _posts;
+}
+
+export async function getLocaleAlternates(pathname: string, translationKey?: string) {
 	const path = stripLocaleFromPath(pathname);
+
+	if (path.startsWith("posts/") && translationKey) {
+		const posts = await getPosts();
+		const alternates = LOCALES.map((locale) => {
+			const translatedPost = posts.find(
+				(p) => p.data.locale === locale && p.data.translationKey === translationKey,
+			);
+			const url = translatedPost
+				? getLocalizedPath(locale, `posts/${translatedPost.slug}`)
+				: getLocalizedPath(locale, path);
+			return {
+				locale,
+				relativeUrl: url,
+				absoluteUrl: getAbsoluteLocalizedPath(locale, url),
+			};
+		});
+		return alternates;
+	}
+
 	return LOCALES.map((locale) => ({
 		locale,
 		relativeUrl: getLocalizedPath(locale, path),
