@@ -1,0 +1,42 @@
+---
+title: "在 Astro 中驾驭代码与图片"
+excerpt: "学习如何展示带有语法高亮的代码块，并利用 Astro 强大的图片处理能力。"
+publishDate: 2026-03-29
+locale: zh-cn
+cover: ../../assets/covers/paper-constellation.svg
+translationKey: code-and-images
+---
+
+本主题为代码块提供了优美的样式，并利用 Astro 内置的 `astro:assets` 来实现强大的图片优化。
+
+### 代码块
+
+这是一个由 Shiki 提供语法高亮的 JavaScript 代码块示例：
+
+```javascript
+import { defineConfig } from 'astro/config';
+
+export default defineConfig({
+  site: 'https://example.com',
+  integrations: [],
+});
+```
+
+您可以在 `astro.config.mjs` 文件中自定义高亮主题和语言支持。
+
+### 使用 `astro:assets` 处理图片
+
+本文的封面图片就是一个由 Astro 处理的本地文件。主题会自动处理响应式尺寸和现代格式（如 WebP 和 AVIF）。
+
+以下是您如何在 MDX 文件中使用 `<Image />` 组件的示例：
+
+```mdx
+---
+import { Image } from "astro:assets";
+import myImage from "../../assets/my-image.png";
+---
+
+<Image src={myImage} alt="我的图片描述。" />
+```
+
+这种方法可以确保您的图片在不牺牲质量的前提下，始终为性能而优化。

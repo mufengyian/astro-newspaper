@@ -1,0 +1,46 @@
+---
+title: "超越 Markdown：MDX 与双语内容"
+excerpt: "通过在文章中嵌入交互式组件来释放 Astro 的全部潜力，并了解管理双语站点是多么轻松。"
+publishDate: 2026-03-28
+locale: zh-cn
+cover: ../../assets/covers/signal-grid.svg
+translationKey: mdx-and-i18n
+---
+
+MDX 允许您在 Markdown 内容中直接使用组件。本主题内置了一些基础组件供您起步，但您也可以创建自己的组件。
+
+### 提示框组件
+
+这是一个您可以创建和使用的简单提示框组件的示例：
+
+```mdx
+import Callout from '~/components/Callout.astro';
+
+<Callout type="info">
+  这是一条提示信息。您可以使用组件为您的文章添加丰富的交互元素。
+</Callout>
+```
+
+### 双语支持
+
+本主题从一开始就为双语内容而设计。要为本文创建一个翻译版本，只需创建一个新文件（例如中文版），并在其 frontmatter 中指定相同的 `translationKey` 即可：
+
+**英文文章 (`mdx-and-i18n.mdx`):**
+```yaml
+---
+title: Beyond Markdown: MDX and Bilingual Content
+locale: en
+translationKey: mdx-and-i18n
+---
+```
+
+**中文文章 (`mdx-and-i18n-cn.mdx`):**
+```yaml
+---
+title: 超越 Markdown：MDX 与双语内容
+locale: zh-cn
+translationKey: mdx-and-i18n
+---
+```
+
+主题将自动处理路由，并提供在两个版本之间切换的链接。
