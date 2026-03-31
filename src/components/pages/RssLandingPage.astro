@@ -1,0 +1,41 @@
+---
+import { hasPublicSiteUrl } from "../../config";
+import { getDictionary, type SiteLocale } from "../../utils/i18n";
+import { getHomePermalink, getRssPermalink } from "../../utils/routing";
+
+interface Props {
+	locale: SiteLocale;
+}
+
+const { locale } = Astro.props;
+const dictionary = getDictionary(locale);
+const isRssAvailable = hasPublicSiteUrl();
+const homeHref = getHomePermalink(locale);
+const target = getRssPermalink(locale);
+---
+
+<!doctype html>
+<html lang={locale === "en" ? "en" : "zh-CN"}>
+	<head>
+		<meta charset="utf-8" />
+		{isRssAvailable && <meta http-equiv="refresh" content={`0;url=${target}`} />}
+		<title>{isRssAvailable ? dictionary.rss.pageTitle : dictionary.rss.unavailableTitle}</title>
+		{isRssAvailable && <link rel="canonical" href={target} />}
+	</head>
+	<body>
+		<p>
+			{
+				isRssAvailable ? (
+					<>
+						{dictionary.rss.redirectLabel}
+						{" "}
+						<a href={target}>{target}</a>
+					</>
+				) : (
+					<>{dictionary.rss.unavailableDescription}</>
+				)
+			}
+		</p>
+		<p><a href={homeHref}>{dictionary.rss.backHome}</a></p>
+	</body>
+</html>

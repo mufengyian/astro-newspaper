@@ -1,14 +1,15 @@
 ---
 import { hasWalineServerUrl, siteConfig } from "../config";
-import { resolveLocale } from "../utils/i18n";
+import { getDictionary, getHtmlLang, resolveLocale } from "../utils/i18n";
 import { stripBasePath } from "../utils/routing";
 
 const locale = resolveLocale(Astro.currentLocale);
+const dictionary = getDictionary(locale);
 const canRenderWaline = hasWalineServerUrl();
-const title = locale === "en" ? "Comments" : "评论";
-const description = locale === "en" ? "Join the discussion." : "欢迎留下你的看法。";
+const title = dictionary.comments.title;
+const description = dictionary.comments.description;
 const commentsPath = stripBasePath(Astro.url.pathname).replace(/\/$/, "") || "/";
-const walineLang = locale === "en" ? "en" : "zh-CN";
+const walineLang = getHtmlLang(locale);
 const walineMeta = siteConfig.comments.meta.join(",");
 const walineRequiredMeta = siteConfig.comments.requiredMeta.join(",");
 ---
@@ -43,59 +44,9 @@ const walineRequiredMeta = siteConfig.comments.requiredMeta.join(",");
 {
 	canRenderWaline && (
 		<script is:inline>
-			(() => {
-				const destroyWaline = () => {
-					if (window.__newspaperWaline?.destroy) {
-						window.__newspaperWaline.destroy();
-					}
-					window.__newspaperWaline = null;
-				};
+			import { bindWalineLifecycle } from "../scripts/waline";
 
-				const mountWaline = async () => {
-					destroyWaline();
-
-					const root = document.querySelector("[data-waline-root='true']");
-					if (!(root instanceof HTMLElement)) {
-						return;
-					}
-
-					const thread = root.querySelector("[data-waline-thread]");
-					if (!(thread instanceof HTMLElement)) {
-						return;
-					}
-
-					const { init } = await import("@waline/client");
-					window.__newspaperWaline = init({
-						el: thread,
-						serverURL: root.dataset.walineServer || "",
-						path: root.dataset.walinePath || window.location.pathname,
-						lang: root.dataset.walineLang || "zh-CN",
-						dark: "html[data-theme='dark']",
-						meta: (root.dataset.walineMeta || "nick,mail,link").split(","),
-						requiredMeta: (root.dataset.walineRequiredMeta || "nick,mail").split(","),
-						login: root.dataset.walineLogin || "enable",
-						commentSorting: root.dataset.walineCommentSorting || "latest",
-						pageSize: Number(root.dataset.walinePageSize || "10"),
-						reaction: root.dataset.walineReaction === "true",
-					});
-				};
-
-				if (!window.__newspaperWalineBound) {
-					window.__newspaperWalineBound = true;
-					document.addEventListener("astro:before-swap", destroyWaline);
-					document.addEventListener("astro:page-load", () => {
-						void mountWaline();
-					});
-				}
-
-				if (document.readyState === "loading") {
-					document.addEventListener("DOMContentLoaded", () => {
-						void mountWaline();
-					}, { once: true });
-				} else {
-					void mountWaline();
-				}
-			})();
+			bindWalineLifecycle();
 		</script>
 	)
 }

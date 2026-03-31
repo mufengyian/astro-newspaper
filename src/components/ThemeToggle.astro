@@ -9,9 +9,9 @@ const dictionary = getDictionary(locale);
 	id="theme-toggle"
 	type="button"
 	data-theme-toggle
-	data-theme-label={dictionary.theme.label}
 	data-theme-light={dictionary.theme.light}
 	data-theme-dark={dictionary.theme.dark}
+	data-theme-current={dictionary.theme.current("__CURRENT__")}
 	aria-label={dictionary.theme.label}
 	title={dictionary.theme.label}
 	transition:persist
@@ -57,63 +57,9 @@ const dictionary = getDictionary(locale);
 </button>
 
 <script>
-	function nextTheme(current: string) {
-		return current === "dark" ? "light" : "dark";
-	}
+	import { mountThemeToggle } from "../scripts/theme-toggle";
 
-	function getThemeLabel(button: HTMLButtonElement, state: string) {
-		if (state === "dark") return button.dataset.themeLight || "Light mode";
-		return button.dataset.themeDark || "Dark mode";
-	}
-
-	function updateButtons() {
-		const state =
-			window.__getNewspaperTheme?.() ||
-			document.documentElement.dataset.themePreference ||
-			"light";
-
-		document.querySelectorAll<HTMLButtonElement>("[data-theme-toggle]").forEach((button) => {
-			const currentLabel = getThemeLabel(button, state);
-			const baseLabel = button.dataset.themeLabel || "Switch theme";
-			button.setAttribute("aria-label", `${baseLabel}: ${currentLabel}`);
-			button.setAttribute("title", currentLabel);
-		});
-	}
-
-	function initThemeToggle() {
-		window.__applyNewspaperTheme?.();
-
-		document.querySelectorAll<HTMLButtonElement>("[data-theme-toggle]").forEach((button) => {
-			if (button.dataset.bound === "true") return;
-			button.dataset.bound = "true";
-			button.addEventListener("click", () => {
-				const current =
-					window.__getNewspaperTheme?.() ||
-					document.documentElement.dataset.themePreference ||
-					"light";
-				window.__setNewspaperTheme?.(nextTheme(current));
-				updateButtons();
-			});
-		});
-
-		updateButtons();
-	}
-
-	if (!window.__newspaperThemeToggleBound) {
-		window.__newspaperThemeToggleBound = true;
-		document.addEventListener("astro:page-load", initThemeToggle);
-	}
-
-	if (!window.__newspaperThemeChangeBound) {
-		window.__newspaperThemeChangeBound = true;
-		window.addEventListener("newspaper:themechange", updateButtons);
-	}
-
-	if (document.readyState === "loading") {
-		document.addEventListener("DOMContentLoaded", initThemeToggle, { once: true });
-	} else {
-		initThemeToggle();
-	}
+	mountThemeToggle();
 </script>
 
 <style>

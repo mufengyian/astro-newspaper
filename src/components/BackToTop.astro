@@ -1,8 +1,9 @@
 ---
-import { resolveLocale } from "../utils/i18n";
+import { getDictionary, resolveLocale } from "../utils/i18n";
 
 const locale = resolveLocale(Astro.currentLocale);
-const label = locale === "en" ? "Back to top" : "回到顶部";
+const dictionary = getDictionary(locale);
+const label = dictionary.a11y.backToTop;
 ---
 
 <button class="top-link" type="button" aria-label={label} title={label} data-top-link>
@@ -10,46 +11,7 @@ const label = locale === "en" ? "Back to top" : "回到顶部";
 </button>
 
 <script>
-	(() => {
-		let activeButton: HTMLButtonElement | null = null;
+	import { mountBackToTop } from "../scripts/back-to-top";
 
-		const handleClick = () => {
-			window.scrollTo({ top: 0, behavior: "smooth" });
-		};
-
-		const syncButton = () => {
-			const nextButton = document.querySelector<HTMLButtonElement>("[data-top-link]");
-			if (nextButton === activeButton) return;
-
-			activeButton?.removeEventListener("click", handleClick);
-			activeButton = nextButton;
-			activeButton?.addEventListener("click", handleClick);
-		};
-
-		const toggleVisibility = () => {
-			if (!activeButton || !document.body.contains(activeButton)) {
-				syncButton();
-			}
-
-			if (!activeButton) return;
-			activeButton.classList.toggle("is-visible", window.scrollY > 520);
-		};
-
-		const initBackToTop = () => {
-			syncButton();
-			toggleVisibility();
-		};
-
-		if (!window.__newspaperBackToTopBound) {
-			window.__newspaperBackToTopBound = true;
-			window.addEventListener("scroll", toggleVisibility, { passive: true });
-			document.addEventListener("astro:page-load", initBackToTop);
-		}
-
-		if (document.readyState === "loading") {
-			document.addEventListener("DOMContentLoaded", initBackToTop, { once: true });
-		} else {
-			initBackToTop();
-		}
-	})();
+	mountBackToTop();
 </script>

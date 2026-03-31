@@ -1,0 +1,30 @@
+---
+import MainLayout from "../../layouts/MainLayout.astro";
+import { getDictionary, type SiteLocale } from "../../utils/i18n";
+import { getTagPermalinkBySlug } from "../../utils/posts";
+import { getTagIndexPageData } from "../../utils/page-data";
+import PageHeader from "../PageHeader.astro";
+
+interface Props {
+	locale: SiteLocale;
+}
+
+const { locale } = Astro.props;
+const dictionary = getDictionary(locale);
+const { tagIndex } = await getTagIndexPageData(locale);
+---
+
+<MainLayout title={dictionary.tags.title} description={dictionary.tags.description} bodyClass="list">
+	<PageHeader title={dictionary.tags.title} description={dictionary.tags.description} />
+
+	<ul class="terms-tags">
+		{tagIndex.map((tag) => (
+			<li>
+				<a href={getTagPermalinkBySlug(locale, tag.slug)} data-astro-prefetch="hover">
+					<span>#{tag.name}</span>
+					<sup>{tag.count}</sup>
+				</a>
+			</li>
+		))}
+	</ul>
+</MainLayout>

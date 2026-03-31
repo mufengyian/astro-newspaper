@@ -1,0 +1,29 @@
+---
+import MainLayout from "../../layouts/MainLayout.astro";
+import { getDictionary, type SiteLocale } from "../../utils/i18n";
+import type { PaginatedPostFeedProps } from "../../utils/page-data";
+import { getPostFeedRouteConfig } from "../../utils/page-data";
+import PostFeed from "../PostFeed.astro";
+
+interface Props extends PaginatedPostFeedProps {
+	locale: SiteLocale;
+}
+
+const { locale, currentPage, totalPages, pagePosts } = Astro.props;
+const dictionary = getDictionary(locale);
+const { firstPageUrl, pageUrlPattern } = getPostFeedRouteConfig(locale);
+---
+
+<MainLayout
+	title={dictionary.pagination.summary(currentPage, totalPages)}
+	description={dictionary.home.feedDescription}
+	bodyClass="list"
+>
+	<PostFeed
+		posts={pagePosts}
+		currentPage={currentPage}
+		totalPages={totalPages}
+		firstPageUrl={firstPageUrl}
+		pageUrlPattern={pageUrlPattern}
+	/>
+</MainLayout>

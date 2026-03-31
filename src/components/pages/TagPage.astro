@@ -1,0 +1,24 @@
+---
+import MainLayout from "../../layouts/MainLayout.astro";
+import { getDictionary, type SiteLocale } from "../../utils/i18n";
+import type { TagPageProps } from "../../utils/page-data";
+import PostFeed from "../PostFeed.astro";
+import PageHeader from "../PageHeader.astro";
+
+interface Props extends TagPageProps {
+	locale: SiteLocale;
+}
+
+const { locale, tagName, posts } = Astro.props;
+const dictionary = getDictionary(locale);
+---
+
+<MainLayout
+	title={`${dictionary.tags.title} · ${tagName}`}
+	description={dictionary.tags.pageDescription(tagName)}
+	bodyClass="list"
+>
+	<PageHeader title={`#${tagName}`} description={dictionary.tags.relatedDescription} />
+
+	<PostFeed posts={posts} />
+</MainLayout>

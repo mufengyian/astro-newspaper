@@ -16,7 +16,7 @@ const {
 	firstPageUrl = "/",
 	pageUrlPattern = "/page/{page}",
 } = Astro.props;
-const navigationLabel = locale === "en" ? "Pagination" : "分页";
+const navigationLabel = dictionary.pagination.label;
 
 function getPageUrl(page: number) {
 	return page <= 1 ? firstPageUrl : pageUrlPattern.replace("{page}", String(page));

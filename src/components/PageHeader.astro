@@ -1,0 +1,29 @@
+---
+interface Props {
+	title: string;
+	description?: string;
+	align?: "center" | "left";
+	icon?: string;
+	level?: "h1" | "h2";
+	class?: string;
+}
+
+const {
+	title,
+	description,
+	align = "center",
+	icon,
+	level = "h1",
+	class: className,
+} = Astro.props;
+const HeadingTag = level;
+const headerClass = align === "left" ? "search-page-header" : "page-header";
+---
+
+<header class:list={[headerClass, className]}>
+	<HeadingTag>
+		<span>{title}</span>
+		{icon && <span class="search-page-header__icon" aria-hidden="true">{icon}</span>}
+	</HeadingTag>
+	{description && <p>{description}</p>}
+</header>

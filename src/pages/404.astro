@@ -1,9 +1,11 @@
 ---
 import { siteConfig } from "../config";
 import "../styles/global.css";
+import { getDictionary } from "../utils/i18n";
 import { withBase } from "../utils/routing";
 
 const fallbackHref = withBase();
+const dictionary = getDictionary("zh-cn");
 
 const notFoundStyles = String.raw`
 	.not-found-body {
@@ -63,18 +65,18 @@ const backScript = String.raw`(() => {
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<meta name="robots" content="noindex, nofollow" />
-		<meta name="description" content="404" />
-		<link rel="icon" type="image/svg+xml" href={withBase("favicon.svg")} />
-		<link rel="icon" href={withBase("favicon.ico")} />
-		<title>404 | {siteConfig.title}</title>
+		<meta name="description" content={dictionary.notFound.description} />
+		<link rel="icon" type="image/svg+xml" href={withBase(siteConfig.assets.faviconSvg)} />
+		<link rel="icon" href={withBase(siteConfig.assets.faviconIco)} />
+		<title>{dictionary.notFound.title} | {siteConfig.title}</title>
 		<style is:inline set:html={notFoundStyles}></style>
 		<script is:inline set:html={backScript}></script>
 	</head>
 
 	<body class:list={[`font-preset-${siteConfig.typography.preset}`, "not-found-body"]}>
-		<main class="not-found-shell" aria-label="Not found">
+		<main class="not-found-shell" aria-label={dictionary.notFound.ariaLabel}>
 			<h1 class="not-found-code">404</h1>
-			<p class="not-found-tip">2 秒后返回上一个页面</p>
+			<p class="not-found-tip">{dictionary.notFound.redirectHint}</p>
 		</main>
 	</body>
 </html>

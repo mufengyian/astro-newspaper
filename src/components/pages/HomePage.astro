@@ -1,0 +1,28 @@
+---
+import MainLayout from "../../layouts/MainLayout.astro";
+import { getDictionary, type SiteLocale } from "../../utils/i18n";
+import { getHomePageData, getPostFeedRouteConfig } from "../../utils/page-data";
+import PostFeed from "../PostFeed.astro";
+import HomeHero from "../HomeHero.astro";
+
+interface Props {
+	locale: SiteLocale;
+}
+
+const { locale } = Astro.props;
+const dictionary = getDictionary(locale);
+const { pagePosts, totalPages } = await getHomePageData(locale);
+const { firstPageUrl, pageUrlPattern } = getPostFeedRouteConfig(locale);
+---
+
+<MainLayout title={dictionary.home.title} description={dictionary.home.description} bodyClass="list home">
+	<HomeHero locale={locale} />
+
+	<PostFeed
+		posts={pagePosts}
+		currentPage={1}
+		totalPages={totalPages}
+		firstPageUrl={firstPageUrl}
+		pageUrlPattern={pageUrlPattern}
+	/>
+</MainLayout>

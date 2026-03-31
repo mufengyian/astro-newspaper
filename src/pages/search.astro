@@ -1,22 +1,5 @@
 ---
-import SearchPanel from "../components/SearchPanel.astro";
-import MainLayout from "../layouts/MainLayout.astro";
-import { getDictionary } from "../utils/i18n";
-
-const locale = "zh-cn" as const;
-const dictionary = getDictionary(locale);
+import SearchPage from "../components/pages/SearchPage.astro";
 ---
 
-<MainLayout title={dictionary.search.title} description={dictionary.search.description} bodyClass="list">
-	<section class="search-shell">
-		<header class="search-page-header">
-			<h1>
-				<span>{dictionary.search.title}</span>
-				<span class="search-page-header__icon" aria-hidden="true">⌕</span>
-			</h1>
-			<p>{dictionary.search.description}</p>
-		</header>
-
-		<SearchPanel />
-	</section>
-</MainLayout>
+<SearchPage locale="zh-cn" />

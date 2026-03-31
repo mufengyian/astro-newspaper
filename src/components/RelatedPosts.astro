@@ -10,7 +10,6 @@ interface Props {
 const locale = resolveLocale(Astro.currentLocale);
 const dictionary = getDictionary(locale);
 const { posts } = Astro.props;
-const relatedPostLabel = locale === "en" ? "Open related post: " : "查看相关文章：";
 ---
 
 {
@@ -39,7 +38,8 @@ const relatedPostLabel = locale === "en" ? "Open related post: " : "查看相关
 						<a
 							class="entry-link"
 							href={getPostPermalink(locale, post)}
-							aria-label={`${relatedPostLabel}${post.data.title}`}
+							aria-label={dictionary.post.openRelatedLabel(post.data.title)}
+							data-astro-prefetch="hover"
 						></a>
 					</article>
 				))}

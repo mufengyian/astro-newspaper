@@ -1,34 +1,5 @@
 ---
-import { hasPublicSiteUrl } from "../../config";
-import { getHomePermalink, getRssPermalink } from "../../utils/routing";
-
-const locale = "en" as const;
-const isRssAvailable = hasPublicSiteUrl();
-const homeHref = getHomePermalink(locale);
-const target = getRssPermalink(locale);
+import RssLandingPage from "../../components/pages/RssLandingPage.astro";
 ---
 
-<!doctype html>
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		{isRssAvailable && <meta http-equiv="refresh" content={`0;url=${target}`} />}
-		<title>{isRssAvailable ? "RSS Feed" : "RSS Unavailable"}</title>
-		{isRssAvailable && <link rel="canonical" href={target} />}
-	</head>
-	<body>
-		<p>
-			{
-				isRssAvailable ? (
-					<>
-						The RSS feed is available at
-						<a href={target}>{target}</a>
-					</>
-				) : (
-					<>The RSS feed is unavailable until a public site URL is configured.</>
-				)
-			}
-		</p>
-		<p><a href={homeHref}>Back to home</a></p>
-	</body>
-</html>
+<RssLandingPage locale="en" />
