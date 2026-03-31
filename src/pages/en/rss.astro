@@ -1,0 +1,22 @@
+---
+import { getRssPermalink } from "../../utils/routing";
+
+const locale = "en" as const;
+const target = getRssPermalink(locale);
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta http-equiv="refresh" content={`0;url=${target}`} />
+		<title>RSS Feed</title>
+		<link rel="canonical" href={target} />
+	</head>
+	<body>
+		<p>
+			The RSS feed is available at
+			<a href={target}>{target}</a>
+		</p>
+	</body>
+</html>
