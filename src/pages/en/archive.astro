@@ -28,7 +28,7 @@ const groupedPosts = groupPostsByYear(posts);
 				{entries.map((post) => (
 					<article class="archive-entry">
 						<h3 class="archive-entry-title">
-							<a href={getPostPermalink(locale, post)} data-astro-prefetch="viewport">
+							<a href={getPostPermalink(locale, post)} data-astro-prefetch="hover">
 								{post.data.title}
 							</a>
 						</h3>

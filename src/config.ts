@@ -8,6 +8,8 @@ type SocialLink = {
 	href: string;
 };
 
+type TypographyPreset = "editorial" | "wenkai";
+
 export const siteConfig = {
 	title: "Newspaper",
 	repositoryUrl: "https://github.com/mufengyian/astro-newspaper",
@@ -15,7 +17,7 @@ export const siteConfig = {
 	defaultLocale: DEFAULT_LOCALE,
 	locales: LOCALES,
 	typography: {
-		preset: "editorial",
+		preset: "editorial" as TypographyPreset,
 	},
 	author: {
 		name: "JiU",

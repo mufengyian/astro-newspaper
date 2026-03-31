@@ -64,6 +64,43 @@ npm run dev
 - [`src/content/posts`](./src/content/posts)：示例文章
 - [`src/assets/covers`](./src/assets/covers)：示例封面
 
+## 多语言内容工作流
+
+主题把中文和英文视为两套独立路由：
+
+- 中文首页：`/`
+- 英文首页：`/en/`
+- 中文文章：`/posts/<slug>/`
+- 英文文章：`/en/posts/<slug>/`
+
+如果你要发布同一篇文章的中英文版本，推荐创建两篇内容文件，并为它们设置相同的 `translationKey`。
+
+```yaml
+---
+title: Hello Astro
+excerpt: 用一篇中英文文章确认多语言链路已经配置完成。
+publishDate: 2026-03-31
+locale: zh-cn
+translationKey: hello-astro
+---
+```
+
+```yaml
+---
+title: Hello Astro
+excerpt: Use one post in each language to verify the bilingual flow.
+publishDate: 2026-03-31
+locale: en
+translationKey: hello-astro
+---
+```
+
+当前行为说明：
+
+- 只有真实存在的译文才会生成对应语言文章页。
+- 如果英文译文不存在，主题不会生成一个重复的 `/en/...` 页面。
+- 导航、按钮、搜索提示等站点级双语文案统一维护在 `src/utils/i18n.ts`。
+
 ## 环境变量
 
 ```bash

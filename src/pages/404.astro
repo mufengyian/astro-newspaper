@@ -48,6 +48,10 @@ const notFoundContent: Record<SiteLocale, NotFoundLocaleContent> = {
 };
 
 const defaultContent = notFoundContent[defaultLocale];
+const wenkaiStylesheet =
+	siteConfig.typography.preset === "wenkai"
+		? (await import("../styles/wenkai.css?url")).default
+		: undefined;
 
 const runtimeConfig = JSON.stringify({
 	base: import.meta.env.BASE_URL,
@@ -234,6 +238,7 @@ const bootstrapScript = String.raw`(() => {
 		<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#171923" />
 		<link rel="icon" type="image/svg+xml" href={withBase("favicon.svg")} />
 		<link rel="icon" href={withBase("favicon.ico")} />
+		{siteConfig.typography.preset === "wenkai" && <link rel="stylesheet" href={wenkaiStylesheet} />}
 		<title id="not-found-title">{defaultContent.title} | {siteConfig.title}</title>
 		<script is:inline type="application/json" id="not-found-config" set:html={runtimeConfig}></script>
 		<script is:inline set:html={bootstrapScript}></script>

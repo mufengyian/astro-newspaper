@@ -72,6 +72,43 @@ Key configuration files to get you started:
 - **`src/content/posts/`**: Directory for your blog posts. Feel free to remove the sample posts.
 - **`src/assets/covers/`**: Directory for post cover images.
 
+## Bilingual Publishing Workflow
+
+This theme treats Chinese and English as two independent route trees:
+
+- Chinese homepage: `/`
+- English homepage: `/en/`
+- Chinese posts: `/posts/<slug>/`
+- English posts: `/en/posts/<slug>/`
+
+To publish the same article in both languages, create two files and give them the same `translationKey`.
+
+```yaml
+---
+title: Hello Astro
+excerpt: Confirm your bilingual setup with one post in each language.
+publishDate: 2026-03-31
+locale: zh-cn
+translationKey: hello-astro
+---
+```
+
+```yaml
+---
+title: Hello Astro
+excerpt: Confirm your bilingual setup with one post in each language.
+publishDate: 2026-03-31
+locale: en
+translationKey: hello-astro
+---
+```
+
+Current behavior:
+
+- Localized article pages are generated only when that locale really exists.
+- If an English translation does not exist, the theme keeps the post on the default-locale route instead of generating a duplicate `/en/...` page.
+- Shared UI strings such as navigation, buttons, and search messages live in `src/utils/i18n.ts`.
+
 For more detailed guides on configuration, content creation, MDX, images, i18n, and deployment, please refer to the [official project Wiki](https://github.com/mufengyian/astro-newspaper/wiki).
 
 ## Contributing

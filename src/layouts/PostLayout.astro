@@ -27,6 +27,9 @@ const dictionary = getDictionary(locale);
 const { post, headings, relatedPosts = [], newerPost, olderPost } = Astro.props;
 
 const shouldRenderComments = post.data.comments && hasWalineServerUrl();
+const walineStylesheet = shouldRenderComments
+	? (await import("@waline/client/waline.css?url")).default
+	: undefined;
 const WalineComments = shouldRenderComments
 	? (await import("../components/WalineComments.astro")).default
 	: null;
@@ -41,6 +44,7 @@ const WalineComments = shouldRenderComments
 	updatedTime={post.data.updatedDate}
 	tags={post.data.tags}
 >
+	{walineStylesheet && <link slot="head" rel="stylesheet" href={walineStylesheet} />}
 	<ReadingProgress />
 
 	<article class="post-single">

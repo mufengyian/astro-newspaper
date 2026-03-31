@@ -32,7 +32,7 @@ const entryLabel =
 
 	<header class="entry-header">
 		<h2>
-			<a href={href} transition:name={`title-${post.id}`} data-astro-prefetch="viewport">
+			<a href={href} transition:name={`title-${post.id}`} data-astro-prefetch="hover">
 				{post.data.title}
 			</a>
 		</h2>
@@ -43,5 +43,5 @@ const entryLabel =
 	<footer class="entry-footer">
 		<PostMeta post={post} />
 	</footer>
-	<a class="entry-link" href={href} aria-label={entryLabel} data-astro-prefetch="viewport"></a>
+	<a class="entry-link" href={href} aria-label={entryLabel} data-astro-prefetch="hover"></a>
 </article>
