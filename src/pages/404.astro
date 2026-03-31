@@ -1,9 +1,10 @@
 ---
 import MainLayout from "../layouts/MainLayout.astro";
-import { getDictionary } from "../utils/i18n";
-import { getArchivePermalink, getHomePermalink } from "../utils/routing";
+import { DEFAULT_LOCALE, getDictionary, isSiteLocale } from "../utils/i18n";
+import { getArchivePermalink, getHomePermalink, stripBasePath, trimSlashes } from "../utils/routing";
 
-const locale = "zh-cn" as const;
+const pathSegments = trimSlashes(stripBasePath(Astro.url.pathname)).split("/").filter(Boolean);
+const locale = pathSegments[0] && isSiteLocale(pathSegments[0]) ? pathSegments[0] : DEFAULT_LOCALE;
 const dictionary = getDictionary(locale);
 ---
 

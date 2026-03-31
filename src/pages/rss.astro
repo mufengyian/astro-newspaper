@@ -1,0 +1,22 @@
+---
+import { getRssPermalink } from "../utils/routing";
+
+const locale = "zh-cn" as const;
+const target = getRssPermalink(locale);
+---
+
+<!doctype html>
+<html lang="zh-CN">
+	<head>
+		<meta charset="utf-8" />
+		<meta http-equiv="refresh" content={`0;url=${target}`} />
+		<title>RSS Feed</title>
+		<link rel="canonical" href={target} />
+	</head>
+	<body>
+		<p>
+			RSS 链接已移动到
+			<a href={target}>{target}</a>
+		</p>
+	</body>
+</html>

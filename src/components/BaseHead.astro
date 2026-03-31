@@ -36,7 +36,7 @@ const canonicalUrl = publicSiteUrl
 	: undefined;
 const socialImagePath = withBase("social-card.svg");
 const socialImage = publicSiteUrl ? new URL(image ?? socialImagePath, publicSiteUrl).href : undefined;
-const alternateLocales = publicSiteUrl ? getLocaleAlternates(Astro.url.pathname) : [];
+const alternateLocales = publicSiteUrl ? await getLocaleAlternates(Astro.url.pathname, locale) : [];
 
 const themeScript = String.raw`(() => {
 	const storageKey = "newspaper-theme";
