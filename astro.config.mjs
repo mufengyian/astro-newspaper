@@ -6,10 +6,12 @@ import remarkGfm from "remark-gfm";
 
 const site = process.env.PUBLIC_SITE_URL?.trim();
 const hasSite = Boolean(site);
+const siteUrl = hasSite ? site : undefined;
+const base = siteUrl ? new URL(siteUrl).pathname.replace(/\/$/, "") || "/" : "/";
 
 // https://astro.build/config
 export default defineConfig({
-	...(hasSite ? { site } : {}),
+	...(siteUrl ? { site: siteUrl, ...(base !== "/" ? { base } : {}) } : {}),
 	integrations: [mdx(), ...(hasSite ? [sitemap()] : [])],
 	i18n: {
 		locales: ["zh-cn", "en"],

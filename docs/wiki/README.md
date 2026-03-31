@@ -7,4 +7,6 @@
 - `docs/wiki/zh-cn/`：中文 Wiki
 - `docs/wiki/en/`：English wiki
 
-如果你准备启用 GitHub Wiki，建议以 `docs/wiki/en/` 为外部镜像基底，并继续在仓库内维护原始内容。
+GitHub Wiki 入口：<https://github.com/mufengyian/astro-newspaper/wiki>
+
+建议以 `docs/wiki/en/` 为 GitHub Wiki 的镜像基底，并继续在仓库内维护原始内容。
