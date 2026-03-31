@@ -1174,9 +1174,7 @@ body.font-preset-wenkai .logo__brand {
 	list-style: none;
 }
 
-.post-tags a,
-.share-buttons,
-.post-nav__item {
+
 	border-radius: var(--radius);
 	background: var(--code-bg);
 	border: 1px solid var(--border);
@@ -1194,23 +1192,7 @@ body.font-preset-wenkai .logo__brand {
 	background: var(--border);
 }
 
-.share-buttons {
-	display: flex;
-	flex-wrap: wrap;
-	gap: 10px;
-	justify-content: center;
-	padding: 10px;
-	list-style: none;
-}
 
-.share-buttons li,
-.share-buttons a {
-	display: inline-flex;
-}
-
-.share-buttons a {
-	color: var(--secondary);
-}
 
 .post-nav {
 	display: grid;
