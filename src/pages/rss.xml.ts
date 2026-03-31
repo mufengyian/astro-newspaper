@@ -1,8 +1,8 @@
 import rss from "@astrojs/rss";
+import { getCollection } from "astro:content";
 import { hasPublicSiteUrl, siteConfig } from "../config";
 import { getDictionary } from "../utils/i18n";
-import { getRssPosts } from "../utils/page-data";
-import { getPostPermalink, type PostEntry } from "../utils/posts";
+import { getPostPermalink, getSortedPosts } from "../utils/posts";
 import { withBase } from "../utils/routing";
 
 const locale = "zh-cn" as const;
@@ -23,35 +23,33 @@ function buildUnavailableFeed(message: string) {
   <channel>
     <title>${escapeXml(siteConfig.title)}</title>
     <description>${escapeXml(message)}</description>
-    <link>${escapeXml(withBase(siteConfig.routes.rss))}</link>
+    <link>${escapeXml(withBase("rss"))}</link>
   </channel>
 </rss>`;
 }
 
-function buildItems(posts: PostEntry[]) {
-	return posts.map((post) => ({
-		title: post.data.title,
-		description: post.data.excerpt,
-		pubDate: post.data.publishDate,
-		link: getPostPermalink(locale, post),
-		categories: post.data.tags,
-	}));
-}
-
 export async function GET() {
 	if (!hasPublicSiteUrl()) {
-		return new Response(buildUnavailableFeed(dictionary.rss.unavailableFeed), {
+		return new Response(buildUnavailableFeed("RSS 订阅暂不可用，请先配置公开站点地址。"), {
 			headers: {
 				"Content-Type": "application/rss+xml; charset=utf-8",
 			},
 		});
 	}
 
+	const posts = getSortedPosts(await getCollection("posts"), locale);
+
 	return rss({
 		title: siteConfig.title,
 		description: dictionary.site.description,
 		site: siteConfig.siteUrl,
-		items: buildItems(await getRssPosts(locale)),
+		items: posts.map((post) => ({
+			title: post.data.title,
+			description: post.data.excerpt,
+			pubDate: post.data.publishDate,
+			link: getPostPermalink(locale, post),
+			categories: post.data.tags,
+		})),
 		customData: `<language>${locale}</language>`,
 	});
 }

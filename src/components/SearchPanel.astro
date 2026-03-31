@@ -1,31 +1,26 @@
 ---
-import { siteConfig } from "../config";
 import { getDictionary, resolveLocale } from "../utils/i18n";
 import { getSearchIndexPermalink } from "../utils/routing";
 
 const locale = resolveLocale(Astro.currentLocale);
 const dictionary = getDictionary(locale);
 const searchEndpoint = getSearchIndexPermalink(locale);
-const searchConfig = {
-	endpoint: searchEndpoint,
-	limit: siteConfig.search.limit,
-	threshold: siteConfig.search.threshold,
-	keys: siteConfig.search.keys,
-	messages: {
-		loading: dictionary.search.loading,
-		readyTemplate: dictionary.search.ready("__COUNT__" as unknown as number),
-		matchesTemplate: dictionary.search.matches("__QUERY__", "__COUNT__" as unknown as number),
-		emptyTitle: dictionary.search.emptyTitle,
-		emptyDescription: dictionary.search.emptyDescription,
-		unavailableTitle: dictionary.search.unavailableTitle,
-		unavailableDescription: dictionary.search.unavailableDescription,
-		openTemplate: dictionary.common.openSearchResult("__TITLE__"),
-		metaSeparator: " · ",
-	},
+const searchMessages = {
+	loading: dictionary.search.loading,
+	matches:
+		locale === "en"
+			? "__COUNT__ matches for “__QUERY__”."
+			: "“__QUERY__” 共命中 __COUNT__ 条结果。",
+	emptyTitle: dictionary.search.emptyTitle,
+	emptyDescription: dictionary.search.emptyDescription,
+	unavailableTitle: dictionary.search.unavailableTitle,
+	unavailableDescription: dictionary.search.unavailableDescription,
+	openLabel: locale === "en" ? "Open " : "打开 ",
+	metaSeparator: " · ",
 };
 ---
 
-<section data-search-root>
+<section data-search-root data-search-endpoint={searchEndpoint}>
 	<div id="searchbox">
 		<label class="sr-only" for="search-input">{dictionary.search.label}</label>
 		<input
@@ -33,17 +28,18 @@ const searchConfig = {
 			type="search"
 			placeholder={dictionary.search.placeholder}
 			autocomplete="off"
-			enterkeyhint="search"
 		/>
 	</div>
 
-	<p class="search-status" data-search-status aria-live="polite" hidden></p>
+	<p class="search-status" data-search-status hidden></p>
 	<ul id="searchResults" data-search-results hidden></ul>
 </section>
 
-<script is:inline type="application/json" data-search-config set:html={JSON.stringify(searchConfig)}></script>
+<script is:inline type="application/json" data-search-messages set:html={JSON.stringify(searchMessages)}></script>
 
 <script>
+	import Fuse from "fuse.js";
+
 	interface SearchEntry {
 		title: string;
 		excerpt: string;
@@ -65,19 +61,15 @@ const searchConfig = {
 		const input = root.querySelector<HTMLInputElement>("#search-input");
 		const status = root.querySelector<HTMLElement>("[data-search-status]");
 		const results = root.querySelector<HTMLElement>("[data-search-results]");
-		const configNode = document.querySelector<HTMLScriptElement>("[data-search-config]");
+		const messagesNode = document.querySelector<HTMLScriptElement>("[data-search-messages]");
 
-		if (!input || !status || !results || !configNode?.textContent) return;
+		if (!input || !status || !results || !messagesNode?.textContent) return;
 
-		const config = JSON.parse(configNode.textContent) as {
-			endpoint: string;
-			limit: number;
-			threshold: number;
-			keys: Array<{ name: string; weight: number }>;
-			messages: Record<string, string>;
-		};
+		const messages = JSON.parse(messagesNode.textContent) as Record<string, string>;
+		const searchEndpoint = root.dataset.searchEndpoint || "/search.json";
 		let activeIndex = 0;
-		let fuse: import("fuse.js").default<SearchEntry> | null = null;
+		let entries: SearchEntry[] | null = null;
+		let fuse: Fuse<SearchEntry> | null = null;
 		let loadPromise: Promise<void> | null = null;
 
 		const setActive = (index: number) => {
@@ -140,7 +132,7 @@ const searchConfig = {
 
 			const metaNode = document.createElement("div");
 			metaNode.className = "search-result-meta";
-			metaNode.textContent = metaSegments.join(config.messages.metaSeparator);
+			metaNode.textContent = metaSegments.join(messages.metaSeparator);
 			resultItem.append(metaNode);
 
 			const excerptNode = document.createElement("p");
@@ -150,7 +142,7 @@ const searchConfig = {
 
 			const link = document.createElement("a");
 			link.href = item.url;
-			link.setAttribute("aria-label", config.messages.openTemplate.replace("__TITLE__", item.title));
+			link.setAttribute("aria-label", `${messages.openLabel}${item.title}`);
 			resultItem.append(link);
 
 			return resultItem;
@@ -161,21 +153,22 @@ const searchConfig = {
 			if (!loadPromise) {
 				loadPromise = (async () => {
 					status.hidden = false;
-					status.textContent = config.messages.loading;
+					status.textContent = messages.loading;
 
-					const [{ default: Fuse }, response] = await Promise.all([
-						import("fuse.js"),
-						fetch(config.endpoint),
-					]);
-					const entries = (await response.json()) as SearchEntry[];
-
+					const response = await fetch(searchEndpoint);
+					entries = (await response.json()) as SearchEntry[];
 					fuse = new Fuse(entries, {
 						includeScore: true,
-						threshold: config.threshold,
+						threshold: 0.32,
 						ignoreLocation: true,
-						keys: config.keys,
+						keys: [
+							{ name: "title", weight: 0.45 },
+							{ name: "excerpt", weight: 0.2 },
+							{ name: "body", weight: 0.15 },
+							{ name: "category", weight: 0.08 },
+							{ name: "tags", weight: 0.12 },
+						],
 					});
-					status.textContent = config.messages.readyTemplate.replace("__COUNT__", String(entries.length));
 				})();
 			}
 
@@ -186,17 +179,16 @@ const searchConfig = {
 			status.hidden = false;
 			results.hidden = false;
 
-			status.textContent = config.messages.matchesTemplate
-				.replace("__QUERY__", query)
-				.replace("__COUNT__", String(items.length));
-
 			if (items.length === 0) {
-				results.replaceChildren(
-					createEmptyState(config.messages.emptyTitle, config.messages.emptyDescription),
-				);
+				status.textContent = messages.matches.replace("__QUERY__", query).replace("__COUNT__", "0");
+				results.replaceChildren(createEmptyState(messages.emptyTitle, messages.emptyDescription));
 				activeIndex = 0;
 				return;
 			}
+
+			status.textContent = messages.matches
+				.replace("__QUERY__", query)
+				.replace("__COUNT__", String(items.length));
 
 			results.replaceChildren(...items.map(({ item }, index) => createResultItem(item, index)));
 			activeIndex = 0;
@@ -210,18 +202,15 @@ const searchConfig = {
 
 			try {
 				await ensureIndex();
-				const matched = fuse ? (fuse.search(query).slice(0, config.limit) as SearchResult[]) : [];
+				const matched = fuse ? (fuse.search(query).slice(0, 10) as SearchResult[]) : [];
 				renderResults(matched, query);
 			} catch (error) {
 				console.error("[newspaper] Failed to load the search index.", error);
 				status.hidden = false;
 				results.hidden = false;
-				status.textContent = config.messages.unavailableTitle;
+				status.textContent = messages.unavailableTitle;
 				results.replaceChildren(
-					createEmptyState(
-						config.messages.unavailableTitle,
-						config.messages.unavailableDescription,
-					),
+					createEmptyState(messages.unavailableTitle, messages.unavailableDescription),
 				);
 			}
 		};

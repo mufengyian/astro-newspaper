@@ -10,12 +10,13 @@ interface Props {
 const locale = resolveLocale(Astro.currentLocale);
 const dictionary = getDictionary(locale);
 const { posts } = Astro.props;
+const relatedPostLabel = locale === "en" ? "Open related post: " : "查看相关文章：";
 ---
 
 {
 	posts.length > 0 && (
 		<section class="related-posts">
-			<header class="page-header page-header--left page-header--compact">
+			<header class="page-header">
 				<h2>{dictionary.post.relatedPosts}</h2>
 			</header>
 
@@ -38,7 +39,7 @@ const { posts } = Astro.props;
 						<a
 							class="entry-link"
 							href={getPostPermalink(locale, post)}
-							aria-label={dictionary.common.openRelatedPost(post.data.title)}
+							aria-label={`${relatedPostLabel}${post.data.title}`}
 						></a>
 					</article>
 				))}

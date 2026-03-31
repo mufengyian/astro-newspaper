@@ -1,5 +1,5 @@
 ---
-import { hasPublicSiteUrl, siteConfig, themeConfig } from "../config";
+import { hasPublicSiteUrl, siteConfig } from "../config";
 import { getDictionary, getHrefLang, getOgLocale, resolveLocale } from "../utils/i18n";
 import { getCanonicalPath, getLocaleAlternates, withBase } from "../utils/routing";
 
@@ -27,9 +27,7 @@ const {
 	tags = [],
 } = Astro.props;
 
-const pageTitle = title
-	? `${title}${siteConfig.seo.titleSeparator}${siteConfig.title}`
-	: `${siteConfig.title}${siteConfig.seo.titleSeparator}${dictionary.site.tagline}`;
+const pageTitle = title ? `${title} | ${siteConfig.title}` : `${siteConfig.title} | ${dictionary.site.tagline}`;
 const publicSiteUrl = hasPublicSiteUrl() ? siteConfig.siteUrl : undefined;
 const canonicalUrl = publicSiteUrl
 	? canonical
@@ -40,62 +38,43 @@ const wenkaiStylesheet =
 	siteConfig.typography.preset === "wenkai"
 		? (await import("../styles/wenkai.css?url")).default
 		: undefined;
-const socialImagePath = withBase(siteConfig.seo.defaultSocialImage);
+const socialImagePath = withBase("social-card.svg");
 const socialImage = publicSiteUrl ? new URL(image ?? socialImagePath, publicSiteUrl).href : undefined;
 const alternateLocales = publicSiteUrl ? await getLocaleAlternates(Astro.url.pathname, locale) : [];
 
 const themeScript = String.raw`(() => {
-	const storageKey = "${themeConfig.storageKey}";
-	const defaultPreference = "${themeConfig.defaultPreference}";
-	const availablePreferences = new Set(["system", "light", "dark"]);
+	const storageKey = "newspaper-theme";
 	const root = document.documentElement;
-	const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
 
 	const readPreference = () => {
 		try {
-			const storedPreference = localStorage.getItem(storageKey);
-			return storedPreference && availablePreferences.has(storedPreference)
-				? storedPreference
-				: defaultPreference;
+			return localStorage.getItem(storageKey) || "light";
 		} catch (error) {
 			console.warn("[newspaper] Failed to read theme preference.", error);
-			return defaultPreference;
+			return "light";
 		}
 	};
 
-	const resolveTheme = (preference) =>
-		preference === "system" ? (mediaQuery.matches ? "dark" : "light") : preference;
-
 	const applyTheme = (preference) => {
-		const resolvedTheme = resolveTheme(preference);
 		root.dataset.themePreference = preference;
-		root.dataset.theme = resolvedTheme;
-		root.style.colorScheme = resolvedTheme;
+		root.dataset.theme = preference;
+		root.style.colorScheme = preference;
 	};
 
 	window.__getNewspaperTheme = () => root.dataset.themePreference || readPreference();
-	window.__getResolvedNewspaperTheme = () => root.dataset.theme || resolveTheme(window.__getNewspaperTheme());
 	window.__applyNewspaperTheme = () => {
 		applyTheme(readPreference());
 	};
 	window.__setNewspaperTheme = (preference) => {
-		const normalizedPreference = availablePreferences.has(preference) ? preference : defaultPreference;
 		try {
-			localStorage.setItem(storageKey, normalizedPreference);
+			localStorage.setItem(storageKey, preference);
 		} catch (error) {
 			console.warn("[newspaper] Failed to persist theme preference.", error);
 		}
 
-		applyTheme(normalizedPreference);
-		window.dispatchEvent(new CustomEvent("newspaper:themechange", { detail: normalizedPreference }));
+		applyTheme(preference);
+		window.dispatchEvent(new CustomEvent("newspaper:themechange", { detail: preference }));
 	};
-
-	mediaQuery.addEventListener?.("change", () => {
-		if ((root.dataset.themePreference || readPreference()) === "system") {
-			applyTheme("system");
-			window.dispatchEvent(new CustomEvent("newspaper:themechange", { detail: "system" }));
-		}
-	});
 
 	window.__applyNewspaperTheme();
 })();`;
@@ -138,8 +117,8 @@ const structuredData =
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta name="generator" content={Astro.generator} />
 <meta name="description" content={description} />
-<meta name="theme-color" media="(prefers-color-scheme: light)" content={themeConfig.metaColors.light} />
-<meta name="theme-color" media="(prefers-color-scheme: dark)" content={themeConfig.metaColors.dark} />
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#F7FAFC" />
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#171923" />
 <link rel="icon" type="image/svg+xml" href={withBase("favicon.svg")} />
 <link rel="icon" href={withBase("favicon.ico")} />
 {siteConfig.typography.preset === "wenkai" && <link rel="stylesheet" href={wenkaiStylesheet} />}

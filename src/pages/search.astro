@@ -1,5 +1,4 @@
 ---
-import PageHeader from "../components/PageHeader.astro";
 import SearchPanel from "../components/SearchPanel.astro";
 import MainLayout from "../layouts/MainLayout.astro";
 import { getDictionary } from "../utils/i18n";
@@ -10,7 +9,14 @@ const dictionary = getDictionary(locale);
 
 <MainLayout title={dictionary.search.title} description={dictionary.search.description} bodyClass="list">
 	<section class="search-shell">
-		<PageHeader title={dictionary.search.title} description={dictionary.search.description} />
+		<header class="search-page-header">
+			<h1>
+				<span>{dictionary.search.title}</span>
+				<span class="search-page-header__icon" aria-hidden="true">⌕</span>
+			</h1>
+			<p>{dictionary.search.description}</p>
+		</header>
+
 		<SearchPanel />
 	</section>
 </MainLayout>

@@ -1,26 +1,17 @@
 ---
 import { siteConfig } from "../config";
 import { getDictionary, resolveLocale } from "../utils/i18n";
-import { getRssPagePermalink } from "../utils/routing";
 
 const locale = resolveLocale(Astro.currentLocale);
 const dictionary = getDictionary(locale);
 ---
 
 <footer class="footer">
-	<div class="footer__meta">
-		<span>&copy; {new Date().getFullYear()} {siteConfig.author.name}</span>
-		<span>•</span>
-		<span>{siteConfig.title}</span>
-		<span>•</span>
-		<span>
-			{dictionary.footer.builtWith}{" "}
-			<a href={siteConfig.footer.builtWithUrl} target="_blank" rel="noreferrer">Astro</a>
-		</span>
-	</div>
-
-	<div class="footer__links">
-		<a href={siteConfig.repositoryUrl} target="_blank" rel="noreferrer">{dictionary.footer.sourceCode}</a>
-		<a href={getRssPagePermalink(locale)} data-astro-prefetch="hover">{dictionary.footer.rss}</a>
-	</div>
+	<span>&copy; {new Date().getFullYear()} {siteConfig.author.name}</span>
+	<span>&middot;</span>
+	<span>{siteConfig.title}</span>
+	<span>&middot;</span>
+	<span>
+		{dictionary.footer.builtWith} <a href="https://astro.build" target="_blank" rel="noreferrer">Astro</a>
+	</span>
 </footer>

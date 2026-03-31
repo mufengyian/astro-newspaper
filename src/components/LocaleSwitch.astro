@@ -7,22 +7,22 @@ const dictionary = getDictionary(locale);
 const alternateLocales = await getLocaleAlternates(Astro.url.pathname, locale);
 ---
 
-<nav class="locale-switch" aria-label={dictionary.langSwitchLabel}>
+<div class="locale-switch" aria-label={dictionary.langSwitchLabel}>
 	{alternateLocales.map(({ locale: alternateLocale, relativeUrl }) => (
 		alternateLocale === locale ? (
 			<span class="locale-switch__current" aria-current="page">
-				{alternateLocale === "zh-cn" ? "ZH" : "EN"}
+				{alternateLocale === "zh-cn" ? "Zh" : "En"}
 			</span>
 		) : (
 			relativeUrl ? (
 				<a class="locale-switch__link" href={relativeUrl} data-astro-prefetch="hover">
-					{alternateLocale === "zh-cn" ? "ZH" : "EN"}
+					{alternateLocale === "zh-cn" ? "Zh" : "En"}
 				</a>
 			) : (
 				<span class="locale-switch__link" aria-disabled="true">
-					{alternateLocale === "zh-cn" ? "ZH" : "EN"}
+					{alternateLocale === "zh-cn" ? "Zh" : "En"}
 				</span>
 			)
 		)
 	))}
-</nav>
+</div>
