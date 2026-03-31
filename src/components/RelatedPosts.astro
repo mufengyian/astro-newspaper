@@ -21,16 +21,18 @@ const { posts } = Astro.props;
 
 			<div class="related-posts__grid">
 				{posts.map((post) => (
-					<article class="post-entry">
-						<header class="entry-header">
-							<h3>
-								<a href={getPostPermalink(locale, post)} data-astro-prefetch="hover">
-									{post.data.title}
-								</a>
-							</h3>
-						</header>
-						<div class="entry-content">
-							<p>{post.data.excerpt}</p>
+					<article class="post-entry related-posts__item">
+						<div class="related-posts__body">
+							<header class="entry-header">
+								<h3>
+									<a href={getPostPermalink(locale, post)} data-astro-prefetch="hover">
+										{post.data.title}
+									</a>
+								</h3>
+							</header>
+							<div class="entry-content">
+								<p>{post.data.excerpt}</p>
+							</div>
 						</div>
 						<footer class="entry-footer">
 							<span>{formatDate(post.data.publishDate, locale)}</span>
