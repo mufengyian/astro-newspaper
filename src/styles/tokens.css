@@ -1,0 +1,62 @@
+:root {
+	--gap: 24px;
+	--content-gap: 20px;
+	--nav-width: 1440px;
+	--main-width: 980px;
+	--list-width: 1180px;
+	--home-feed-width: 940px;
+	--post-layout-width: 1320px;
+	--header-height: 60px;
+	--footer-height: 60px;
+	--radius: 16px;
+	--theme: rgb(247 250 252);
+	--entry: rgb(255 255 255);
+	--primary: rgb(15 23 42);
+	--secondary: rgb(74 85 104);
+	--tertiary: rgb(226 232 240);
+	--accent: rgb(49 130 206);
+	--content: rgb(15 23 42);
+	--code-bg: rgb(237 242 247);
+	--border: rgb(226 232 240);
+	--shadow: none;
+	--glass-panel: rgb(255 255 255 / 0.46);
+	--glass-panel-strong: rgb(255 255 255 / 0.62);
+	--glass-border: rgb(255 255 255 / 0.38);
+	--glass-shadow: 0 12px 28px rgb(148 163 184 / 0.18);
+	--font-body:
+		"Manrope Variable",
+		"Segoe UI",
+		Helvetica,
+		Arial,
+		sans-serif;
+	--font-heading: "Newsreader Variable", Georgia, serif;
+	--font-code:
+		ui-monospace,
+		SFMono-Regular,
+		"SF Mono",
+		Menlo,
+		Consolas,
+		"Liberation Mono",
+		monospace;
+	--body-line-height: 1.7;
+	--content-line-height: 1.88;
+	color-scheme: light;
+}
+
+:root[data-theme="dark"] {
+	--theme: rgb(23 25 35);
+	--entry: rgb(29 33 45);
+	--primary: rgb(237 242 247);
+	--secondary: rgb(160 174 192);
+	--tertiary: rgb(45 55 72);
+	--accent: rgb(99 179 237);
+	--content: rgb(237 242 247);
+	--code-bg: rgb(35 43 57);
+	--border: rgb(45 55 72);
+	--shadow: none;
+	--glass-panel: rgb(0 0 0 / 0.2);
+	--glass-panel-strong: rgb(0 0 0 / 0.28);
+	--glass-border: rgb(255 255 255 / 0.08);
+	--glass-shadow: 0 16px 36px rgb(0 0 0 / 0.28);
+	color-scheme: dark;
+}

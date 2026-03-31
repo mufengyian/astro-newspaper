@@ -1,34 +1,5 @@
 ---
-import { hasPublicSiteUrl } from "../config";
-import { getHomePermalink, getRssPermalink } from "../utils/routing";
-
-const locale = "zh-cn" as const;
-const isRssAvailable = hasPublicSiteUrl();
-const homeHref = getHomePermalink(locale);
-const target = getRssPermalink(locale);
+import RssLandingPage from "../components/pages/RssLandingPage.astro";
 ---
 
-<!doctype html>
-<html lang="zh-CN">
-	<head>
-		<meta charset="utf-8" />
-		{isRssAvailable && <meta http-equiv="refresh" content={`0;url=${target}`} />}
-		<title>{isRssAvailable ? "RSS Feed" : "RSS 暂不可用"}</title>
-		{isRssAvailable && <link rel="canonical" href={target} />}
-	</head>
-	<body>
-		<p>
-			{
-				isRssAvailable ? (
-					<>
-						RSS 链接已移动到
-						<a href={target}>{target}</a>
-					</>
-				) : (
-					<>当前还没有可用的 RSS Feed。配置公开站点地址后，这里会提供订阅链接。</>
-				)
-			}
-		</p>
-		<p><a href={homeHref}>返回首页</a></p>
-	</body>
-</html>
+<RssLandingPage locale="zh-cn" />

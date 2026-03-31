@@ -10,6 +10,7 @@ type Principle = {
 
 type Dictionary = {
 	langName: string;
+	langShortName: string;
 	langSwitchLabel: string;
 	skipToContent: string;
 	site: {
@@ -28,12 +29,20 @@ type Dictionary = {
 	footer: {
 		builtWith: string;
 	};
+	a11y: {
+		backToTop: string;
+		breadcrumb: string;
+		pagination: string;
+		notFound: string;
+	};
 	notFound: {
 		title: string;
 		description: string;
 		body: string;
 		goHome: string;
 		viewArchive: string;
+		redirectHint: string;
+		ariaLabel: string;
 	};
 	home: {
 		eyebrow: string;
@@ -44,6 +53,11 @@ type Dictionary = {
 		postCount: (count: number) => string;
 		feedTitle: string;
 		feedDescription: string;
+		demoLead: string;
+		socialLinksLabel: string;
+		readmeBeforeLink: string;
+		readmeLinkLabel: string;
+		readmeAfterLink: string;
 	};
 	archive: {
 		title: string;
@@ -68,6 +82,7 @@ type Dictionary = {
 		emptyDescription: string;
 		unavailableTitle: string;
 		unavailableDescription: string;
+		openLabel: (title: string) => string;
 	};
 	about: {
 		title: string;
@@ -85,11 +100,15 @@ type Dictionary = {
 		relatedPosts: string;
 		newerPost: string;
 		olderPost: string;
+		navigationLabel: string;
+		openLabel: (title: string) => string;
+		openRelatedLabel: (title: string) => string;
 		shareOnX: string;
 		shareOnLinkedIn: string;
 		shareByEmail: string;
 	};
 	pagination: {
+		label: string;
 		previous: string;
 		next: string;
 		summary: (currentPage: number, totalPages: number) => string;
@@ -101,7 +120,6 @@ type Dictionary = {
 		label: string;
 		light: string;
 		dark: string;
-		system: string;
 		current: (label: string) => string;
 	};
 	copy: {
@@ -109,11 +127,24 @@ type Dictionary = {
 		success: string;
 		failure: string;
 	};
+	comments: {
+		title: string;
+		description: string;
+	};
+	rss: {
+		pageTitle: string;
+		unavailableTitle: string;
+		redirectLabel: string;
+		unavailableDescription: string;
+		backHome: string;
+		unavailableFeedMessage: string;
+	};
 };
 
 const dictionaries: Record<SiteLocale, Dictionary> = {
 	"zh-cn": {
 		langName: "简体中文",
+		langShortName: "Zh",
 		langSwitchLabel: "切换语言",
 		skipToContent: "跳到正文",
 		site: {
@@ -133,12 +164,20 @@ const dictionaries: Record<SiteLocale, Dictionary> = {
 		footer: {
 			builtWith: "Built with",
 		},
+		a11y: {
+			backToTop: "回到顶部",
+			breadcrumb: "面包屑导航",
+			pagination: "分页",
+			notFound: "页面不存在",
+		},
 		notFound: {
 			title: "页面不存在",
 			description: "你访问的页面不存在，请尝试回到首页或归档继续浏览。",
 			body: "链接可能已经移动，或者这个地址从未存在过。",
 			goHome: "返回首页",
 			viewArchive: "查看归档",
+			redirectHint: "2 秒后返回上一页或首页",
+			ariaLabel: "页面不存在",
 		},
 		home: {
 			eyebrow: "Paper-like reading, Astro-native architecture",
@@ -150,6 +189,11 @@ const dictionaries: Record<SiteLocale, Dictionary> = {
 			postCount: (count) => `当前共 ${count} 篇文章`,
 			feedTitle: "最新文章",
 			feedDescription: "按时间顺序浏览内容，首页支持连续加载，归档与标签页则适合回看。",
+			demoLead: "欢迎来到 {title} 的主题演示页。",
+			socialLinksLabel: "Social Links:",
+			readmeBeforeLink: "可以直接阅读文章，也可以查看",
+			readmeLinkLabel: "README",
+			readmeAfterLink: "了解更多使用方式。",
 		},
 		archive: {
 			title: "归档",
@@ -174,6 +218,7 @@ const dictionaries: Record<SiteLocale, Dictionary> = {
 			emptyDescription: "试试更短的关键词，或者换一个标签名。",
 			unavailableTitle: "索引暂时不可用。",
 			unavailableDescription: "你仍然可以通过归档和标签页继续浏览内容。",
+			openLabel: (title) => `打开 ${title}`,
 		},
 		about: {
 			title: "关于",
@@ -204,11 +249,15 @@ const dictionaries: Record<SiteLocale, Dictionary> = {
 			relatedPosts: "相关文章",
 			newerPost: "较新的文章",
 			olderPost: "较早的文章",
+			navigationLabel: "文章上下篇",
+			openLabel: (title) => `查看文章：${title}`,
+			openRelatedLabel: (title) => `查看相关文章：${title}`,
 			shareOnX: "分享到 X / Twitter",
 			shareOnLinkedIn: "分享到 LinkedIn",
 			shareByEmail: "通过 Email 分享",
 		},
 		pagination: {
+			label: "分页",
 			previous: "上一页",
 			next: "下一页",
 			summary: (currentPage, totalPages) => `第 ${currentPage} 页 / 共 ${totalPages} 页`,
@@ -220,7 +269,6 @@ const dictionaries: Record<SiteLocale, Dictionary> = {
 			label: "切换主题",
 			light: "浅色模式",
 			dark: "深色模式",
-			system: "跟随系统",
 			current: (label) => `切换主题，当前为${label}`,
 		},
 		copy: {
@@ -228,9 +276,22 @@ const dictionaries: Record<SiteLocale, Dictionary> = {
 			success: "已复制",
 			failure: "失败",
 		},
+		comments: {
+			title: "评论",
+			description: "欢迎留下你的看法。",
+		},
+		rss: {
+			pageTitle: "RSS Feed",
+			unavailableTitle: "RSS 暂不可用",
+			redirectLabel: "RSS 链接已移动到",
+			unavailableDescription: "当前还没有可用的 RSS Feed。配置公开站点地址后，这里会提供订阅链接。",
+			backHome: "返回首页",
+			unavailableFeedMessage: "RSS 订阅暂不可用，请先配置公开站点地址。",
+		},
 	},
 	en: {
 		langName: "English",
+		langShortName: "En",
 		langSwitchLabel: "Switch language",
 		skipToContent: "Skip to content",
 		site: {
@@ -251,12 +312,20 @@ const dictionaries: Record<SiteLocale, Dictionary> = {
 		footer: {
 			builtWith: "Built with",
 		},
+		a11y: {
+			backToTop: "Back to top",
+			breadcrumb: "Breadcrumb",
+			pagination: "Pagination",
+			notFound: "Page not found",
+		},
 		notFound: {
 			title: "Page not found",
 			description: "The page you requested could not be found. Try the homepage or archive instead.",
 			body: "The link may have moved, or this address may never have existed.",
 			goHome: "Back home",
 			viewArchive: "Open archive",
+			redirectHint: "Returning to the previous page or homepage in 2 seconds",
+			ariaLabel: "Page not found",
 		},
 		home: {
 			eyebrow: "Paper-like reading, Astro-native architecture",
@@ -269,6 +338,11 @@ const dictionaries: Record<SiteLocale, Dictionary> = {
 			feedTitle: "Latest writing",
 			feedDescription:
 				"Follow the newest posts here, then use archive, tags, and search when you want to explore by structure.",
+			demoLead: "Welcome to the demo page of {title}.",
+			socialLinksLabel: "Social Links:",
+			readmeBeforeLink: "Read the posts or check the",
+			readmeLinkLabel: "English README",
+			readmeAfterLink: "for setup details.",
 		},
 		archive: {
 			title: "Archive",
@@ -293,6 +367,7 @@ const dictionaries: Record<SiteLocale, Dictionary> = {
 			emptyDescription: "Try a shorter phrase, or search using a tag name instead.",
 			unavailableTitle: "The index is temporarily unavailable.",
 			unavailableDescription: "You can still browse through the archive or tag pages.",
+			openLabel: (title) => `Open ${title}`,
 		},
 		about: {
 			title: "About",
@@ -326,11 +401,15 @@ const dictionaries: Record<SiteLocale, Dictionary> = {
 			relatedPosts: "Related posts",
 			newerPost: "Newer post",
 			olderPost: "Older post",
+			navigationLabel: "Post navigation",
+			openLabel: (title) => `Open post: ${title}`,
+			openRelatedLabel: (title) => `Open related post: ${title}`,
 			shareOnX: "Share on X / Twitter",
 			shareOnLinkedIn: "Share on LinkedIn",
 			shareByEmail: "Share by email",
 		},
 		pagination: {
+			label: "Pagination",
 			previous: "Previous",
 			next: "Next",
 			summary: (currentPage, totalPages) => `Page ${currentPage} of ${totalPages}`,
@@ -342,13 +421,24 @@ const dictionaries: Record<SiteLocale, Dictionary> = {
 			label: "Switch theme",
 			light: "Light mode",
 			dark: "Dark mode",
-			system: "System",
 			current: (label) => `Switch theme, current setting: ${label}`,
 		},
 		copy: {
 			idle: "Copy",
 			success: "Copied",
 			failure: "Error",
+		},
+		comments: {
+			title: "Comments",
+			description: "Join the discussion.",
+		},
+		rss: {
+			pageTitle: "RSS Feed",
+			unavailableTitle: "RSS Unavailable",
+			redirectLabel: "The RSS feed is available at",
+			unavailableDescription: "The RSS feed is unavailable until a public site URL is configured.",
+			backHome: "Back to home",
+			unavailableFeedMessage: "RSS feed is unavailable until a public site URL is configured.",
 		},
 	},
 };
@@ -359,6 +449,10 @@ export function resolveLocale(locale: string | undefined): SiteLocale {
 
 export function getDictionary(locale: string | undefined) {
 	return dictionaries[resolveLocale(locale)];
+}
+
+export function getLocaleShortName(locale: SiteLocale) {
+	return dictionaries[locale].langShortName;
 }
 
 export function getHtmlLang(locale: string | undefined) {

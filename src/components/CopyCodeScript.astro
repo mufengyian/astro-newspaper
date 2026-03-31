@@ -13,52 +13,7 @@ const dictionary = getDictionary(locale);
 ></template>
 
 <script>
-	function initCodeCopy() {
-		const dictionaryNode = document.querySelector<HTMLElement>("[data-copy-i18n]");
-		const idleLabel = dictionaryNode?.dataset.copyIdle || "Copy";
-		const successLabel = dictionaryNode?.dataset.copySuccess || "Copied";
-		const failureLabel = dictionaryNode?.dataset.copyFailure || "Error";
+	import { mountCodeCopy } from "../scripts/copy-code";
 
-		document.querySelectorAll("pre").forEach((block) => {
-			if (!(block instanceof HTMLElement) || block.dataset.copyReady === "true") return;
-			const code = block.querySelector("code");
-			if (!code) return;
-
-			block.dataset.copyReady = "true";
-			const button = document.createElement("button");
-			button.type = "button";
-			button.className = "copy-button";
-			button.textContent = idleLabel;
-			button.setAttribute("aria-label", idleLabel);
-
-			button.addEventListener("click", async () => {
-				try {
-					await navigator.clipboard.writeText(code.textContent || "");
-					button.textContent = successLabel;
-					window.setTimeout(() => {
-						button.textContent = idleLabel;
-					}, 1400);
-				} catch (error) {
-					console.error("[newspaper] Failed to copy code block.", error);
-					button.textContent = failureLabel;
-					window.setTimeout(() => {
-						button.textContent = idleLabel;
-					}, 1400);
-				}
-			});
-
-			block.append(button);
-		});
-	}
-
-	if (!window.__newspaperCopyCodeBound) {
-		window.__newspaperCopyCodeBound = true;
-		document.addEventListener("astro:page-load", initCodeCopy);
-	}
-
-	if (document.readyState === "loading") {
-		document.addEventListener("DOMContentLoaded", initCodeCopy, { once: true });
-	} else {
-		initCodeCopy();
-	}
+	mountCodeCopy();
 </script>

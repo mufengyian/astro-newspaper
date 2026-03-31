@@ -2,6 +2,7 @@
 import { hasPublicSiteUrl, siteConfig } from "../config";
 import { getDictionary, getHrefLang, getOgLocale, resolveLocale } from "../utils/i18n";
 import { getCanonicalPath, getLocaleAlternates, withBase } from "../utils/routing";
+import { getThemeBootstrapScript } from "../utils/theme";
 
 interface Props {
 	title?: string;
@@ -38,46 +39,13 @@ const wenkaiStylesheet =
 	siteConfig.typography.preset === "wenkai"
 		? (await import("../styles/wenkai.css?url")).default
 		: undefined;
-const socialImagePath = withBase("social-card.svg");
+const socialImagePath = withBase(siteConfig.assets.socialCard);
 const socialImage = publicSiteUrl ? new URL(image ?? socialImagePath, publicSiteUrl).href : undefined;
 const alternateLocales = publicSiteUrl ? await getLocaleAlternates(Astro.url.pathname, locale) : [];
-
-const themeScript = String.raw`(() => {
-	const storageKey = "newspaper-theme";
-	const root = document.documentElement;
-
-	const readPreference = () => {
-		try {
-			return localStorage.getItem(storageKey) || "light";
-		} catch (error) {
-			console.warn("[newspaper] Failed to read theme preference.", error);
-			return "light";
-		}
-	};
-
-	const applyTheme = (preference) => {
-		root.dataset.themePreference = preference;
-		root.dataset.theme = preference;
-		root.style.colorScheme = preference;
-	};
-
-	window.__getNewspaperTheme = () => root.dataset.themePreference || readPreference();
-	window.__applyNewspaperTheme = () => {
-		applyTheme(readPreference());
-	};
-	window.__setNewspaperTheme = (preference) => {
-		try {
-			localStorage.setItem(storageKey, preference);
-		} catch (error) {
-			console.warn("[newspaper] Failed to persist theme preference.", error);
-		}
-
-		applyTheme(preference);
-		window.dispatchEvent(new CustomEvent("newspaper:themechange", { detail: preference }));
-	};
-
-	window.__applyNewspaperTheme();
-})();`;
+const themeScript = getThemeBootstrapScript();
+const xDefaultAlternate = publicSiteUrl ? await getLocaleAlternates(Astro.url.pathname, siteConfig.defaultLocale) : [];
+const xDefaultAlternateUrl =
+	xDefaultAlternate.find(({ locale: alternateLocale }) => alternateLocale === siteConfig.defaultLocale)?.absoluteUrl;
 
 const structuredData =
 	publicSiteUrl && type === "article" && title && publishedTime
@@ -117,10 +85,10 @@ const structuredData =
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta name="generator" content={Astro.generator} />
 <meta name="description" content={description} />
-<meta name="theme-color" media="(prefers-color-scheme: light)" content="#F7FAFC" />
-<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#171923" />
-<link rel="icon" type="image/svg+xml" href={withBase("favicon.svg")} />
-<link rel="icon" href={withBase("favicon.ico")} />
+<meta name="theme-color" media="(prefers-color-scheme: light)" content={siteConfig.seo.themeColor.light} />
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content={siteConfig.seo.themeColor.dark} />
+<link rel="icon" type="image/svg+xml" href={withBase(siteConfig.assets.faviconSvg)} />
+<link rel="icon" href={withBase(siteConfig.assets.faviconIco)} />
 {siteConfig.typography.preset === "wenkai" && <link rel="stylesheet" href={wenkaiStylesheet} />}
 {canonicalUrl && <link rel="canonical" href={canonicalUrl} />}
 {!publicSiteUrl && <meta name="robots" content="noindex, nofollow" />}
@@ -147,6 +115,9 @@ const structuredData =
 	alternateLocales.map(({ locale: alternateLocale, absoluteUrl }) =>
 		absoluteUrl ? <link rel="alternate" hreflang={getHrefLang(alternateLocale)} href={absoluteUrl} /> : null,
 	)
+}
+{
+	xDefaultAlternateUrl && <link rel="alternate" hreflang="x-default" href={xDefaultAlternateUrl} />
 }
 
 <title>{pageTitle}</title>

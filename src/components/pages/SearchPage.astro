@@ -1,0 +1,26 @@
+---
+import MainLayout from "../../layouts/MainLayout.astro";
+import { getDictionary, type SiteLocale } from "../../utils/i18n";
+import SearchPanel from "../SearchPanel.astro";
+import PageHeader from "../PageHeader.astro";
+
+interface Props {
+	locale: SiteLocale;
+}
+
+const { locale } = Astro.props;
+const dictionary = getDictionary(locale);
+---
+
+<MainLayout title={dictionary.search.title} description={dictionary.search.description} bodyClass="list">
+	<section class="search-shell">
+		<PageHeader
+			title={dictionary.search.title}
+			description={dictionary.search.description}
+			align="left"
+			icon="⌕"
+		/>
+
+		<SearchPanel />
+	</section>
+</MainLayout>

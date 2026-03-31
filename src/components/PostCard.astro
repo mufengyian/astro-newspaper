@@ -1,6 +1,6 @@
 ---
 import { Picture } from "astro:assets";
-import { resolveLocale } from "../utils/i18n";
+import { getDictionary, resolveLocale } from "../utils/i18n";
 import PostMeta from "./PostMeta.astro";
 import { getPostPermalink, type PostEntry } from "../utils/posts";
 
@@ -9,10 +9,10 @@ interface Props {
 }
 
 const locale = resolveLocale(Astro.currentLocale);
+const dictionary = getDictionary(locale);
 const { post } = Astro.props;
 const href = getPostPermalink(locale, post);
-const entryLabel =
-	locale === "en" ? `Open post: ${post.data.title}` : `查看文章：${post.data.title}`;
+const entryLabel = dictionary.post.openLabel(post.data.title);
 ---
 
 <article class="post-entry">
@@ -26,6 +26,8 @@ const entryLabel =
 				formats={["avif", "webp"]}
 				quality={86}
 				layout="constrained"
+				loading="lazy"
+				decoding="async"
 			/>
 		</div>
 	)}

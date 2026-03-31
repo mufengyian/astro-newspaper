@@ -1,10 +1,15 @@
-import type { CollectionEntry } from "astro:content";
+import { getCollection, type CollectionEntry } from "astro:content";
 import readingTime from "reading-time";
-import type { SiteLocale } from "./i18n";
-import { DEFAULT_LOCALE } from "./i18n";
+import { DEFAULT_LOCALE, type SiteLocale } from "./i18n";
 import { getLocalizedPath } from "./routing";
 
 export type PostEntry = CollectionEntry<"posts">;
+
+export type TagSummary = {
+	name: string;
+	slug: string;
+	count: number;
+};
 
 const tagSymbolTokens: Record<string, string> = {
 	"#": "sharp",
@@ -13,6 +18,8 @@ const tagSymbolTokens: Record<string, string> = {
 	"&": "and",
 	"@": "at",
 };
+
+let allPostsPromise: Promise<PostEntry[]> | undefined;
 
 function getTranslationKey(post: PostEntry) {
 	return post.data.translationKey?.trim() || post.id;
@@ -24,6 +31,14 @@ function sortPosts(posts: PostEntry[]) {
 			b.data.publishDate.valueOf() - a.data.publishDate.valueOf() ||
 			a.data.title.localeCompare(b.data.title, "zh-CN"),
 	);
+}
+
+export async function getAllPosts() {
+	if (!allPostsPromise) {
+		allPostsPromise = getCollection("posts");
+	}
+
+	return allPostsPromise;
 }
 
 export function slugifyTag(tag: string) {
@@ -71,7 +86,7 @@ export function isVisiblePost(post: PostEntry) {
 
 export function getLocalizedPosts(posts: PostEntry[], locale: SiteLocale = DEFAULT_LOCALE) {
 	const visiblePosts = posts.filter(isVisiblePost);
-	return sortPosts(visiblePosts.filter((post) => post.data.locale === locale));
+	return visiblePosts.filter((post) => post.data.locale === locale);
 }
 
 export function getSortedPosts(posts: PostEntry[], locale: SiteLocale = DEFAULT_LOCALE) {
@@ -103,11 +118,15 @@ export function getPostPermalink(locale: SiteLocale, post: Pick<PostEntry, "id">
 }
 
 export function getTagPermalink(locale: SiteLocale, tag: string) {
-	return getLocalizedPath(locale, `tags/${slugifyTag(tag)}`);
+	return getTagPermalinkBySlug(locale, slugifyTag(tag));
+}
+
+export function getTagPermalinkBySlug(locale: SiteLocale, tagSlug: string) {
+	return getLocalizedPath(locale, `tags/${tagSlug}`);
 }
 
 export function getTagIndex(posts: PostEntry[]) {
-	const counts = new Map<string, { name: string; slug: string; count: number }>();
+	const counts = new Map<string, TagSummary>();
 
 	for (const post of sortPosts(posts)) {
 		for (const tag of post.data.tags) {
@@ -136,6 +155,7 @@ export function groupPostsByYear(posts: PostEntry[]) {
 		bucket.push(post);
 		groups.set(year, bucket);
 	}
+
 	return Array.from(groups.entries()).sort((a, b) => b[0] - a[0]);
 }
 

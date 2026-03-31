@@ -11,7 +11,7 @@ interface Props {
 const locale = resolveLocale(Astro.currentLocale);
 const dictionary = getDictionary(locale);
 const { newerPost, olderPost } = Astro.props;
-const navigationLabel = locale === "en" ? "Post navigation" : "文章上下篇";
+const navigationLabel = dictionary.post.navigationLabel;
 ---
 
 {

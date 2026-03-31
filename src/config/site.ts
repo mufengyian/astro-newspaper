@@ -1,14 +1,27 @@
-import { DEFAULT_LOCALE, LOCALES } from "./utils/i18n";
+import { DEFAULT_LOCALE, LOCALES, type SiteLocale } from "../utils/i18n";
 
 const publicSiteUrl = (import.meta.env.PUBLIC_SITE_URL ?? "").trim();
 const walineServerURL = (import.meta.env.PUBLIC_WALINE_SERVER_URL ?? "").trim();
 
-type SocialLink = {
-	label: "GitHub" | "X" | "LinkedIn" | "Email";
+export type SocialLinkLabel = "GitHub" | "X" | "LinkedIn" | "Email";
+
+export type SocialLink = {
+	label: SocialLinkLabel;
 	href: string;
 };
 
-type TypographyPreset = "editorial" | "wenkai";
+export type TypographyPreset = "editorial" | "wenkai";
+
+export type NavigationKey = "home" | "archive" | "tags" | "search" | "about";
+
+const navigationItems = ["home", "archive", "tags", "search", "about"] as const satisfies readonly NavigationKey[];
+
+const repositoryReadmePathByLocale: Record<SiteLocale, string> = {
+	"zh-cn": "#readme",
+	en: "/blob/main/README.en.md",
+};
+
+export const THEME_STORAGE_KEY = "newspaper-theme";
 
 export const siteConfig = {
 	title: "Newspaper",
@@ -16,6 +29,18 @@ export const siteConfig = {
 	siteUrl: publicSiteUrl,
 	defaultLocale: DEFAULT_LOCALE,
 	locales: LOCALES,
+	navigationItems,
+	assets: {
+		faviconSvg: "favicon.svg",
+		faviconIco: "favicon.ico",
+		socialCard: "social-card.svg",
+	},
+	seo: {
+		themeColor: {
+			light: "#F7FAFC",
+			dark: "#171923",
+		},
+	},
 	typography: {
 		preset: "editorial" as TypographyPreset,
 	},
@@ -46,6 +71,10 @@ export const siteConfig = {
 		"Dark Mode",
 	],
 } as const;
+
+export function getReadmeUrl(locale: SiteLocale) {
+	return `${siteConfig.repositoryUrl}${repositoryReadmePathByLocale[locale]}`;
+}
 
 export function hasPublicSiteUrl() {
 	return siteConfig.siteUrl.length > 0;

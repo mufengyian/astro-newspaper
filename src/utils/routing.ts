@@ -1,6 +1,6 @@
-import { getCollection } from "astro:content";
 import { getRelativeLocaleUrl } from "astro:i18n";
 import { siteConfig } from "../config";
+import { getAllPosts, isVisiblePost, type PostEntry } from "./posts";
 import { DEFAULT_LOCALE, LOCALES, isSiteLocale, type SiteLocale } from "./i18n";
 
 export function trimSlashes(value = "") {
@@ -20,7 +20,8 @@ export function withBase(path = "") {
 }
 
 export function stripBasePath(pathname: string) {
-	const normalizedBase = import.meta.env.BASE_URL === "/" ? "/" : import.meta.env.BASE_URL.replace(/\/+$/, "");
+	const normalizedBase =
+		import.meta.env.BASE_URL === "/" ? "/" : import.meta.env.BASE_URL.replace(/\/+$/, "");
 	if (normalizedBase === "/") {
 		return pathname || "/";
 	}
@@ -115,26 +116,19 @@ type LocaleAlternate = {
 	absoluteUrl?: string;
 };
 
-let visiblePostsPromise: Promise<Awaited<ReturnType<typeof getCollection<"posts">>>> | undefined;
-
-function getTranslationKey(post: { id: string; data: { translationKey?: string } }) {
+function getTranslationKey(post: Pick<PostEntry, "id" | "data">) {
 	return post.data.translationKey?.trim() || post.id;
 }
 
-function isVisiblePost(post: { data: { draft?: boolean } }) {
-	return import.meta.env.DEV || !post.data.draft;
-}
-
 async function getVisiblePosts() {
-	if (!visiblePostsPromise) {
-		visiblePostsPromise = getCollection("posts").then((posts) => posts.filter(isVisiblePost));
-	}
-
-	return visiblePostsPromise;
+	const posts = await getAllPosts();
+	return posts.filter(isVisiblePost);
 }
 
-function getLocalizedPostAlternate(locale: SiteLocale, translationKey: string, posts: Awaited<ReturnType<typeof getCollection<"posts">>>) {
-	const exactMatch = posts.find((post) => post.data.locale === locale && getTranslationKey(post) === translationKey);
+function getLocalizedPostAlternate(locale: SiteLocale, translationKey: string, posts: PostEntry[]) {
+	const exactMatch = posts.find(
+		(post) => post.data.locale === locale && getTranslationKey(post) === translationKey,
+	);
 	if (exactMatch) {
 		return {
 			relativeUrl: getLocalizedPath(locale, `posts/${exactMatch.id}`),
@@ -144,7 +138,8 @@ function getLocalizedPostAlternate(locale: SiteLocale, translationKey: string, p
 
 	if (locale === DEFAULT_LOCALE) {
 		const defaultMatch = posts.find(
-			(post) => post.data.locale === DEFAULT_LOCALE && getTranslationKey(post) === translationKey,
+			(post) =>
+				post.data.locale === DEFAULT_LOCALE && getTranslationKey(post) === translationKey,
 		);
 		if (!defaultMatch) {
 			return {};
@@ -159,7 +154,10 @@ function getLocalizedPostAlternate(locale: SiteLocale, translationKey: string, p
 	return {};
 }
 
-export async function getLocaleAlternates(pathname: string, currentLocale = getLocaleFromPathname(pathname)): Promise<LocaleAlternate[]> {
+export async function getLocaleAlternates(
+	pathname: string,
+	currentLocale = getLocaleFromPathname(pathname),
+): Promise<LocaleAlternate[]> {
 	const path = stripLocaleFromPath(pathname);
 	const segments = trimSlashes(path).split("/").filter(Boolean);
 	const isPostPath = segments[0] === "posts" && segments.length > 1;

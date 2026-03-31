@@ -1,0 +1,74 @@
+---
+import { getReadmeUrl, siteConfig } from "../config";
+import { getDictionary, type SiteLocale } from "../utils/i18n";
+import { getRssPagePermalink } from "../utils/routing";
+import SocialLinkIcon from "./SocialLinkIcon.astro";
+
+interface Props {
+	locale: SiteLocale;
+}
+
+const { locale } = Astro.props;
+const dictionary = getDictionary(locale);
+const demoLead = dictionary.home.demoLead.replace("{title}", siteConfig.title);
+const readmeUrl = getReadmeUrl(locale);
+const needsLinkSpacing = locale === "en";
+---
+
+<section id="hero" class="home-info">
+	<div class="home-info__inner">
+		<div class="home-info__title-row">
+			<h1>{siteConfig.title}</h1>
+			<a
+				class="home-info__rss"
+				href={getRssPagePermalink(locale)}
+				aria-label={dictionary.rss.pageTitle}
+				title={dictionary.rss.pageTitle}
+			>
+				<svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+					<path
+						d="M5 19a1 1 0 1 0 0-2a1 1 0 0 0 0 2Zm-1-8a9 9 0 0 1 9 9h2C15 14.477 9.523 9 3 9v2Zm0-7a16 16 0 0 1 16 16h2C22 10.059 13.941 2 4 2v2Z"
+						fill="currentColor"
+					/>
+				</svg>
+				<span class="sr-only">{dictionary.rss.pageTitle}</span>
+			</a>
+		</div>
+
+		<p class="home-info__lead">{demoLead}</p>
+
+		<ul class="home-info__list">
+			{dictionary.principles.map((principle) => (
+				<li>
+					<strong>{principle.title}</strong>：{principle.description}
+				</li>
+			))}
+		</ul>
+
+		<p class="home-info__secondary">
+			{dictionary.home.readmeBeforeLink}
+			{needsLinkSpacing && " "}
+			<a href={readmeUrl} target="_blank" rel="noreferrer">
+				{dictionary.home.readmeLinkLabel}
+			</a>
+			{needsLinkSpacing && " "}
+			{dictionary.home.readmeAfterLink}
+		</p>
+
+		{
+			siteConfig.socialLinks.length > 0 && (
+				<div class="home-info__links-row">
+					<div class="home-info__links-label">{dictionary.home.socialLinksLabel}</div>
+					<div class="home-info__links">
+						{siteConfig.socialLinks.map((link) => (
+							<a href={link.href} target="_blank" rel="noreferrer" aria-label={link.label} title={link.label}>
+								<SocialLinkIcon label={link.label} />
+								<span class="sr-only">{link.label}</span>
+							</a>
+						))}
+					</div>
+				</div>
+			)
+		}
+	</div>
+</section>

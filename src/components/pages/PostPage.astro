@@ -1,0 +1,25 @@
+---
+import { render } from "astro:content";
+import PostLayout from "../../layouts/PostLayout.astro";
+import { getAdjacentPosts, getRelatedPosts, type PostEntry } from "../../utils/posts";
+
+interface Props {
+	post: PostEntry;
+	posts: PostEntry[];
+}
+
+const { post, posts } = Astro.props;
+const { Content, headings } = await render(post);
+const relatedPosts = getRelatedPosts(post, posts);
+const { newerPost, olderPost } = getAdjacentPosts(post, posts);
+---
+
+<PostLayout
+	post={post}
+	headings={headings}
+	relatedPosts={relatedPosts}
+	newerPost={newerPost}
+	olderPost={olderPost}
+>
+	<Content />
+</PostLayout>
