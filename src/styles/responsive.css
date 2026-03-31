@@ -1,15 +1,3 @@
-@media screen and (min-width: 760px) {
-	.related-posts__grid {
-		grid-template-columns: repeat(2, minmax(0, 1fr));
-	}
-}
-
-@media screen and (min-width: 1120px) {
-	.related-posts__grid {
-		grid-template-columns: repeat(3, minmax(0, 1fr));
-	}
-}
-
 @media screen and (max-width: 768px) {
 	:root {
 		--gap: 14px;
@@ -90,15 +78,6 @@
 
 	.post-nav__item--next {
 		text-align: left;
-	}
-
-	.related-posts__item {
-		grid-template-columns: 1fr;
-	}
-
-	.related-posts__item .entry-footer {
-		justify-content: flex-start;
-		padding-top: 0;
 	}
 }
 
