@@ -778,19 +778,21 @@ body.font-preset-wenkai .logo__brand {
 	position: relative;
 	max-width: var(--post-layout-width);
 	margin: 0 auto;
+	--post-heading-width: 18ch;
 }
 
 .post-title {
 	margin: 0 0 2px;
 	font-size: 40px;
 	line-height: 1.2;
+	max-width: var(--post-heading-width);
 }
 
 .post-description {
 	margin-top: 10px;
 	margin-bottom: 5px;
 	color: var(--secondary);
-	max-width: 64ch;
+	max-width: var(--post-heading-width);
 }
 
 .post-meta,
