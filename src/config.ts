@@ -10,9 +10,6 @@ type SocialLink = {
 
 type TypographyPreset = "editorial" | "wenkai";
 
-const defaultIcpUrl = "https://beian.miit.gov.cn/";
-const defaultPoliceSearchUrl = "https://beian.mps.gov.cn/#/query/webSearch";
-
 export const siteConfig = {
 	title: "Newspaper",
 	repositoryUrl: "https://github.com/mufengyian/astro-newspaper",
@@ -33,12 +30,6 @@ export const siteConfig = {
 		commentSorting: "latest",
 		pageSize: 10,
 		reaction: false,
-	},
-	filings: {
-		icp: "测试ICP备20260001号-1",
-		icpUrl: defaultIcpUrl,
-		police: "测试公网安备44030502000001号",
-		policeUrl: defaultPoliceSearchUrl,
 	},
 	socialLinks: [] as SocialLink[],
 	featuredCount: 2,
@@ -62,22 +53,4 @@ export function hasPublicSiteUrl() {
 
 export function hasWalineServerUrl() {
 	return siteConfig.comments.serverURL.length > 0;
-}
-
-export function getIcpFilingUrl() {
-	return siteConfig.filings.icpUrl.trim() || defaultIcpUrl;
-}
-
-export function getPoliceFilingUrl() {
-	const customUrl = siteConfig.filings.policeUrl.trim();
-	if (customUrl) {
-		return customUrl;
-	}
-
-	const matchedCode = siteConfig.filings.police.match(/\d{8,}/)?.[0];
-	if (!matchedCode) {
-		return defaultPoliceSearchUrl;
-	}
-
-	return `${defaultPoliceSearchUrl}?code=${matchedCode}`;
 }
