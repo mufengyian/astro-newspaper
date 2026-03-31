@@ -6,17 +6,18 @@ import { getPostPermalink, type PostEntry } from "../utils/posts";
 
 interface Props {
 	post: PostEntry;
+	compact?: boolean;
 }
 
 const locale = resolveLocale(Astro.currentLocale);
 const dictionary = getDictionary(locale);
-const { post } = Astro.props;
+const { post, compact = false } = Astro.props;
 const href = getPostPermalink(locale, post);
 const entryLabel = dictionary.post.openLabel(post.data.title);
 ---
 
-<article class="post-entry">
-	{post.data.cover && (
+<article class:list={["post-entry", compact && "post-entry--compact"]}>
+	{!compact && post.data.cover && (
 		<div class="entry-cover">
 			<Picture
 				src={post.data.cover}

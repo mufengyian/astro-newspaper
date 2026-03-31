@@ -50,10 +50,29 @@
 		font-size: 22px;
 	}
 
+	.post-entry--compact .entry-header h2,
+	.post-entry--compact .entry-header h3 {
+		font-size: 20px;
+	}
+
 	.entry-header,
 	.entry-content,
 	.entry-footer {
 		padding-inline: 22px;
+	}
+
+	.post-entry--compact .entry-header,
+	.post-entry--compact .entry-content,
+	.post-entry--compact .entry-footer {
+		padding-inline: 18px;
+	}
+
+	.post-entry--compact .entry-header {
+		padding-top: 18px;
+	}
+
+	.post-entry--compact .entry-footer {
+		padding-bottom: 18px;
 	}
 
 	.pagination,
