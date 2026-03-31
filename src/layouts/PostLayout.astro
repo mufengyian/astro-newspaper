@@ -47,7 +47,7 @@ const WalineComments = shouldRenderComments
 	{walineStylesheet && <link slot="head" rel="stylesheet" href={walineStylesheet} />}
 	<ReadingProgress />
 
-	<article class="post-single">
+	<article class="post-single" data-reading-container>
 		<header class="post-header">
 			<Breadcrumbs
 				items={[
@@ -71,6 +71,8 @@ const WalineComments = shouldRenderComments
 					formats={["avif", "webp"]}
 					quality={90}
 					layout="constrained"
+					loading="eager"
+					fetchpriority="high"
 				/>
 			</figure>
 		)}

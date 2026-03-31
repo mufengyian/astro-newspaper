@@ -1,0 +1,42 @@
+---
+import type { SiteLocale } from "../utils/i18n";
+import { getDictionary } from "../utils/i18n";
+import { getHomePermalink, getLocalizedPath } from "../utils/routing";
+import type { PostEntry } from "../utils/posts";
+import MainLayout from "../layouts/MainLayout.astro";
+import PageHeader from "./PageHeader.astro";
+import PostFeed from "./PostFeed.astro";
+
+interface Props {
+	locale: SiteLocale;
+	currentPage: number;
+	totalPages: number;
+	pagePosts: PostEntry[];
+}
+
+const { locale, currentPage, totalPages, pagePosts } = Astro.props;
+const dictionary = getDictionary(locale);
+---
+
+<MainLayout
+	title={dictionary.pagination.summary(currentPage, totalPages)}
+	description={dictionary.home.feedDescription}
+	bodyClass="list home"
+>
+	<section class="section-stack">
+		<PageHeader
+			eyebrow={dictionary.home.feedTitle}
+			title={dictionary.pagination.summary(currentPage, totalPages)}
+			description={dictionary.home.feedDescription}
+			align="left"
+			compact
+		/>
+		<PostFeed
+			posts={pagePosts}
+			currentPage={currentPage}
+			totalPages={totalPages}
+			firstPageUrl={getHomePermalink(locale)}
+			pageUrlPattern={getLocalizedPath(locale, "page/{page}")}
+		/>
+	</section>
+</MainLayout>

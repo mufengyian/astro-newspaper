@@ -1,7 +1,6 @@
 ---
 import { getDictionary, resolveLocale } from "../utils/i18n";
-import type { PostEntry } from "../utils/posts";
-import { getPostPermalink } from "../utils/posts";
+import { getPostPermalink, type PostEntry } from "../utils/posts";
 
 interface Props {
 	newerPost?: PostEntry;
@@ -11,12 +10,11 @@ interface Props {
 const locale = resolveLocale(Astro.currentLocale);
 const dictionary = getDictionary(locale);
 const { newerPost, olderPost } = Astro.props;
-const navigationLabel = locale === "en" ? "Post navigation" : "文章上下篇";
 ---
 
 {
 	(newerPost || olderPost) && (
-		<nav class="post-nav" aria-label={navigationLabel}>
+		<nav class="post-nav" aria-label={dictionary.common.postNavigationLabel}>
 			{newerPost ? (
 				<a class="post-nav__item" href={getPostPermalink(locale, newerPost)} data-astro-prefetch="hover">
 					<span class="post-nav__label">{dictionary.post.newerPost}</span>
@@ -27,7 +25,11 @@ const navigationLabel = locale === "en" ? "Post navigation" : "文章上下篇";
 			)}
 
 			{olderPost ? (
-				<a class="post-nav__item post-nav__item--next" href={getPostPermalink(locale, olderPost)} data-astro-prefetch="hover">
+				<a
+					class="post-nav__item post-nav__item--next"
+					href={getPostPermalink(locale, olderPost)}
+					data-astro-prefetch="hover"
+				>
 					<span class="post-nav__label">{dictionary.post.olderPost}</span>
 					<strong>{olderPost.data.title}</strong>
 				</a>

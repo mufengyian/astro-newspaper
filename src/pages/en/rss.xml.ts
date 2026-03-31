@@ -1,8 +1,8 @@
 import rss from "@astrojs/rss";
-import { getCollection } from "astro:content";
 import { hasPublicSiteUrl, siteConfig } from "../../config";
 import { getDictionary } from "../../utils/i18n";
-import { getPostPermalink, getSortedPosts } from "../../utils/posts";
+import { getRssPosts } from "../../utils/page-data";
+import { getPostPermalink, type PostEntry } from "../../utils/posts";
 import { withBase } from "../../utils/routing";
 
 const locale = "en" as const;
@@ -23,33 +23,35 @@ function buildUnavailableFeed(message: string) {
   <channel>
     <title>${escapeXml(siteConfig.title)}</title>
     <description>${escapeXml(message)}</description>
-    <link>${escapeXml(withBase("en/rss"))}</link>
+    <link>${escapeXml(withBase(`en/${siteConfig.routes.rss}`))}</link>
   </channel>
 </rss>`;
 }
 
+function buildItems(posts: PostEntry[]) {
+	return posts.map((post) => ({
+		title: post.data.title,
+		description: post.data.excerpt,
+		pubDate: post.data.publishDate,
+		link: getPostPermalink(locale, post),
+		categories: post.data.tags,
+	}));
+}
+
 export async function GET() {
 	if (!hasPublicSiteUrl()) {
-		return new Response(buildUnavailableFeed("RSS feed is unavailable until a public site URL is configured."), {
+		return new Response(buildUnavailableFeed(dictionary.rss.unavailableFeed), {
 			headers: {
 				"Content-Type": "application/rss+xml; charset=utf-8",
 			},
 		});
 	}
 
-	const posts = getSortedPosts(await getCollection("posts"), locale);
-
 	return rss({
 		title: `${siteConfig.title} (${dictionary.langName})`,
 		description: dictionary.site.description,
 		site: siteConfig.siteUrl,
-		items: posts.map((post) => ({
-			title: post.data.title,
-			description: post.data.excerpt,
-			pubDate: post.data.publishDate,
-			link: getPostPermalink(locale, post),
-			categories: post.data.tags,
-		})),
+		items: buildItems(await getRssPosts(locale)),
 		customData: `<language>${locale}</language>`,
 	});
 }

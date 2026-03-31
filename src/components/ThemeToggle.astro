@@ -1,4 +1,5 @@
 ---
+import { themeConfig } from "../config";
 import { getDictionary, resolveLocale } from "../utils/i18n";
 
 const locale = resolveLocale(Astro.currentLocale);
@@ -9,13 +10,32 @@ const dictionary = getDictionary(locale);
 	id="theme-toggle"
 	type="button"
 	data-theme-toggle
+	data-theme-default={themeConfig.defaultPreference}
 	data-theme-label={dictionary.theme.label}
+	data-theme-system={dictionary.theme.system}
 	data-theme-light={dictionary.theme.light}
 	data-theme-dark={dictionary.theme.dark}
 	aria-label={dictionary.theme.label}
 	title={dictionary.theme.label}
 	transition:persist
 >
+	<svg
+		id="system"
+		xmlns="http://www.w3.org/2000/svg"
+		width="18"
+		height="18"
+		viewBox="0 0 24 24"
+		fill="none"
+		stroke="currentColor"
+		stroke-width="2"
+		stroke-linecap="round"
+		stroke-linejoin="round"
+		aria-hidden="true"
+	>
+		<rect x="3" y="4" width="18" height="12" rx="2"></rect>
+		<path d="M8 20h8"></path>
+		<path d="M12 16v4"></path>
+	</svg>
 	<svg
 		id="moon"
 		xmlns="http://www.w3.org/2000/svg"
@@ -57,26 +77,32 @@ const dictionary = getDictionary(locale);
 </button>
 
 <script>
+	const preferences = ["system", "light", "dark"];
+
 	function nextTheme(current: string) {
-		return current === "dark" ? "light" : "dark";
+		const index = preferences.indexOf(current);
+		return preferences[(index + 1 + preferences.length) % preferences.length];
 	}
 
 	function getThemeLabel(button: HTMLButtonElement, state: string) {
-		if (state === "dark") return button.dataset.themeLight || "Light mode";
-		return button.dataset.themeDark || "Dark mode";
+		if (state === "light") return button.dataset.themeLight || "Light mode";
+		if (state === "dark") return button.dataset.themeDark || "Dark mode";
+		return button.dataset.themeSystem || "System mode";
 	}
 
 	function updateButtons() {
-		const state =
-			window.__getNewspaperTheme?.() ||
-			document.documentElement.dataset.themePreference ||
-			"light";
-
 		document.querySelectorAll<HTMLButtonElement>("[data-theme-toggle]").forEach((button) => {
+			const defaultTheme = button.dataset.themeDefault || "system";
+			const state =
+				window.__getNewspaperTheme?.() ||
+				document.documentElement.dataset.themePreference ||
+				defaultTheme;
 			const currentLabel = getThemeLabel(button, state);
+			const nextLabel = getThemeLabel(button, nextTheme(state));
 			const baseLabel = button.dataset.themeLabel || "Switch theme";
-			button.setAttribute("aria-label", `${baseLabel}: ${currentLabel}`);
-			button.setAttribute("title", currentLabel);
+			button.setAttribute("aria-label", `${baseLabel}. ${currentLabel}. ${nextLabel}.`);
+			button.setAttribute("title", `${currentLabel} → ${nextLabel}`);
+			button.dataset.themeState = state;
 		});
 	}
 
@@ -87,10 +113,11 @@ const dictionary = getDictionary(locale);
 			if (button.dataset.bound === "true") return;
 			button.dataset.bound = "true";
 			button.addEventListener("click", () => {
+				const defaultTheme = button.dataset.themeDefault || "system";
 				const current =
 					window.__getNewspaperTheme?.() ||
 					document.documentElement.dataset.themePreference ||
-					"light";
+					defaultTheme;
 				window.__setNewspaperTheme?.(nextTheme(current));
 				updateButtons();
 			});
@@ -136,15 +163,19 @@ const dictionary = getDictionary(locale);
 		display: none;
 	}
 
-	button #moon {
+	button #system {
 		display: block;
 	}
 
-	:global([data-theme-preference="dark"]) button #sun {
-		display: block;
-	}
-
+	:global([data-theme-preference="light"]) button #sun,
 	:global([data-theme-preference="dark"]) button #moon {
+		display: block;
+	}
+
+	:global([data-theme-preference="light"]) button #system,
+	:global([data-theme-preference="light"]) button #moon,
+	:global([data-theme-preference="dark"]) button #system,
+	:global([data-theme-preference="dark"]) button #sun {
 		display: none;
 	}
 </style>

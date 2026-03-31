@@ -42,7 +42,10 @@ const locale = resolveLocale(Astro.currentLocale);
 		<slot name="head" />
 	</head>
 
-	<body class:list={[props.bodyClass, `font-preset-${siteConfig.typography.preset}`]}>
+	<body
+		class:list={["site-shell", props.bodyClass, `font-preset-${siteConfig.typography.preset}`]}
+		data-page-locale={locale}
+	>
 		<SiteHeader />
 
 		<main id="main-content" class="main">

@@ -14,7 +14,7 @@ const visibleHeadings = headings.filter((heading) => heading.depth >= 2 && headi
 
 {
 	visibleHeadings.length > 0 && (
-		<section class="toc">
+		<nav class="toc" aria-label={dictionary.post.tocTitle}>
 			<details open>
 				<summary>
 					<span class="details">{dictionary.post.tocTitle}</span>
@@ -29,6 +29,6 @@ const visibleHeadings = headings.filter((heading) => heading.depth >= 2 && headi
 					</ul>
 				</div>
 			</details>
-		</section>
+		</nav>
 	)
 }

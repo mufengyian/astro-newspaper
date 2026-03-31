@@ -1,0 +1,24 @@
+---
+interface Props {
+	eyebrow?: string;
+	title: string;
+	description?: string;
+	align?: "left" | "center";
+	compact?: boolean;
+}
+
+const {
+	eyebrow,
+	title,
+	description,
+	align = "center",
+	compact = false,
+} = Astro.props;
+---
+
+<header class:list={["page-header", `page-header--${align}`, compact && "page-header--compact"]}>
+	{eyebrow && <p class="page-header__eyebrow">{eyebrow}</p>}
+	<h1>{title}</h1>
+	{description && <p>{description}</p>}
+	<slot />
+</header>

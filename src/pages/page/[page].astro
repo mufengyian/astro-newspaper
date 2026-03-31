@@ -1,46 +1,14 @@
 ---
 import type { GetStaticPaths } from "astro";
-import { getCollection } from "astro:content";
-import PostFeed from "../../components/PostFeed.astro";
-import { siteConfig } from "../../config";
-import MainLayout from "../../layouts/MainLayout.astro";
-import { getDictionary } from "../../utils/i18n";
-import { getHomePermalink, getLocalizedPath } from "../../utils/routing";
-import { getHomePosts, getSortedPosts, getPageItems, getTotalPages } from "../../utils/posts";
+import PaginatedFeedPage from "../../components/PaginatedFeedPage.astro";
+import { getPaginationStaticPaths } from "../../utils/page-data";
 
-const locale = "zh-cn" as const;
-const dictionary = getDictionary(locale);
-
-export const getStaticPaths = (async () => {
-	const posts = getHomePosts(getSortedPosts(await getCollection("posts"), "zh-cn"), siteConfig.featuredCount);
-	const totalPages = getTotalPages(posts.length, siteConfig.postsPerPage);
-
-	return Array.from({ length: Math.max(0, totalPages - 1) }, (_, index) => {
-		const currentPage = index + 2;
-		return {
-			params: { page: String(currentPage) },
-			props: {
-				currentPage,
-				totalPages,
-				pagePosts: getPageItems(posts, currentPage, siteConfig.postsPerPage),
-			},
-		};
-	});
-}) satisfies GetStaticPaths;
-
-const { currentPage, totalPages, pagePosts } = Astro.props;
+export const getStaticPaths = (async () => getPaginationStaticPaths("zh-cn")) satisfies GetStaticPaths;
 ---
 
-<MainLayout
-	title={dictionary.pagination.summary(currentPage, totalPages)}
-	description={dictionary.home.feedDescription}
-	bodyClass="list"
->
-	<PostFeed
-		posts={pagePosts}
-		currentPage={currentPage}
-		totalPages={totalPages}
-		firstPageUrl={getHomePermalink(locale)}
-		pageUrlPattern={getLocalizedPath(locale, "page/{page}")}
-	/>
-</MainLayout>
+<PaginatedFeedPage
+	locale="zh-cn"
+	currentPage={Astro.props.currentPage}
+	totalPages={Astro.props.totalPages}
+	pagePosts={Astro.props.pagePosts}
+/>

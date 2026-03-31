@@ -1,12 +1,11 @@
 ---
 import { hasWalineServerUrl, siteConfig } from "../config";
-import { resolveLocale } from "../utils/i18n";
+import { getDictionary, resolveLocale } from "../utils/i18n";
 import { stripBasePath } from "../utils/routing";
 
 const locale = resolveLocale(Astro.currentLocale);
+const dictionary = getDictionary(locale);
 const canRenderWaline = hasWalineServerUrl();
-const title = locale === "en" ? "Comments" : "评论";
-const description = locale === "en" ? "Join the discussion." : "欢迎留下你的看法。";
 const commentsPath = stripBasePath(Astro.url.pathname).replace(/\/$/, "") || "/";
 const walineLang = locale === "en" ? "en" : "zh-CN";
 const walineMeta = siteConfig.comments.meta.join(",");
@@ -17,8 +16,8 @@ const walineRequiredMeta = siteConfig.comments.requiredMeta.join(",");
 	canRenderWaline && (
 		<section class="comments-section" aria-labelledby="comments-title">
 			<div class="comments-section__header">
-				<h2 id="comments-title">{title}</h2>
-				<p>{description}</p>
+				<h2 id="comments-title">{dictionary.comments.title}</h2>
+				<p>{dictionary.comments.description}</p>
 			</div>
 
 			<div
@@ -89,9 +88,13 @@ const walineRequiredMeta = siteConfig.comments.requiredMeta.join(",");
 				}
 
 				if (document.readyState === "loading") {
-					document.addEventListener("DOMContentLoaded", () => {
-						void mountWaline();
-					}, { once: true });
+					document.addEventListener(
+						"DOMContentLoaded",
+						() => {
+							void mountWaline();
+						},
+						{ once: true },
+					);
 				} else {
 					void mountWaline();
 				}
