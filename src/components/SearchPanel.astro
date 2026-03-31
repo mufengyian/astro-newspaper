@@ -2,28 +2,11 @@
 import { getDictionary, resolveLocale } from "../utils/i18n";
 import { getSearchIndexPermalink } from "../utils/routing";
 
-type SearchLink = {
-	label: string;
-	href: string;
-	count?: number;
-};
-
-interface Props {
-	indexedCount?: number;
-	quickLinks?: SearchLink[];
-	topics?: SearchLink[];
-}
-
 const locale = resolveLocale(Astro.currentLocale);
 const dictionary = getDictionary(locale);
 const searchEndpoint = getSearchIndexPermalink(locale);
-const { indexedCount = 0, quickLinks = [], topics = [] } = Astro.props as Props;
 const searchMessages = {
 	loading: dictionary.search.loading,
-	ready:
-		locale === "en"
-			? "__COUNT__ posts indexed and ready to search."
-			: "已加载 __COUNT__ 篇文章，输入后开始搜索。",
 	matches:
 		locale === "en"
 			? "__COUNT__ matches for “__QUERY__”."
@@ -37,21 +20,7 @@ const searchMessages = {
 };
 ---
 
-<section
-	data-search-root
-	data-search-endpoint={searchEndpoint}
-	data-search-count={indexedCount}
->
-	<div class="search-toolbar">
-		<p class="search-toolbar__hint">
-			<span class="search-toolbar__key">/</span>
-			<span>{dictionary.search.shortcutFocus}</span>
-			<span class="search-toolbar__separator" aria-hidden="true">·</span>
-			<span class="search-toolbar__key">Esc</span>
-			<span>{dictionary.search.shortcutClear}</span>
-		</p>
-	</div>
-
+<section data-search-root data-search-endpoint={searchEndpoint}>
 	<div id="searchbox">
 		<label class="sr-only" for="search-input">{dictionary.search.label}</label>
 		<input
@@ -60,50 +29,9 @@ const searchMessages = {
 			placeholder={dictionary.search.placeholder}
 			autocomplete="off"
 		/>
-		<button class="search-clear" type="button" data-search-clear hidden>
-			{dictionary.search.clear}
-		</button>
 	</div>
 
-	<p class="search-status" data-search-status>{dictionary.search.ready(indexedCount)}</p>
-
-	<div class="search-discovery" data-search-discovery>
-		<div class="search-discovery__intro">
-			<strong>{dictionary.search.discoverTitle}</strong>
-			<p>{dictionary.search.discoverDescription(indexedCount)}</p>
-		</div>
-
-		{
-			quickLinks.length > 0 && (
-				<div class="search-discovery__links">
-					{quickLinks.map((link) => (
-						<a class="button" href={link.href} data-astro-prefetch="hover">
-							{link.label}
-						</a>
-					))}
-				</div>
-			)
-		}
-
-		{
-			topics.length > 0 && (
-				<div class="search-discovery__topics-block">
-					<span class="search-discovery__label">{dictionary.search.popularTags}</span>
-					<div class="search-discovery__topics">
-						{topics.map((topic) => (
-							<a class="tag-pill" href={topic.href} data-astro-prefetch="hover">
-								<span>#{topic.label}</span>
-								{typeof topic.count === "number" && (
-									<span class="tag-pill__count">{topic.count}</span>
-								)}
-							</a>
-						))}
-					</div>
-				</div>
-			)
-		}
-	</div>
-
+	<p class="search-status" data-search-status hidden></p>
 	<ul id="searchResults" data-search-results hidden></ul>
 </section>
 
@@ -133,12 +61,9 @@ const searchMessages = {
 		const input = root.querySelector<HTMLInputElement>("#search-input");
 		const status = root.querySelector<HTMLElement>("[data-search-status]");
 		const results = root.querySelector<HTMLElement>("[data-search-results]");
-		const discovery = root.querySelector<HTMLElement>("[data-search-discovery]");
-		const clearButton = root.querySelector<HTMLButtonElement>("[data-search-clear]");
 		const messagesNode = document.querySelector<HTMLScriptElement>("[data-search-messages]");
-		const indexedCount = Number(root.dataset.searchCount ?? "0");
 
-		if (!input || !status || !results || !clearButton || !messagesNode?.textContent) return;
+		if (!input || !status || !results || !messagesNode?.textContent) return;
 
 		const messages = JSON.parse(messagesNode.textContent) as Record<string, string>;
 		const searchEndpoint = root.dataset.searchEndpoint || "/search.json";
@@ -146,34 +71,6 @@ const searchMessages = {
 		let entries: SearchEntry[] | null = null;
 		let fuse: Fuse<SearchEntry> | null = null;
 		let loadPromise: Promise<void> | null = null;
-
-		const isEditableTarget = (target: EventTarget | null) =>
-			target instanceof HTMLElement &&
-			(target.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(target.tagName));
-
-		const formatTemplate = (template: string, replacements: Record<string, string>) =>
-			Object.entries(replacements).reduce(
-				(result, [key, value]) => result.replaceAll(`__${key}__`, value),
-				template,
-			);
-
-		const formatReady = (count: number) => formatTemplate(messages.ready, { COUNT: String(count) });
-
-		const formatMatches = (query: string, count: number) =>
-			formatTemplate(messages.matches, {
-				COUNT: String(count),
-				QUERY: query,
-			});
-
-		const toggleDiscovery = (visible: boolean) => {
-			if (discovery) {
-				discovery.hidden = !visible;
-			}
-		};
-
-		const updateClearButton = () => {
-			clearButton.hidden = input.value.trim().length === 0;
-		};
 
 		const setActive = (index: number) => {
 			const items = Array.from(results.querySelectorAll<HTMLLIElement>("li"));
@@ -195,12 +92,11 @@ const searchMessages = {
 		};
 
 		const clearResults = () => {
-			status.hidden = false;
-			status.textContent = formatReady(entries?.length ?? indexedCount);
+			status.hidden = true;
 			results.hidden = true;
+			status.textContent = "";
 			results.replaceChildren();
 			activeIndex = 0;
-			toggleDiscovery(true);
 		};
 
 		const createEmptyState = (title: string, description: string) => {
@@ -252,20 +148,14 @@ const searchMessages = {
 			return resultItem;
 		};
 
-		const ensureIndex = async (announce = true) => {
+		const ensureIndex = async () => {
 			if (fuse) return;
 			if (!loadPromise) {
 				loadPromise = (async () => {
-					if (announce) {
-						status.hidden = false;
-						status.textContent = messages.loading;
-					}
+					status.hidden = false;
+					status.textContent = messages.loading;
 
 					const response = await fetch(searchEndpoint);
-					if (!response.ok) {
-						throw new Error(`Search index request failed with ${response.status}.`);
-					}
-
 					entries = (await response.json()) as SearchEntry[];
 					fuse = new Fuse(entries, {
 						includeScore: true,
@@ -280,32 +170,26 @@ const searchMessages = {
 						],
 					});
 				})();
-			} else if (announce && !fuse) {
-				status.hidden = false;
-				status.textContent = messages.loading;
 			}
 
 			await loadPromise;
-
-			if (!input.value.trim()) {
-				status.hidden = false;
-				status.textContent = formatReady(entries?.length ?? indexedCount);
-			}
 		};
 
 		const renderResults = (items: SearchResult[], query: string) => {
 			status.hidden = false;
 			results.hidden = false;
-			toggleDiscovery(false);
 
 			if (items.length === 0) {
-				status.textContent = formatMatches(query, 0);
+				status.textContent = messages.matches.replace("__QUERY__", query).replace("__COUNT__", "0");
 				results.replaceChildren(createEmptyState(messages.emptyTitle, messages.emptyDescription));
 				activeIndex = 0;
 				return;
 			}
 
-			status.textContent = formatMatches(query, items.length);
+			status.textContent = messages.matches
+				.replace("__QUERY__", query)
+				.replace("__COUNT__", String(items.length));
+
 			results.replaceChildren(...items.map(({ item }, index) => createResultItem(item, index)));
 			activeIndex = 0;
 		};
@@ -324,7 +208,6 @@ const searchMessages = {
 				console.error("[newspaper] Failed to load the search index.", error);
 				status.hidden = false;
 				results.hidden = false;
-				toggleDiscovery(false);
 				status.textContent = messages.unavailableTitle;
 				results.replaceChildren(
 					createEmptyState(messages.unavailableTitle, messages.unavailableDescription),
@@ -332,26 +215,11 @@ const searchMessages = {
 			}
 		};
 
-		const clearQuery = () => {
-			input.value = "";
-			syncQuery("");
-			updateClearButton();
-			clearResults();
-			input.focus();
-		};
-
-		input.addEventListener("focus", () => {
-			void ensureIndex(false);
-		});
-
 		input.addEventListener("input", () => {
 			const query = input.value.trim();
-			updateClearButton();
 			syncQuery(query);
 			void runSearch(query);
 		});
-
-		clearButton.addEventListener("click", clearQuery);
 
 		input.addEventListener("keydown", (event) => {
 			const items = Array.from(results.querySelectorAll<HTMLLIElement>("li"));
@@ -376,44 +244,11 @@ const searchMessages = {
 			}
 		});
 
-		if (!window.__newspaperSearchShortcutsBound) {
-			window.__newspaperSearchShortcutsBound = true;
-			document.addEventListener("keydown", (event) => {
-				const currentRoot = document.querySelector<HTMLElement>("[data-search-root]");
-				const currentInput = currentRoot?.querySelector<HTMLInputElement>("#search-input");
-				const currentClearButton =
-					currentRoot?.querySelector<HTMLButtonElement>("[data-search-clear]");
-				if (!currentInput || !currentClearButton) return;
-
-				if (
-					event.key === "/" &&
-					!event.metaKey &&
-					!event.ctrlKey &&
-					!event.altKey &&
-					!isEditableTarget(event.target)
-				) {
-					event.preventDefault();
-					currentInput.focus();
-					currentInput.select();
-				}
-
-				if (event.key === "Escape" && document.activeElement === currentInput) {
-					if (currentInput.value.trim()) {
-						currentClearButton.click();
-					} else {
-						currentInput.blur();
-					}
-				}
-			});
-		}
-
 		const initialQuery = new URL(window.location.href).searchParams.get("q")?.trim() ?? "";
 		if (initialQuery) {
 			input.value = initialQuery;
-			updateClearButton();
 			void runSearch(initialQuery);
 		} else {
-			updateClearButton();
 			clearResults();
 		}
 	}

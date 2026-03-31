@@ -7,7 +7,6 @@ declare global {
 		__setNewspaperTheme?: (preference: string) => void;
 		__newspaperCopyCodeBound?: boolean;
 		__newspaperSearchBound?: boolean;
-		__newspaperSearchShortcutsBound?: boolean;
 		__newspaperThemeToggleBound?: boolean;
 		__newspaperThemeChangeBound?: boolean;
 		__newspaperReadingProgressBound?: boolean;

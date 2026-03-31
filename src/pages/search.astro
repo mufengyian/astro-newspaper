@@ -1,23 +1,10 @@
 ---
-import { getCollection } from "astro:content";
 import SearchPanel from "../components/SearchPanel.astro";
 import MainLayout from "../layouts/MainLayout.astro";
 import { getDictionary } from "../utils/i18n";
-import { getArchivePermalink, getTagsPermalink } from "../utils/routing";
-import { getSortedPosts, getTagIndex, getTagPermalink } from "../utils/posts";
 
 const locale = "zh-cn" as const;
 const dictionary = getDictionary(locale);
-const posts = getSortedPosts(await getCollection("posts"), locale);
-const topics = getTagIndex(posts).slice(0, 8).map((tag) => ({
-	label: tag.name,
-	href: getTagPermalink(locale, tag.slug),
-	count: tag.count,
-}));
-const quickLinks = [
-	{ label: dictionary.search.browseArchive, href: getArchivePermalink(locale) },
-	{ label: dictionary.search.browseTags, href: getTagsPermalink(locale) },
-];
 ---
 
 <MainLayout title={dictionary.search.title} description={dictionary.search.description} bodyClass="list">
@@ -30,6 +17,6 @@ const quickLinks = [
 			<p>{dictionary.search.description}</p>
 		</header>
 
-		<SearchPanel indexedCount={posts.length} quickLinks={quickLinks} topics={topics} />
+		<SearchPanel />
 	</section>
 </MainLayout>
