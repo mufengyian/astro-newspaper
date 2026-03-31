@@ -7,6 +7,7 @@
 	--nav-width: 1440px;
 	--main-width: 980px;
 	--list-width: 1180px;
+	--home-feed-width: 940px;
 	--post-layout-width: 1320px;
 	--header-height: 60px;
 	--footer-height: 60px;
@@ -521,6 +522,12 @@ body.font-preset-wenkai .logo__brand {
 .posts-feed {
 	display: grid;
 	gap: var(--gap);
+}
+
+body.home .posts-feed,
+body.home .posts-grid {
+	max-width: var(--home-feed-width);
+	margin-inline: auto;
 }
 
 .post-entry {
