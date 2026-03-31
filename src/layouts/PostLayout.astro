@@ -1,7 +1,7 @@
 ---
 import { Picture } from "astro:assets";
 import type { MarkdownHeading } from "astro";
-import { hasPublicSiteUrl, hasWalineServerUrl, siteConfig } from "../config";
+import { hasWalineServerUrl } from "../config";
 import Breadcrumbs from "../components/Breadcrumbs.astro";
 import PostMeta from "../components/PostMeta.astro";
 import PostNavLinks from "../components/PostNavLinks.astro";
@@ -11,7 +11,7 @@ import TableOfContents from "../components/TableOfContents.astro";
 import TagPill from "../components/TagPill.astro";
 import { getDictionary, resolveLocale } from "../utils/i18n";
 import { getArchivePermalink, getHomePermalink } from "../utils/routing";
-import { getPostPermalink, type PostEntry } from "../utils/posts";
+import type { PostEntry } from "../utils/posts";
 import MainLayout from "./MainLayout.astro";
 
 interface Props {
@@ -25,7 +25,6 @@ interface Props {
 const locale = resolveLocale(Astro.currentLocale);
 const dictionary = getDictionary(locale);
 const { post, headings, relatedPosts = [], newerPost, olderPost } = Astro.props;
-
 
 const shouldRenderComments = post.data.comments && hasWalineServerUrl();
 const WalineComments = shouldRenderComments
@@ -86,8 +85,6 @@ const WalineComments = shouldRenderComments
 					</li>
 				))}
 			</ul>
-
-			
 
 			{WalineComments && <WalineComments />}
 
