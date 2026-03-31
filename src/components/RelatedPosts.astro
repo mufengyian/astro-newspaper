@@ -16,28 +16,28 @@ const relatedPostLabel = locale === "en" ? "Open related post: " : "查看相关
 {
 	posts.length > 0 && (
 		<section class="related-posts">
-			<header class="page-header">
+			<header class="related-posts__header">
 				<h2>{dictionary.post.relatedPosts}</h2>
 			</header>
 
 			<div class="related-posts__grid">
 				{posts.map((post) => (
-					<article class="post-entry">
-						<header class="entry-header">
+					<article class="related-post-card">
+						<header class="related-post-card__header">
 							<h3>
 								<a href={getPostPermalink(locale, post)} data-astro-prefetch="hover">
 									{post.data.title}
 								</a>
 							</h3>
 						</header>
-						<div class="entry-content">
+						<div class="related-post-card__excerpt">
 							<p>{post.data.excerpt}</p>
 						</div>
-						<footer class="entry-footer">
+						<footer class="related-post-card__meta">
 							<span>{formatDate(post.data.publishDate, locale)}</span>
 						</footer>
 						<a
-							class="entry-link"
+							class="related-post-card__link"
 							href={getPostPermalink(locale, post)}
 							aria-label={`${relatedPostLabel}${post.data.title}`}
 						></a>

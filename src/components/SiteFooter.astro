@@ -1,17 +1,49 @@
 ---
-import { siteConfig } from "../config";
+import { getIcpFilingUrl, getPoliceFilingUrl, siteConfig } from "../config";
 import { getDictionary, resolveLocale } from "../utils/i18n";
 
 const locale = resolveLocale(Astro.currentLocale);
 const dictionary = getDictionary(locale);
+const hasIcpFiling = siteConfig.filings.icp.trim().length > 0;
+const hasPoliceFiling = siteConfig.filings.police.trim().length > 0;
 ---
 
 <footer class="footer">
-	<span>&copy; {new Date().getFullYear()} {siteConfig.author.name}</span>
-	<span>&middot;</span>
-	<span>{siteConfig.title}</span>
-	<span>&middot;</span>
-	<span>
+	<span class="footer__item">&copy; {new Date().getFullYear()}</span>
+	<a
+		class="footer__item footer__link"
+		href={siteConfig.repositoryUrl}
+		target="_blank"
+		rel="noreferrer"
+	>
+		{siteConfig.title}
+	</a>
+	<span class="footer__item">
 		{dictionary.footer.builtWith} <a href="https://astro.build" target="_blank" rel="noreferrer">Astro</a>
 	</span>
+	{
+		hasIcpFiling && (
+			<a class="footer__item footer__link" href={getIcpFilingUrl()} target="_blank" rel="nofollow noreferrer">
+				{siteConfig.filings.icp}
+			</a>
+		)
+	}
+	{
+		hasPoliceFiling && (
+			<a
+				class="footer__item footer__link footer__record"
+				href={getPoliceFilingUrl()}
+				target="_blank"
+				rel="nofollow noreferrer"
+			>
+				<img
+					src="/police-badge.png"
+					alt=""
+					loading="lazy"
+					decoding="async"
+				/>
+				<span>{siteConfig.filings.police}</span>
+			</a>
+		)
+	}
 </footer>
