@@ -1,9 +1,40 @@
 {
-  "name": "newspaper",
-  "description": "newspaper - an elegant, high-performance Astro blog theme.",
-  "private": true,
+  "name": "@mufengyian/astro-newspaper",
+  "description": "A calm, multilingual Astro blog theme starter inspired by Paper and PaperMod.",
   "type": "module",
   "version": "0.0.1",
+  "license": "MIT",
+  "author": "JiU",
+  "homepage": "https://github.com/mufengyian/astro-newspaper#readme",
+  "bugs": {
+    "url": "https://github.com/mufengyian/astro-newspaper/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mufengyian/astro-newspaper.git"
+  },
+  "keywords": [
+    "astro",
+    "withastro",
+    "astro-theme",
+    "blog",
+    "starter",
+    "mdx",
+    "i18n",
+    "seo",
+    "waline"
+  ],
+  "files": [
+    "public",
+    "src",
+    "docs",
+    "astro.config.mjs",
+    "tsconfig.json",
+    ".env.example",
+    "README.md",
+    "README.en.md",
+    "LICENSE"
+  ],
   "engines": {
     "node": ">=22.12.0"
   },

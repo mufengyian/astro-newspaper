@@ -1,55 +1,74 @@
 # newspaper
 
-`newspaper` 是一个基于 Astro 6 的博客主题 starter，重点放在这些事情上：
+[English README](./README.en.md) | [中文 Wiki](./docs/wiki/zh-cn/Home.md) | [English Wiki](./docs/wiki/en/Home.md) | [Wiki Source](./docs/wiki/README.md)
 
-- 阅读体验要舒服
-- 目录结构要清楚
-- 多语言要原生
-- 长期写作要省心
-- 默认配置要尽量安全，不误伤生产环境 SEO
+`newspaper` 是一个面向长期写作的 Astro 博客主题 starter。它把阅读、归档、搜索、多语言与稳定维护放在视觉噱头之前，适合个人博客、技术笔记、项目日志、读书记录与持续积累型内容。
 
-它参考了 `PaperMod` 的克制层次，也吸收了 `astro-paper` 与 `fuwari` 的轻盈感，但实现上尽量靠近 Astro 官方能力。
+这个主题受到 [Paper](https://github.com/nanxiaobei/hugo-paper) 与 [PaperMod](https://github.com/adityatelange/hugo-PaperMod) 的启发，也参考了 [astro-paper](https://github.com/satnaing/astro-paper) 和 [fuwari](https://github.com/saicaca/fuwari) 对 Astro 生态的实践方式。它不是对这些项目的复刻，而是一次基于 Astro 官方能力的重新组织。
 
-## 目录
+## 设计目标
 
-- [1. 主题特性](#1-主题特性)
-- [2. 快速开始](#2-快速开始)
-- [3. 生产环境配置](#3-生产环境配置)
-- [4. 主题配置项](#4-主题配置项)
-- [5. 字体配置](#5-字体配置)
-- [6. 内容组织方式](#6-内容组织方式)
-- [7. MDX 是什么，为什么要用](#7-mdx-是什么为什么要用)
-- [8. 如何写 MDX 文章](#8-如何写-mdx-文章)
-- [9. 响应式图片：`astro:assets` + `sharp`](#9-响应式图片astroassets--sharp)
-- [10. 如何在文章中使用图片](#10-如何在文章中使用图片)
-- [11. 多语言写作方式](#11-多语言写作方式)
-- [12. 构建与验证](#12-构建与验证)
-- [13. Waline 评论](#13-waline-评论)
-- [14. 常见问题](#14-常见问题)
+- 阅读优先：正文、列表、归档、标签和搜索都服务于内容本身。
+- Astro 原生：尽量直接使用 [Content Collections](https://docs.astro.build/zh-cn/guides/content-collections/)、[i18n](https://docs.astro.build/zh-cn/guides/internationalization/)、[MDX](https://docs.astro.build/zh-cn/guides/integrations-guide/mdx/)、[astro:assets](https://docs.astro.build/zh-cn/reference/modules/astro-assets/) 和 [View Transitions](https://docs.astro.build/zh-cn/guides/view-transitions/)。
+- 安全默认：未配置公开站点地址时，不输出误导性的生产 SEO 元数据；未配置 Waline 服务端时，不显示评论区。
+- 适合持续维护：尽量避免过度工程化，让主题可以稳定写很多年。
 
-## 1. 主题特性
+## 功能概览
 
-- 基于 Astro 官方 `i18n` 路由能力，内置 `zh-cn` 与 `en`
-- 基于 `astro:content` + `glob()` 的内容管理
-- 支持 `MDX`
-- 使用 `astro:assets` + `sharp` 处理本地响应式图片
-- 启用 `ClientRouter`、链接预取与视图过渡
-- 内建首页、文章页、分页、归档、标签、搜索、关于、404
-- 内置 `Waline` 评论适配
-- 暗色 / 浅色两态切换
-- 代码块复制按钮支持键盘与触屏
-- 默认 SEO 策略更安全：未配置公开站点地址时，不输出生产环境元数据
-- 支持通过配置切换字体方案，包括 `LXGW WenKai` Web 字体
+- 基于 Astro 6 的双语博客结构，内置 `zh-cn` 与 `en`
+- `astro:content` 内容集合，支持 `.md` 与 `.mdx`
+- `astro:assets` + `sharp` 的本地响应式图片工作流
+- 首页、分页、归档、标签、搜索、关于、404 与 RSS
+- 阅读进度、目录、代码复制、回到顶部、视图过渡
+- 亮色 / 暗色两态主题
+- 可选 Waline 评论
+- 可配置字体方案，内置 `editorial` 与 `wenkai`
 
-## 2. 快速开始
+## 适合谁
 
-安装依赖：
+- 想直接开始写作，而不是先搭一套内容平台的人
+- 需要中英文双语结构的人
+- 希望主题安静、克制、可长期维护的人
+- 喜欢 Paper / PaperMod 一类阅读气质，但更偏 Astro 原生能力的人
+
+## 不适合谁
+
+- 想要 CMS、后台管理、多人协作编辑流的人
+- 想把主题作为可 `astro add` 安装的 integration 使用的人
+- 需要重交互首页、复杂动画 landing page 或重应用式信息架构的人
+
+## 快速开始
+
+> 这是一个 starter 仓库。推荐直接 `git clone` 或使用 GitHub 的 “Use this template”，而不是把它当作安装型主题包。
+
+### 环境要求
+
+- Node.js `>= 22.12.0`
+- npm `>= 10`
+
+### 1. 安装依赖
 
 ```bash
 npm install
 ```
 
-启动开发：
+### 2. 准备环境变量
+
+将 [`.env.example`](./.env.example) 复制为 `.env`，至少保留：
+
+```bash
+PUBLIC_SITE_URL="https://your-domain.com"
+PUBLIC_WALINE_SERVER_URL="https://your-waline-server.vercel.app"
+```
+
+说明：
+
+- `PUBLIC_SITE_URL`：
+  生产环境强烈建议配置。未配置时，主题会关闭 canonical、OG、Twitter、RSS 与 sitemap 的生产输出，并让 `robots.txt` 返回 `Disallow: /`。
+- `PUBLIC_WALINE_SERVER_URL`：
+  可选。未配置时，文章页不会显示评论区。
+
+### 3. 本地开发
 
 ```bash
 npm run dev
@@ -61,289 +80,147 @@ npm run dev
 http://localhost:4321
 ```
 
-常用命令：
+### 4. 常用命令
 
-| Command | Action |
-| :-- | :-- |
+| 命令 | 作用 |
+| --- | --- |
 | `npm run dev` | 启动开发服务器 |
 | `npm run check` | 运行 Astro 类型检查 |
 | `npm run build` | 生成生产构建 |
-| `npm run preview` | 预览生产构建 |
-| `npm run sync` | 同步内容与类型定义 |
+| `npm run preview` | 本地预览生产构建 |
+| `npm run sync` | 同步内容集合类型 |
 
-## 3. 生产环境配置
+## 第一次启动后建议先改什么
 
-主题不会把 `siteUrl` 写死在源码里，而是通过环境变量提供。
+主题已经能直接跑，但真正上线前至少建议先改这些：
 
-新建 `.env`：
+1. [`src/config.ts`](./src/config.ts) 里的站点标题、作者名、字体方案、分页数量
+2. [`src/utils/i18n.ts`](./src/utils/i18n.ts) 里的中英文站点描述与导航文案
+3. [`.env.example`](./.env.example) 对应的真实环境变量
+4. [`src/content/posts`](./src/content/posts) 里的示例文章
+5. [`src/assets/covers`](./src/assets/covers) 里的示例封面
+6. `siteConfig.socialLinks`，如果你需要首页社交链接行
 
-```bash
-PUBLIC_SITE_URL="https://your-domain.com"
+## 目录结构
+
+```text
+.
+├─ public/                # favicon、社交卡片等静态资源
+├─ src/
+│  ├─ assets/             # 本地封面与图片素材
+│  ├─ components/         # UI 组件
+│  ├─ content/            # Markdown / MDX 内容
+│  ├─ layouts/            # 页面布局
+│  ├─ pages/              # 路由与页面
+│  ├─ styles/             # 全局样式
+│  ├─ utils/              # i18n、路由、文章工具函数
+│  ├─ config.ts           # 站点配置
+│  └─ content.config.ts   # 内容 schema
+├─ docs/wiki/             # 中英文 Wiki 真源
+├─ astro.config.mjs       # Astro 配置
+├─ README.md              # 中文说明
+├─ README.en.md           # English README
+└─ .env.example           # 环境变量示例
 ```
 
-为什么这么设计：
+## 核心配置
 
-- starter 阶段如果直接写 `https://example.com`，很容易把错误的 canonical / Open Graph / RSS / robots / sitemap 带上生产
-- 把公开地址放到环境变量里，默认更安全，也更适合多环境部署
+### 1. `src/config.ts`
 
-未设置 `PUBLIC_SITE_URL` 时：
-
-- 页面照常开发与构建
-- 不输出 canonical、OG、Twitter、hreflang 等生产元数据
-- `robots.txt` 会返回 `Disallow: /`
-- `rss.xml` / `en/rss.xml` 不会生成实体文件
-- `@astrojs/sitemap` 不启用
-
-## 4. 主题配置项
-
-主要配置在：
-
-- [`src/config.ts`](./src/config.ts)
-- [`src/utils/i18n.ts`](./src/utils/i18n.ts)
-
-`src/config.ts` 里你最常改的是：
+这里维护站点级配置。最常改的是：
 
 ```ts
 export const siteConfig = {
   title: "Newspaper",
-  siteUrl: publicSiteUrl,
-  defaultLocale: DEFAULT_LOCALE,
-  locales: LOCALES,
+  repositoryUrl: "https://github.com/mufengyian/astro-newspaper",
   typography: {
     preset: "editorial",
   },
   author: {
     name: "JiU",
   },
+  socialLinks: [],
   featuredCount: 2,
   postsPerPage: 6,
 }
 ```
 
-说明：
+字段建议：
 
-- `title`：站点标题
-- `typography.preset`：字体方案
+- `title`：站点名
+- `typography.preset`：字体方案，当前支持 `editorial` / `wenkai`
+- `author.name`：文章页与结构化数据作者名
+- `socialLinks`：首页 `Social Links` 图标行，默认留空更安全
 - `featuredCount`：首页优先展示的置顶文章数量
 - `postsPerPage`：分页大小
 
-`src/utils/i18n.ts` 里维护的是：
+### 2. `src/utils/i18n.ts`
+
+这里维护：
 
 - 中英文站点描述
-- 导航文案
+- 顶部导航文案
 - 按钮文案
-- 搜索页提示
-- 文章页相关文案
+- 搜索页文案
+- 文章页局部文案
 
-## 5. 字体配置
+如果你只写中文，也建议保留英文结构，这样后续扩展成本最低。
 
-主题内置了两套字体方案：
+### 3. `astro.config.mjs`
 
-- `editorial`
-  - 默认方案
-  - 正文使用 `Manrope`
-  - 标题使用 `Newsreader`
-  - 适合偏英文感、杂志感的排版
-- `wenkai`
-  - 使用 `@callmebill/lxgw-wenkai-web`
-  - 当前接入的是 `lxgwwenkai-regular`
-  - 适合中文内容更重、希望整体更温润耐读的博客
+当前启用了：
 
-切换方式：
+- MDX
+- remark-gfm
+- sitemap（仅在配置 `PUBLIC_SITE_URL` 时启用）
+- 官方 `sharp` 图片服务
+- i18n 路由
+- 链接预取
+- Shiki 代码高亮
 
-```ts
-typography: {
-  preset: "wenkai",
-},
-```
+## 内容写作
 
-当前支持值：
+所有文章都放在 [`src/content/posts`](./src/content/posts) 下，支持 `.md` 与 `.mdx`。
 
-```ts
-"editorial" | "wenkai"
-```
+当前内容 schema 定义在 [`src/content.config.ts`](./src/content.config.ts)，主要字段如下：
 
-### 为什么改成 `@callmebill/lxgw-wenkai-web`
+| 字段 | 必填 | 说明 |
+| --- | --- | --- |
+| `title` | 是 | 文章标题 |
+| `excerpt` | 是 | 摘要，列表页和 meta 会使用 |
+| `publishDate` | 是 | 发布时间 |
+| `updatedDate` | 否 | 更新时间 |
+| `draft` | 否 | 草稿，默认 `false` |
+| `featured` | 否 | 是否置顶 |
+| `locale` | 否 | `zh-cn` 或 `en`，默认 `zh-cn` |
+| `translationKey` | 否 | 同一篇文章的多语言关联键 |
+| `category` | 否 | 分类 |
+| `tags` | 否 | 标签数组 |
+| `authors` | 否 | 作者数组，默认 `["JiU"]` |
+| `comments` | 否 | 是否显示评论区，默认 `true` |
+| `cover` | 否 | 本地封面图 |
+| `coverAlt` | 否 | 封面图替代文本 |
 
-你提供的这个包更适合 Web 场景，原因很直接：
+最小示例：
 
-- 它已经把字体拆成了适合网页分发的 `woff2` 分片
-- 浏览器只会按需加载需要的字形范围
-- 比直接塞一整份本地 `ttf` 更适合线上使用
-- 对仓库体积和首屏加载都更友好
-
-当前项目里字体是这样接入的：
-
-```css
-@import "@callmebill/lxgw-wenkai-web/lxgwwenkai-regular/result.css";
-```
-
-相关来源：
-
-- npm 包：<https://www.npmjs.com/package/@callmebill/lxgw-wenkai-web>
-- GitHub 仓库：<https://github.com/CMBill/lxgw-wenkai-web>
-- 上游字体项目：<https://github.com/lxgw/LxgwWenKai>
-
-说明：
-
-- `@callmebill/lxgw-wenkai-web` 这个 Web 包本身是 MIT
-- 它封装的字体上游仍然是 `LXGW WenKai`
-- 上游字体许可信息可以在包内生成的 CSS 注释里看到，来源仍然指向 `LXGW WenKai`
-
-如果你后续希望：
-
-- 增加 `medium` / `light`
-- 给代码块接 `lxgwwenkaimono-regular`
-- 再新增一套字体 preset
-
-可以在当前实现上继续扩展
-
-## 6. 内容组织方式
-
-文章目录：
-
-```text
-src/content/posts
-```
-
-封面示例素材：
-
-```text
-src/assets/covers
-```
-
-主题使用 `astro:content` 管理文章，因此 frontmatter 会经过类型校验。
-
-当前文章 schema 支持这些字段：
-
-```yaml
-title: 示例文章
-excerpt: 一段摘要
-publishDate: 2026-03-30
-updatedDate: 2026-03-31
-draft: false
-featured: false
-locale: zh-cn
-translationKey: hello-world
-category: Astro
-tags:
-  - i18n
-  - MDX
-authors:
-  - JiU
-comments: true
-cover: ../../assets/covers/example.png
-coverAlt: 封面描述
-```
-
-字段说明：
-
-- `title`：标题
-- `excerpt`：摘要，列表页与 meta 会用到
-- `publishDate`：发布日期
-- `updatedDate`：可选，更新日期
-- `draft`：草稿
-- `featured`：是否置顶
-- `locale`：文章语言，支持 `zh-cn` 和 `en`
-- `translationKey`：同一篇文章的多语言版本共用同一个 key 时，便于关联与回退
-- `category`：分类
-- `tags`：标签
-- `comments`：是否显示评论区，默认 `true`
-- `cover`：封面图，建议使用本地图片
-
-## 7. MDX 是什么，为什么要用
-
-### MDX 是什么
-
-MDX 可以理解为：
-
-- Markdown + JSX / 组件能力
-
-也就是说，你既可以像写普通 Markdown 一样写：
-
-- 标题
-- 列表
-- 表格
-- 代码块
-- 引用
-
-也可以直接在文章里写组件，例如：
-
-```mdx
-<Callout type="info">这是一段提示。</Callout>
-```
-
-### 它适合什么场景
-
-如果你只是写非常纯粹的文字，Markdown 已经够用。
-
-但如果你经常需要：
-
-- 嵌入组件
-- 定制图片展示
-- 加提示框、卡片、图表、对比块
-- 在文章里组合交互式内容
-
-那 MDX 会非常舒服。
-
-### 主题为什么支持 MDX
-
-因为博客写久了，内容很少永远只是“纯文本”。
-
-支持 MDX 的好处是：
-
-- 写作时保留 Markdown 的轻量感
-- 需要复杂表达时不用跳出内容系统
-- 后续做组件化文章模板会更容易
-
-Astro 官方文档：
-
-- MDX 集成指南：<https://docs.astro.build/en/guides/integrations-guide/mdx/>
-
-## 8. 如何写 MDX 文章
-
-### 1. 新建文章文件
-
-在 `src/content/posts` 下创建一个 `.mdx` 文件，例如：
-
-```text
-src/content/posts/hello-mdx.mdx
-```
-
-### 2. 写 frontmatter
-
-```mdx
+```md
 ---
-title: Hello MDX
-excerpt: 用一篇文章快速了解 MDX 在这个主题里的工作方式。
-publishDate: 2026-03-30
+title: Hello Astro
+excerpt: 用一篇文章确认主题已经能正常写作。
+publishDate: 2026-03-31
 locale: zh-cn
-translationKey: hello-mdx
-category: 写作
+translationKey: hello-astro
 tags:
-  - MDX
   - Astro
+  - Writing
 ---
+
+这是一篇新的文章。
 ```
 
-### 3. 写正文
+## MDX 与 `astro:assets`
 
-````mdx
-## 这是二级标题
-
-你可以像普通 Markdown 一样写段落、列表和表格。
-
-- 第一项
-- 第二项
-
-```ts
-console.log("hello mdx");
-```
-````
-
-### 4. 在 MDX 中导入组件或资源
-
-你可以直接导入 Astro / JSX 组件和本地资源：
+主题默认支持 [MDX](https://docs.astro.build/zh-cn/guides/integrations-guide/mdx/)，所以你既可以写普通 Markdown，也可以在文章里导入组件与图片资源。
 
 ```mdx
 ---
@@ -351,180 +228,36 @@ import { Image } from "astro:assets";
 import cover from "../../assets/covers/paper-constellation.svg";
 ---
 
-<Image src={cover} alt="示例图片" width={1200} />
+<Image src={cover} alt="示例图片" widths={[480, 720, 1080]} />
 ```
 
-### 5. 在 MDX 中插入组件
+为什么推荐 `astro:assets`：
 
-以后如果你新增了自定义组件，例如 `Callout.astro`：
+- 自动生成响应式图片与 `srcset`
+- 构建时使用 `sharp` 处理本地资源
+- 能输出现代格式，如 `webp` / `avif`
+- 能提前保留宽高，减少布局抖动
 
-```mdx
----
-import Callout from "../../components/Callout.astro";
----
+如果你想看更完整的写法，请直接去 Wiki：
 
-<Callout>这是一条提示。</Callout>
-```
+- [中文：内容与 MDX](./docs/wiki/zh-cn/Content-and-MDX.md)
+- [中文：图片与 astro:assets](./docs/wiki/zh-cn/Images-and-Assets.md)
 
-### MDX 写作建议
+## i18n 使用方式
 
-- 常规文章优先保持 Markdown 风格
-- 只有在表达需要时才引入组件
-- 组件数量不要太多，否则文章会变成“拼页面”
-- 一篇文章如果大量依赖组件，建议先抽一个固定模板
+当前主题内置两个 locale：
 
-## 9. 响应式图片：`astro:assets` + `sharp`
+- `zh-cn`
+- `en`
 
-### 这是什么
-
-主题使用 Astro 官方的 `astro:assets` 图片能力，并通过 `sharp` 在构建阶段处理本地图片。
-
-这里可以分开理解：
-
-- `astro:assets`
-  - Astro 官方提供的图片模块
-  - 负责统一图片导入、尺寸推导、`srcset` 生成、`Image` / `Picture` 组件能力
-- `sharp`
-  - 一个高性能图片处理库
-  - Astro 会用它在构建时生成不同尺寸、不同格式的优化图片
-
-Astro 官方文档：
-
-- 图片指南：<https://docs.astro.build/en/guides/images/>
-- `astro:assets` 参考：<https://docs.astro.build/en/reference/modules/astro-assets/>
-
-### 有什么好处
-
-#### 1. 自动生成响应式图片
-
-同一张源图可以生成多种尺寸，浏览器根据设备宽度选择更合适的版本。
-
-好处：
-
-- 手机不会下载桌面大图
-- 大屏不会强行放大小图
-- 节省流量，提升加载速度
-
-#### 2. 自动生成现代格式
-
-主题里的文章封面通过 `Picture` 输出 `avif` 和 `webp`。
-
-好处：
-
-- 大多数场景下体积比原始 PNG/JPG 更小
-- 页面更快打开
-
-#### 3. 自动保留宽高，减少布局抖动
-
-Astro 能知道图片尺寸，因此可以提前在页面里保留空间。
-
-好处：
-
-- 页面加载时不容易“跳一下”
-- 阅读更稳定
-- 对 Core Web Vitals 更友好
-
-#### 4. 构建期完成，不依赖运行时服务
-
-图片优化在构建时完成。
-
-好处：
-
-- 静态部署更简单
-- CDN / 对象存储 / GitHub Pages 都更容易兼容
-- 不需要额外的图片处理服务
-
-### 主题里哪里在用
-
-主题主要在这些地方使用了 `astro:assets`：
-
-- 文章卡片封面
-- 文章详情页封面
-- 你在 MDX 中手动导入并使用的图片
-
-## 10. 如何在文章中使用图片
-
-### 方式一：把图片作为文章封面
-
-frontmatter 里直接写本地路径：
-
-```yaml
-cover: ../../assets/covers/paper-constellation.svg
-coverAlt: 深蓝色几何插图
-```
-
-好处：
-
-- schema 会校验图片
-- 列表页和详情页会统一走主题的 `Picture` 逻辑
-- 自动生成响应式图片与现代格式
-
-### 方式二：在 MDX 正文里使用 `Image`
-
-```mdx
----
-import { Image } from "astro:assets";
-import demo from "../../assets/covers/signal-grid.svg";
----
-
-<Image
-  src={demo}
-  alt="一张示例图片"
-  widths={[480, 720, 1080]}
-  sizes="(max-width: 768px) 100vw, 720px"
-/>
-```
-
-适合：
-
-- 正文插图
-- 流程图
-- 局部截图
-
-### 方式三：在 MDX 正文里使用 `Picture`
-
-如果你希望明确输出多个格式：
-
-```mdx
----
-import { Picture } from "astro:assets";
-import demo from "../../assets/covers/craft-wave.svg";
----
-
-<Picture
-  src={demo}
-  alt="一张示例图片"
-  formats={["avif", "webp"]}
-  widths={[480, 720, 1080]}
-  sizes="(max-width: 768px) 100vw, 720px"
-/>
-```
-
-适合：
-
-- 大图
-- 首页视觉图
-- 你明确希望浏览器优先选择更省体积格式的场景
-
-### 图片使用建议
-
-- 优先使用本地图片，而不是随手塞外链
-- 封面图尽量保持风格统一
-- 如果是正文插图，建议写清楚 `alt`
-- 超大原图在导入前尽量先做一次人工筛选，避免构建时间过长
-
-## 11. 多语言写作方式
-
-主题当前使用 Astro 原生 i18n 路由：
+路由结构如下：
 
 - 中文首页：`/`
-- 英文首页：`/en`
-- 中文文章：`/posts/slug`
-- 英文文章：`/en/posts/slug`
+- 英文首页：`/en/`
+- 中文文章：`/posts/slug/`
+- 英文文章：`/en/posts/slug/`
 
-### 最简单的做法
-
-分别写两篇文章：
+建议中英文文章通过同一个 `translationKey` 关联：
 
 ```yaml
 locale: zh-cn
@@ -536,64 +269,26 @@ locale: en
 translationKey: hello-world
 ```
 
-### 为什么要写 `translationKey`
+这样后续无论做语言切换还是 fallback，都会更稳。
 
-它的作用是：
+## Waline 评论
 
-- 把多语言版本视为“同一篇内容”的不同翻译
-- 在某个语言版本缺失时，便于回退到默认语言内容
-- 后续如果想做“切换到另一语言版本”的精确跳转，也更方便扩展
+主题已接入 [Waline](https://waline.js.org/) 客户端，但默认保持静默。
 
-## 12. 构建与验证
+### 启用条件
 
-已验证通过：
+- 未配置 `PUBLIC_WALINE_SERVER_URL`
+  - 不显示评论区
+- 已配置 `PUBLIC_WALINE_SERVER_URL`
+  - 文章页自动加载 Waline
 
-```bash
-npm run check
-npm run build
+### 按文章关闭评论
+
+```yaml
+comments: false
 ```
 
-如果你改了：
-
-- `src/config.ts`
-- `src/utils/i18n.ts`
-- `astro.config.mjs`
-- 内容 schema
-- 字体 preset
-
-建议都跑一遍：
-
-```bash
-npm run check
-npm run build
-```
-
-## 13. Waline 评论
-
-主题已经接好了 `Waline` 评论的前端适配。
-
-### 先看效果
-
-只有在配置了 Waline 服务端之后，文章页才会显示评论区。
-
-### 真正启用评论
-
-在 `.env` 里加入：
-
-```bash
-PUBLIC_WALINE_SERVER_URL="https://your-waline-server.vercel.app"
-```
-
-示例已经写在 [`.env.example`](./.env.example)。
-
-### 当前默认行为
-
-- 没有 `PUBLIC_WALINE_SERVER_URL`
-  - 文章页不显示评论区
-- 配置了 `PUBLIC_WALINE_SERVER_URL`
-  - 文章页自动切换为真实 Waline 评论区
-
-### 内置的默认配置
+### 当前默认评论配置
 
 配置位于 [`src/config.ts`](./src/config.ts)：
 
@@ -604,49 +299,65 @@ PUBLIC_WALINE_SERVER_URL="https://your-waline-server.vercel.app"
 - `pageSize`: `10`
 - `reaction`: `false`
 
-### 按文章关闭评论
+## 部署说明
 
-如果某篇文章不想显示评论区：
+这是一个静态站点主题，适合部署到：
 
-```yaml
-comments: false
-```
+- Vercel
+- Netlify
+- Cloudflare Pages
+- GitHub Pages
+- 任何支持静态文件输出的对象存储/CDN
 
-### 说明
+部署前检查：
 
-因为主题启用了 `ClientRouter`，评论组件已经处理了页面切换时的重新挂载；后面你从一篇文章跳到另一篇文章时，不需要再手写额外初始化逻辑。
+1. 配置 `PUBLIC_SITE_URL`
+2. 运行 `npm run check`
+3. 运行 `npm run build`
+4. 确认示例文章、示例封面和示例作者信息都已经替换
 
-## 14. 常见问题
+如果你计划继续把它公开成主题仓库，也建议补齐：
 
-### Q1：我只想写中文，还需要保留英文吗？
+- 仓库截图
+- GitHub Topics
+- GitHub Wiki 首页说明
 
-不一定，但建议先保留。
+## FAQ
 
-原因：
+### 这是一个 npm 安装包还是 starter 仓库？
 
-- 路由和字典已经接好
-- 后续要加英文时成本很低
-- 不会影响中文日常写作
+当前定位是 starter 仓库。最顺手的使用方式是 clone 或 Use this template。
 
-### Q2：为什么没有配置 `PUBLIC_SITE_URL` 时看不到 RSS 文件？
+### 为什么不配置 `PUBLIC_SITE_URL` 时 RSS 和 sitemap 不生成？
 
-这是主题刻意做的安全默认。
+这是刻意的安全默认。主题不应该在不知道真实站点地址时输出错误的 canonical、RSS 或 sitemap。
 
-因为如果不知道真实站点地址，就不应该生成带错误绝对链接的 RSS / SEO 元数据。
+### 可以只用 Markdown，不用 MDX 吗？
 
-### Q3：我可以把字体切回更传统的系统字体吗？
+可以。主题同时支持 `.md` 与 `.mdx`，不需要组件能力时完全可以一直用 Markdown。
 
-可以。
+### 可以只写中文吗？
 
-直接改 `src/styles/global.css` 里的 `--font-body` / `--font-heading`，或者继续扩展 `src/config.ts` 的字体 preset。
+可以。只是建议保留英文结构，方便以后扩展。
 
-### Q4：我可以只用 Markdown，不用 MDX 吗？
+## 延伸文档
 
-当然可以。
+- [中文 Wiki 首页](./docs/wiki/zh-cn/Home.md)
+- [English Wiki Home](./docs/wiki/en/Home.md)
+- [Wiki Source](./docs/wiki/README.md)
+- [Astro 文档](https://docs.astro.build/zh-cn/)
+- [Astro Themes](https://astro.build/themes/)
 
-主题的内容 loader 同时支持：
+## 致谢与许可证
 
-- `.md`
-- `.mdx`
+`newspaper` 采用 [MIT License](./LICENSE)。
 
-如果你暂时不需要组件能力，完全可以一直写普通 Markdown。
+灵感与参考来源：
+
+- [Paper](https://github.com/nanxiaobei/hugo-paper)
+- [PaperMod](https://github.com/adityatelange/hugo-PaperMod)
+- [astro-paper](https://github.com/satnaing/astro-paper)
+- [fuwari](https://github.com/saicaca/fuwari)
+- [Astro](https://astro.build/)
+
+如果你基于这个主题继续修改或发布，欢迎保留致谢链接，也欢迎按自己的内容与审美把它真正用起来。
