@@ -1173,10 +1173,15 @@ body.font-preset-wenkai .logo__brand {
 	padding: 0;
 	list-style: none;
 }
-.post-tags a {
+
+.post-tags a,
+.post-nav__item {
 	border-radius: var(--radius);
 	background: var(--code-bg);
 	border: 1px solid var(--border);
+}
+
+.post-tags a {
 	display: block;
 	padding: 0 14px;
 	color: var(--secondary);

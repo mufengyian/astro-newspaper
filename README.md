@@ -1,6 +1,6 @@
 # newspaper
 
-[English README](./README.en.md) | [中文文档](./docs/wiki/zh-cn/Home.md) | [English Wiki](https://github.com/mufengyian/astro-newspaper/wiki)
+[English README](./README.en.md) | [中文文档](./docs/wiki/Home.md) | [English Wiki](https://github.com/mufengyian/astro-newspaper/wiki)
 
 `newspaper` 是一个面向长期写作的 Astro 博客主题 starter，适合个人博客、技术笔记、项目日志与中英文双语内容。它延续了 [Paper](https://github.com/nanxiaobei/hugo-paper) 与 [PaperMod](https://github.com/adityatelange/hugo-PaperMod) 的阅读气质，同时尽量直接使用 Astro 官方能力来组织主题结构。
 
@@ -98,9 +98,9 @@ translationKey: hello-astro
 
 ## 文档
 
-- 中文文档：[`docs/wiki/zh-cn`](./docs/wiki/zh-cn)
+- 中文文档：[`docs/wiki/Home.md`](./docs/wiki/Home.md)
 - English Wiki：<https://github.com/mufengyian/astro-newspaper/wiki>
-- 仓库内文档源：[`docs/wiki/en`](./docs/wiki/en)
+- 仓库内英文文档源：[`docs/wiki/Home-en.md`](./docs/wiki/Home-en.md)
 - Astro 官方文档：<https://docs.astro.build/zh-cn/>
 - Astro Themes：<https://astro.build/themes/>
 

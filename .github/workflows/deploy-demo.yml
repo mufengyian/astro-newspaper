@@ -39,8 +39,6 @@ jobs:
 
       - name: Build site
         run: npm run build
-        env:
-          PUBLIC_SITE_URL: https://mufengyian.github.io/astro-newspaper/
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
@@ -57,5 +55,3 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
-        env:
-          FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
