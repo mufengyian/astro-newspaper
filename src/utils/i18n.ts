@@ -365,6 +365,10 @@ export function getHtmlLang(locale: string | undefined) {
 	return resolveLocale(locale) === "en" ? "en" : "zh-CN";
 }
 
+export function getHrefLang(locale: string | undefined) {
+	return getHtmlLang(locale);
+}
+
 export function getOgLocale(locale: string | undefined) {
 	return resolveLocale(locale) === "en" ? "en_US" : "zh_CN";
 }

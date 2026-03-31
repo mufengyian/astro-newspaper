@@ -71,24 +71,7 @@ export function isVisiblePost(post: PostEntry) {
 
 export function getLocalizedPosts(posts: PostEntry[], locale: SiteLocale = DEFAULT_LOCALE) {
 	const visiblePosts = posts.filter(isVisiblePost);
-	const localizedPosts = sortPosts(visiblePosts.filter((post) => post.data.locale === locale));
-
-	if (locale === DEFAULT_LOCALE) {
-		return localizedPosts;
-	}
-
-	const fallbackPosts = sortPosts(visiblePosts.filter((post) => post.data.locale === DEFAULT_LOCALE));
-	const postsByTranslation = new Map<string, PostEntry>();
-
-	for (const post of fallbackPosts) {
-		postsByTranslation.set(getTranslationKey(post), post);
-	}
-
-	for (const post of localizedPosts) {
-		postsByTranslation.set(getTranslationKey(post), post);
-	}
-
-	return sortPosts(Array.from(postsByTranslation.values()));
+	return sortPosts(visiblePosts.filter((post) => post.data.locale === locale));
 }
 
 export function getSortedPosts(posts: PostEntry[], locale: SiteLocale = DEFAULT_LOCALE) {

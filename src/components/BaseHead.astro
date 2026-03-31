@@ -1,6 +1,6 @@
 ---
 import { hasPublicSiteUrl, siteConfig } from "../config";
-import { getDictionary, getOgLocale, resolveLocale } from "../utils/i18n";
+import { getDictionary, getHrefLang, getOgLocale, resolveLocale } from "../utils/i18n";
 import { getCanonicalPath, getLocaleAlternates, withBase } from "../utils/routing";
 
 interface Props {
@@ -140,7 +140,7 @@ const structuredData =
 
 {
 	alternateLocales.map(({ locale: alternateLocale, absoluteUrl }) =>
-		absoluteUrl ? <link rel="alternate" hreflang={alternateLocale} href={absoluteUrl} /> : null,
+		absoluteUrl ? <link rel="alternate" hreflang={getHrefLang(alternateLocale)} href={absoluteUrl} /> : null,
 	)
 }
 
