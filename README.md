@@ -35,8 +35,8 @@
 - 使用 `astro:assets` + `sharp` 处理本地响应式图片
 - 启用 `ClientRouter`、链接预取与视图过渡
 - 内建首页、文章页、分页、归档、标签、搜索、关于、404
-- 内置 `Waline` 评论适配，未配置服务端时可先看预览壳层
-- 暗色 / 浅色 / 跟随系统三态切换
+- 内置 `Waline` 评论适配
+- 暗色 / 浅色两态切换
 - 代码块复制按钮支持键盘与触屏
 - 默认 SEO 策略更安全：未配置公开站点地址时，不输出生产环境元数据
 - 支持通过配置切换字体方案，包括 `LXGW WenKai` Web 字体
@@ -105,7 +105,7 @@ PUBLIC_SITE_URL="https://your-domain.com"
 
 ```ts
 export const siteConfig = {
-  title: "newspaper",
+  title: "Newspaper",
   siteUrl: publicSiteUrl,
   defaultLocale: DEFAULT_LOCALE,
   locales: LOCALES,

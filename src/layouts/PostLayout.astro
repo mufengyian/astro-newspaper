@@ -9,7 +9,6 @@ import ReadingProgress from "../components/ReadingProgress.astro";
 import RelatedPosts from "../components/RelatedPosts.astro";
 import TableOfContents from "../components/TableOfContents.astro";
 import TagPill from "../components/TagPill.astro";
-import WalineComments from "../components/WalineComments.astro";
 import { getDictionary, resolveLocale } from "../utils/i18n";
 import { getArchivePermalink, getHomePermalink } from "../utils/routing";
 import { getPostPermalink, type PostEntry } from "../utils/posts";
@@ -33,6 +32,9 @@ const absoluteUrl = hasPublicSiteUrl()
 const shareTitle = encodeURIComponent(post.data.title);
 const shareUrl = absoluteUrl ? encodeURIComponent(absoluteUrl) : undefined;
 const shouldRenderComments = post.data.comments && hasWalineServerUrl();
+const WalineComments = shouldRenderComments
+	? (await import("../components/WalineComments.astro")).default
+	: null;
 ---
 
 <MainLayout
@@ -117,7 +119,7 @@ const shouldRenderComments = post.data.comments && hasWalineServerUrl();
 				)
 			}
 
-			{shouldRenderComments && <WalineComments enabled={true} />}
+			{WalineComments && <WalineComments />}
 
 			<PostNavLinks newerPost={newerPost} olderPost={olderPost} />
 		</footer>

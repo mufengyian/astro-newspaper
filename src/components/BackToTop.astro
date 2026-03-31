@@ -10,31 +10,46 @@ const label = locale === "en" ? "Back to top" : "回到顶部";
 </button>
 
 <script>
-	function initBackToTop() {
-		const button = document.querySelector<HTMLButtonElement>("[data-top-link]");
-		if (!button || button.dataset.bound === "true") return;
-		button.dataset.bound = "true";
+	(() => {
+		let activeButton: HTMLButtonElement | null = null;
 
-		const toggleVisibility = () => {
-			button.classList.toggle("is-visible", window.scrollY > 520);
+		const handleClick = () => {
+			window.scrollTo({ top: 0, behavior: "smooth" });
 		};
 
-		button.addEventListener("click", () => {
-			window.scrollTo({ top: 0, behavior: "smooth" });
-		});
+		const syncButton = () => {
+			const nextButton = document.querySelector<HTMLButtonElement>("[data-top-link]");
+			if (nextButton === activeButton) return;
 
-		window.addEventListener("scroll", toggleVisibility, { passive: true });
-		toggleVisibility();
-	}
+			activeButton?.removeEventListener("click", handleClick);
+			activeButton = nextButton;
+			activeButton?.addEventListener("click", handleClick);
+		};
 
-	if (!window.__newspaperBackToTopBound) {
-		window.__newspaperBackToTopBound = true;
-		document.addEventListener("astro:page-load", initBackToTop);
-	}
+		const toggleVisibility = () => {
+			if (!activeButton || !document.body.contains(activeButton)) {
+				syncButton();
+			}
 
-	if (document.readyState === "loading") {
-		document.addEventListener("DOMContentLoaded", initBackToTop, { once: true });
-	} else {
-		initBackToTop();
-	}
+			if (!activeButton) return;
+			activeButton.classList.toggle("is-visible", window.scrollY > 520);
+		};
+
+		const initBackToTop = () => {
+			syncButton();
+			toggleVisibility();
+		};
+
+		if (!window.__newspaperBackToTopBound) {
+			window.__newspaperBackToTopBound = true;
+			window.addEventListener("scroll", toggleVisibility, { passive: true });
+			document.addEventListener("astro:page-load", initBackToTop);
+		}
+
+		if (document.readyState === "loading") {
+			document.addEventListener("DOMContentLoaded", initBackToTop, { once: true });
+		} else {
+			initBackToTop();
+		}
+	})();
 </script>

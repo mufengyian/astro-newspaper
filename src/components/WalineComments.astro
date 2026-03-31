@@ -4,17 +4,14 @@ import { hasWalineServerUrl, siteConfig } from "../config";
 import { resolveLocale } from "../utils/i18n";
 import { stripBasePath } from "../utils/routing";
 
-interface Props {
-	enabled?: boolean;
-}
-
 const locale = resolveLocale(Astro.currentLocale);
-const { enabled = true } = Astro.props;
-const canRenderWaline = enabled && hasWalineServerUrl();
+const canRenderWaline = hasWalineServerUrl();
 const title = locale === "en" ? "Comments" : "评论";
 const description = locale === "en" ? "Join the discussion." : "欢迎留下你的看法。";
 const commentsPath = stripBasePath(Astro.url.pathname).replace(/\/$/, "") || "/";
 const walineLang = locale === "en" ? "en" : "zh-CN";
+const walineMeta = siteConfig.comments.meta.join(",");
+const walineRequiredMeta = siteConfig.comments.requiredMeta.join(",");
 ---
 
 {
@@ -31,6 +28,12 @@ const walineLang = locale === "en" ? "en" : "zh-CN";
 				data-waline-server={siteConfig.comments.serverURL}
 				data-waline-path={commentsPath}
 				data-waline-lang={walineLang}
+				data-waline-meta={walineMeta}
+				data-waline-required-meta={walineRequiredMeta}
+				data-waline-login={siteConfig.comments.login}
+				data-waline-comment-sorting={siteConfig.comments.commentSorting}
+				data-waline-page-size={String(siteConfig.comments.pageSize)}
+				data-waline-reaction={siteConfig.comments.reaction ? "true" : "false"}
 			>
 				<div class="comments-shell__inner" data-waline-thread></div>
 			</div>
@@ -69,12 +72,12 @@ const walineLang = locale === "en" ? "en" : "zh-CN";
 						path: root.dataset.walinePath || window.location.pathname,
 						lang: root.dataset.walineLang || "zh-CN",
 						dark: "html[data-theme='dark']",
-						meta: ["nick", "mail", "link"],
-						requiredMeta: ["nick", "mail"],
-						login: "enable",
-						commentSorting: "latest",
-						pageSize: 10,
-						reaction: false,
+						meta: (root.dataset.walineMeta || "nick,mail,link").split(","),
+						requiredMeta: (root.dataset.walineRequiredMeta || "nick,mail").split(","),
+						login: root.dataset.walineLogin || "enable",
+						commentSorting: root.dataset.walineCommentSorting || "latest",
+						pageSize: Number(root.dataset.walinePageSize || "10"),
+						reaction: root.dataset.walineReaction === "true",
 					});
 				};
 

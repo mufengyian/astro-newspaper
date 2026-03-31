@@ -15,7 +15,6 @@ export const siteConfig = {
 		name: "JiU",
 	},
 	comments: {
-		provider: "waline",
 		serverURL: walineServerURL,
 		meta: ["nick", "mail", "link"],
 		requiredMeta: ["nick", "mail"],
@@ -24,12 +23,7 @@ export const siteConfig = {
 		pageSize: 10,
 		reaction: false,
 	},
-	socialLinks: [
-		{ label: "GitHub", href: "https://github.com/satnaing/astro-paper" },
-		{ label: "X", href: "https://x.com/username" },
-		{ label: "LinkedIn", href: "https://www.linkedin.com/in/username/" },
-		{ label: "Email", href: "mailto:yourmail@gmail.com" },
-	],
+	socialLinks: [],
 	featuredCount: 2,
 	postsPerPage: 6,
 	capabilities: [
