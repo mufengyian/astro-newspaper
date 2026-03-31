@@ -54,15 +54,6 @@ const searchMessages = {
 
 	type SearchResult = { item: SearchEntry };
 
-	function escapeHtml(value: string) {
-		return value
-			.replaceAll("&", "&amp;")
-			.replaceAll("<", "&lt;")
-			.replaceAll(">", "&gt;")
-			.replaceAll('"', "&quot;")
-			.replaceAll("'", "&#39;");
-	}
-
 	function initSearch() {
 		const root = document.querySelector<HTMLElement>("[data-search-root]");
 		if (!root || root.dataset.ready === "true") return;
@@ -105,8 +96,57 @@ const searchMessages = {
 			status.hidden = true;
 			results.hidden = true;
 			status.textContent = "";
-			results.innerHTML = "";
+			results.replaceChildren();
 			activeIndex = 0;
+		};
+
+		const createEmptyState = (title: string, description: string) => {
+			const item = document.createElement("li");
+			item.className = "search-empty";
+
+			const strong = document.createElement("strong");
+			strong.textContent = title;
+			item.append(strong);
+
+			const descriptionNode = document.createElement("p");
+			descriptionNode.textContent = description;
+			item.append(descriptionNode);
+
+			return item;
+		};
+
+		const createResultItem = (item: SearchEntry, index: number) => {
+			const resultItem = document.createElement("li");
+			if (index === 0) {
+				resultItem.classList.add("focus");
+			}
+
+			const titleNode = document.createElement("div");
+			titleNode.className = "search-result-title";
+			titleNode.textContent = item.title;
+			resultItem.append(titleNode);
+
+			const metaSegments = [item.publishedLabel, item.readingMinutesLabel];
+			if (item.category) {
+				metaSegments.push(item.category);
+			}
+
+			const metaNode = document.createElement("div");
+			metaNode.className = "search-result-meta";
+			metaNode.textContent = metaSegments.join(messages.metaSeparator);
+			resultItem.append(metaNode);
+
+			const excerptNode = document.createElement("p");
+			excerptNode.className = "search-result-excerpt";
+			excerptNode.textContent = item.excerpt;
+			resultItem.append(excerptNode);
+
+			const link = document.createElement("a");
+			link.href = item.url;
+			link.setAttribute("aria-label", `${messages.openLabel}${item.title}`);
+			resultItem.append(link);
+
+			return resultItem;
 		};
 
 		const ensureIndex = async () => {
@@ -142,7 +182,7 @@ const searchMessages = {
 
 			if (items.length === 0) {
 				status.textContent = messages.matches.replace("__QUERY__", query).replace("__COUNT__", "0");
-				results.innerHTML = `<li class="search-empty"><strong>${escapeHtml(messages.emptyTitle)}</strong><p>${escapeHtml(messages.emptyDescription)}</p></li>`;
+				results.replaceChildren(createEmptyState(messages.emptyTitle, messages.emptyDescription));
 				activeIndex = 0;
 				return;
 			}
@@ -151,25 +191,7 @@ const searchMessages = {
 				.replace("__QUERY__", query)
 				.replace("__COUNT__", String(items.length));
 
-			results.innerHTML = items
-				.map(({ item }, index) => {
-					const metaSegments = [item.publishedLabel, item.readingMinutesLabel];
-					if (item.category) {
-						metaSegments.push(item.category);
-					}
-
-					return `
-						<li${index === 0 ? ' class="focus"' : ""}>
-							<div class="search-result-title">${escapeHtml(item.title)}</div>
-							<div class="search-result-meta">
-								${metaSegments.map(escapeHtml).join(messages.metaSeparator)}
-							</div>
-							<p class="search-result-excerpt">${escapeHtml(item.excerpt)}</p>
-							<a href="${item.url}" aria-label="${escapeHtml(messages.openLabel)}${escapeHtml(item.title)}"></a>
-						</li>
-					`;
-				})
-				.join("");
+			results.replaceChildren(...items.map(({ item }, index) => createResultItem(item, index)));
 			activeIndex = 0;
 		};
 
@@ -188,7 +210,9 @@ const searchMessages = {
 				status.hidden = false;
 				results.hidden = false;
 				status.textContent = messages.unavailableTitle;
-				results.innerHTML = `<li class="search-empty"><strong>${escapeHtml(messages.unavailableTitle)}</strong><p>${escapeHtml(messages.unavailableDescription)}</p></li>`;
+				results.replaceChildren(
+					createEmptyState(messages.unavailableTitle, messages.unavailableDescription),
+				);
 			}
 		};
 

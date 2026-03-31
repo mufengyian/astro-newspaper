@@ -1,5 +1,5 @@
 import { getCollection } from "astro:content";
-import { getAbsoluteLocaleUrl, getRelativeLocaleUrl } from "astro:i18n";
+import { getRelativeLocaleUrl } from "astro:i18n";
 import { siteConfig } from "../config";
 import { DEFAULT_LOCALE, LOCALES, isSiteLocale, type SiteLocale } from "./i18n";
 
@@ -70,7 +70,7 @@ export function getAbsoluteLocalizedPath(locale: SiteLocale, path = "") {
 		return undefined;
 	}
 
-	return getAbsoluteLocaleUrl(locale, trimSlashes(path));
+	return new URL(getLocalizedPath(locale, path), siteConfig.siteUrl).href;
 }
 
 export function getHomePermalink(locale: SiteLocale) {
@@ -105,11 +105,17 @@ export function getRssPermalink(locale: SiteLocale) {
 	return getLocalizedFilePath(locale, "rss.xml");
 }
 
+export function getRssPagePermalink(locale: SiteLocale) {
+	return getLocalizedPath(locale, "rss");
+}
+
 type LocaleAlternate = {
 	locale: SiteLocale;
 	relativeUrl?: string;
 	absoluteUrl?: string;
 };
+
+let visiblePostsPromise: Promise<Awaited<ReturnType<typeof getCollection<"posts">>>> | undefined;
 
 function getTranslationKey(post: { id: string; data: { translationKey?: string } }) {
 	return post.data.translationKey?.trim() || post.id;
@@ -119,7 +125,15 @@ function isVisiblePost(post: { data: { draft?: boolean } }) {
 	return import.meta.env.DEV || !post.data.draft;
 }
 
-function getLocalizedPostAlternate(locale: SiteLocale, postId: string, translationKey: string, posts: Awaited<ReturnType<typeof getCollection<"posts">>>) {
+async function getVisiblePosts() {
+	if (!visiblePostsPromise) {
+		visiblePostsPromise = getCollection("posts").then((posts) => posts.filter(isVisiblePost));
+	}
+
+	return visiblePostsPromise;
+}
+
+function getLocalizedPostAlternate(locale: SiteLocale, translationKey: string, posts: Awaited<ReturnType<typeof getCollection<"posts">>>) {
 	const exactMatch = posts.find((post) => post.data.locale === locale && getTranslationKey(post) === translationKey);
 	if (exactMatch) {
 		return {
@@ -128,28 +142,17 @@ function getLocalizedPostAlternate(locale: SiteLocale, postId: string, translati
 		};
 	}
 
-	const defaultMatch = posts.find(
-		(post) => post.data.locale === DEFAULT_LOCALE && getTranslationKey(post) === translationKey,
-	);
-
-	if (defaultMatch && locale !== DEFAULT_LOCALE) {
-		return {
-			relativeUrl: getLocalizedPath(locale, `posts/${defaultMatch.id}`),
-			absoluteUrl: getAbsoluteLocalizedPath(locale, `posts/${defaultMatch.id}`),
-		};
-	}
-
-	if (defaultMatch) {
-		return {
-			relativeUrl: getLocalizedPath(locale, `posts/${defaultMatch.id}`),
-			absoluteUrl: getAbsoluteLocalizedPath(locale, `posts/${defaultMatch.id}`),
-		};
-	}
-
 	if (locale === DEFAULT_LOCALE) {
+		const defaultMatch = posts.find(
+			(post) => post.data.locale === DEFAULT_LOCALE && getTranslationKey(post) === translationKey,
+		);
+		if (!defaultMatch) {
+			return {};
+		}
+
 		return {
-			relativeUrl: getLocalizedPath(locale, `posts/${postId}`),
-			absoluteUrl: getAbsoluteLocalizedPath(locale, `posts/${postId}`),
+			relativeUrl: getLocalizedPath(DEFAULT_LOCALE, `posts/${defaultMatch.id}`),
+			absoluteUrl: getAbsoluteLocalizedPath(DEFAULT_LOCALE, `posts/${defaultMatch.id}`),
 		};
 	}
 
@@ -170,7 +173,7 @@ export async function getLocaleAlternates(pathname: string, currentLocale = getL
 	}
 
 	const postId = segments.slice(1).join("/");
-	const posts = (await getCollection("posts")).filter(isVisiblePost);
+	const posts = await getVisiblePosts();
 	const currentPost =
 		posts.find((post) => post.id === postId && post.data.locale === currentLocale) ??
 		posts.find((post) => post.id === postId);
@@ -187,7 +190,7 @@ export async function getLocaleAlternates(pathname: string, currentLocale = getL
 
 	return LOCALES.map((locale) => ({
 		locale,
-		...getLocalizedPostAlternate(locale, postId, translationKey, posts),
+		...getLocalizedPostAlternate(locale, translationKey, posts),
 	}));
 }
 

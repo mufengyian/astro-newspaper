@@ -4,7 +4,7 @@ import PostFeed from "../../components/PostFeed.astro";
 import { siteConfig } from "../../config";
 import MainLayout from "../../layouts/MainLayout.astro";
 import { getDictionary } from "../../utils/i18n";
-import { getHomePermalink, getLocalizedPath, getRssPermalink } from "../../utils/routing";
+import { getHomePermalink, getLocalizedPath, getRssPagePermalink } from "../../utils/routing";
 import { getHomePosts, getPageItems, getSortedPosts, getTotalPages } from "../../utils/posts";
 
 const locale = "en" as const;
@@ -20,7 +20,7 @@ const pagePosts = getPageItems(homePosts, 1, siteConfig.postsPerPage);
 		<div class="home-info__inner">
 			<div class="home-info__title-row">
 				<h1>{siteConfig.title}</h1>
-				<a class="home-info__rss" href={getRssPermalink(locale)} aria-label="RSS Feed" title="RSS Feed">
+				<a class="home-info__rss" href={getRssPagePermalink(locale)} aria-label="RSS Feed" title="RSS Feed">
 					<svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
 						<path
 							d="M5 19a1 1 0 1 0 0-2a1 1 0 0 0 0 2Zm-1-8a9 9 0 0 1 9 9h2C15 14.477 9.523 9 3 9v2Zm0-7a16 16 0 0 1 16 16h2C22 10.059 13.941 2 4 2v2Z"
