@@ -26,11 +26,7 @@ const locale = resolveLocale(Astro.currentLocale);
 const dictionary = getDictionary(locale);
 const { post, headings, relatedPosts = [], newerPost, olderPost } = Astro.props;
 
-const absoluteUrl = hasPublicSiteUrl()
-	? new URL(getPostPermalink(locale, post), siteConfig.siteUrl).href
-	: undefined;
-const shareTitle = encodeURIComponent(post.data.title);
-const shareUrl = absoluteUrl ? encodeURIComponent(absoluteUrl) : undefined;
+
 const shouldRenderComments = post.data.comments && hasWalineServerUrl();
 const WalineComments = shouldRenderComments
 	? (await import("../components/WalineComments.astro")).default
@@ -91,33 +87,7 @@ const WalineComments = shouldRenderComments
 				))}
 			</ul>
 
-			{
-				shareUrl && (
-					<ul class="share-buttons">
-						<li>
-							<a
-								href={`https://twitter.com/intent/tweet?text=${shareTitle}&url=${shareUrl}`}
-								target="_blank"
-								rel="noreferrer"
-							>
-								{dictionary.post.shareOnX}
-							</a>
-						</li>
-						<li>
-							<a
-								href={`https://www.linkedin.com/sharing/share-offsite/?url=${shareUrl}`}
-								target="_blank"
-								rel="noreferrer"
-							>
-								{dictionary.post.shareOnLinkedIn}
-							</a>
-						</li>
-						<li>
-							<a href={`mailto:?subject=${shareTitle}&body=${shareUrl}`}>{dictionary.post.shareByEmail}</a>
-						</li>
-					</ul>
-				)
-			}
+			
 
 			{WalineComments && <WalineComments />}
 
