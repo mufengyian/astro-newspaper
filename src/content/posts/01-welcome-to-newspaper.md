@@ -4,6 +4,7 @@ excerpt: "Discover the design philosophy and core features that make Newspaper t
 publishDate: 2026-03-30
 locale: en
 featured: true
+cover: ../../assets/covers/craft-wave.svg
 translationKey: welcome-to-newspaper
 ---
 

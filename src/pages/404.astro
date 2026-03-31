@@ -3,7 +3,7 @@ import MainLayout from "../layouts/MainLayout.astro";
 import { getDictionary } from "../utils/i18n";
 import { getArchivePermalink, getHomePermalink } from "../utils/routing";
 
-const locale = "zh-cn" as const;
+const locale = Astro.currentLocale as "zh-cn" | "en";
 const dictionary = getDictionary(locale);
 ---
 
