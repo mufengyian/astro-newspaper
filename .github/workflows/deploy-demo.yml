@@ -20,6 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       PUBLIC_SITE_URL: https://mufengyian.github.io/astro-newspaper/
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
     steps:
       - name: Checkout
         uses: actions/checkout@v4
