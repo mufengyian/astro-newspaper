@@ -1,0 +1,143 @@
+---
+title: "MDX and Astro components: writing with local assets, code, and richer structure"
+excerpt: "This article demonstrates MDX, astro:assets, local image imports, syntax-highlighted code blocks, tables, footnotes, and collapsible content."
+publishDate: 2026-03-29
+updatedDate: 2026-03-30
+featured: true
+locale: en
+translationKey: mdx-and-astro-components
+category: MDX
+tags:
+  - MDX
+  - Astro Components
+  - astro-assets
+  - Code
+  - Images
+cover: ../../assets/covers/signal-grid.svg
+coverAlt: An abstract grid-based cover used to represent MDX and component-driven content.
+---
+
+import { Image } from "astro:assets";
+import signalGrid from "../../assets/covers/signal-grid.svg";
+import craftWave from "../../assets/covers/craft-wave.svg";
+
+MDX is most valuable when it solves a real writing need, not when it turns every article into a miniature component demo.
+
+## When to use Markdown and when to use MDX
+
+A practical split looks like this:
+
+- standard prose, lists, tables, and code blocks: use Markdown
+- imported Astro components, local assets, or richer inline composition: use MDX
+
+This theme supports both `.md` and `.mdx`, so the author can choose the lighter format by default and only opt into MDX when needed.
+
+## Importing Astro components directly inside content
+
+The image below is not a remote URL. It is a local asset rendered through Astro inside the article body:
+
+<Image src={signalGrid} alt="Signal Grid demo cover rendered from a local asset inside MDX." />
+
+You can import additional local assets in the same article:
+
+<Image src={craftWave} alt="Craft Wave cover rendered from a second local asset to demonstrate repeated image usage." />
+
+That makes MDX useful for:
+
+- local illustrations
+- component-driven callouts
+- structured examples that benefit from build-time rendering
+
+## Code blocks, highlighting, and copy buttons
+
+Technical content needs more than plain paragraphs, so this article includes several common block types.
+
+### Astro example
+
+```astro
+---
+import MainLayout from "../layouts/MainLayout.astro";
+import { getDictionary } from "../utils/i18n";
+
+const locale = "en" as const;
+const dictionary = getDictionary(locale);
+---
+
+<MainLayout title={dictionary.search.title}>
+  <h1>{dictionary.search.title}</h1>
+</MainLayout>
+```
+
+### TypeScript example
+
+```ts
+export function getTotalPages(totalItems: number, pageSize: number) {
+  return Math.max(1, Math.ceil(totalItems / pageSize));
+}
+```
+
+### Shell example
+
+```bash
+npm run check
+npm run build
+```
+
+The important part is not only that the code is highlighted, but that the demo proves the copy button remains practical on both desktop and touch devices.
+
+## GFM support matters in real documentation
+
+Because the project enables `remark-gfm`, the content layer can use task lists, tables, and footnotes naturally.
+
+### Table
+
+| Capability | Provided by | How it appears here |
+| --- | --- | --- |
+| MDX | `@astrojs/mdx` | Components and imported assets |
+| Tables / task lists | `remark-gfm` | Structured technical writing |
+| Syntax highlighting | Shiki | Multi-language code examples |
+| Image handling | `astro:assets` | Local assets in content |
+
+### Task list
+
+- [x] import local images
+- [x] render Astro components in content
+- [x] show multiple code block languages
+- [x] use tables
+- [x] use footnotes[^mdx-en]
+
+[^mdx-en]: Footnotes are especially useful for side remarks that should not interrupt the main flow of the article.
+
+## Collapsible content
+
+<details>
+  <summary>Open a more publishing-ready frontmatter example</summary>
+
+```yaml
+---
+title: A production-ready post
+excerpt: Explain the value clearly before the body starts.
+publishDate: 2026-03-29
+updatedDate: 2026-03-30
+locale: en
+translationKey: reusable-post-template
+category: Writing
+tags:
+  - Markdown
+  - MDX
+  - Workflow
+cover: ../../assets/covers/signal-grid.svg
+coverAlt: Cover image used in the frontmatter example
+comments: true
+---
+```
+
+</details>
+
+## Why this article matters to the demo
+
+If a theme claims to support Markdown and MDX but never shows imported components, local assets, or richer document structure, users still do not know whether it can carry real-world content.
+
+This article exists to make those capabilities concrete, not theoretical.
+
+Once you finish this one, [Publishing checklist and deploy flow](/en/posts/publishing-checklist-and-deploy/) and [Search, archive, and tags](/en/posts/search-archive-and-tags/) will make much more sense as part of a larger writing system.

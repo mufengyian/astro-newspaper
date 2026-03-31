@@ -1,0 +1,149 @@
+---
+title: "MDX 与 Astro 组件：把内容、图片和代码示例写进一篇文章"
+excerpt: "这篇文章专门用来演示 MDX、astro:assets、本地图片导入、代码块高亮、表格、脚注与可折叠内容。"
+publishDate: 2026-03-29
+updatedDate: 2026-03-30
+featured: true
+locale: zh-cn
+translationKey: mdx-and-astro-components
+category: MDX
+tags:
+  - MDX
+  - Astro Components
+  - astro-assets
+  - Code
+  - Images
+cover: ../../assets/covers/signal-grid.svg
+coverAlt: 一张由几何线条构成的抽象信号网格封面，用来代表 MDX 与组件能力。
+---
+
+import { Image } from "astro:assets";
+import signalGrid from "../../assets/covers/signal-grid.svg";
+import craftWave from "../../assets/covers/craft-wave.svg";
+
+MDX 的价值不是“让文章长得更像代码文件”，而是当你确实需要把 Astro 组件放进正文时，不用把内容拆成很别扭的短段落。
+
+## 什么时候该用 Markdown，什么时候该用 MDX
+
+经验上可以这样判断：
+
+- 纯文本写作、列表、表格、代码块：优先 Markdown
+- 需要导入本地图片、组件、交互片段：再用 MDX
+
+这套主题同时支持 `.md` 和 `.mdx`，所以你不需要为了“以后可能会用到组件”而把所有文章都写成 MDX。
+
+## 直接在正文里导入 Astro 组件
+
+下面这张图不是外链，而是通过 `astro:assets` 处理的本地资源：
+
+<Image src={signalGrid} alt="Signal Grid demo cover rendered from a local asset inside MDX." />
+
+同一篇 MDX 文章里可以继续导入别的资源：
+
+<Image src={craftWave} alt="Craft Wave cover rendered from a second local asset to demonstrate repeated image usage." />
+
+这意味着你可以在正文中自然地混排：
+
+- 本地图像
+- Astro 组件
+- 自定义提示框
+- 需要在构建期处理的静态资源
+
+## 代码块、高亮与复制按钮
+
+代码块是技术博客里最容易变成“演示不完整”的部分，所以这里直接放几种常见语言。
+
+### Astro 组件示例
+
+```astro
+---
+import MainLayout from "../layouts/MainLayout.astro";
+import { getDictionary } from "../utils/i18n";
+
+const locale = "zh-cn" as const;
+const dictionary = getDictionary(locale);
+---
+
+<MainLayout title={dictionary.search.title}>
+  <h1>{dictionary.search.title}</h1>
+</MainLayout>
+```
+
+### TypeScript 示例
+
+```ts
+export function getTotalPages(totalItems: number, pageSize: number) {
+  return Math.max(1, Math.ceil(totalItems / pageSize));
+}
+```
+
+### Shell 示例
+
+```bash
+npm run check
+npm run build
+```
+
+如果你把鼠标移到代码块上，应该能看到复制按钮；在移动端则会直接显示，避免“触屏设备没有 hover”导致无法复制。
+
+## GFM 扩展也要一起展示
+
+这个仓库启用了 `remark-gfm`，所以除了普通 Markdown，还能稳定使用任务清单、表格和脚注。
+
+### 表格
+
+| 能力 | 由谁提供 | 文章里怎么体现 |
+| --- | --- | --- |
+| MDX | `@astrojs/mdx` | 可以导入组件与图片 |
+| 表格 / 任务清单 | `remark-gfm` | 适合写清单、对比与规范 |
+| 代码高亮 | Shiki | 支持多语言代码展示 |
+| 图片优化 | `astro:assets` | 本地图片构建期处理 |
+
+### 任务清单
+
+- [x] 导入本地图片
+- [x] 渲染 Astro 组件
+- [x] 展示多种代码块
+- [x] 使用表格
+- [x] 使用脚注[^mdx-note]
+
+[^mdx-note]: 这类脚注非常适合技术写作里放补充说明，而不打断正文节奏。
+
+## 可折叠内容
+
+<details>
+  <summary>点开查看一个更偏实践向的 frontmatter 模板</summary>
+
+```yaml
+---
+title: 一篇真正可发布的文章
+excerpt: 先用摘要交代价值，再让正文展开。
+publishDate: 2026-03-29
+updatedDate: 2026-03-30
+locale: zh-cn
+translationKey: reusable-post-template
+category: 写作
+tags:
+  - Markdown
+  - MDX
+  - Workflow
+cover: ../../assets/covers/signal-grid.svg
+coverAlt: 用于演示 frontmatter 的封面图
+comments: true
+---
+```
+
+</details>
+
+## 这篇文章为什么对 demo 很关键
+
+如果一个主题号称“支持 Markdown 与 MDX”，但 demo 内容始终停留在纯文字段落，那用户并不知道它在真实写作里到底能不能承载：
+
+- 图文混排
+- 组件导入
+- 多语言代码展示
+- 技术写作常见的 GFM 扩展
+
+所以这篇文章的任务不是谈理念，而是把这些能力真正放进一篇可读、可构建、可搜索的内容里。
+
+读完这一篇之后，你再去看 [发布清单与部署路径](/posts/fa-bu-qing-dan-yu-bu-shu/) 或 [搜索、归档与标签如何协同工作](/posts/sou-suo-gui-dang-yu-biao-qian/)，会更容易理解为什么这个主题把“内容结构”放在视觉之前。
