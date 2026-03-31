@@ -1,6 +1,6 @@
 # i18n
 
-[简体中文](../zh-cn/i18n.md) · [Back to Wiki Home](./Home.md)
+[简体中文](i18n-zh-cn) · [Back to Wiki Home](Home-en)
 
 ## Built-in locales
 

@@ -250,36 +250,7 @@ ol {
 	box-shadow: var(--glass-shadow);
 }
 
-button#theme-toggle {
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	width: 18px;
-	height: 18px;
-	margin: 0;
-	cursor: pointer;
-	border-radius: 0;
-	background: transparent;
-	box-shadow: none;
-	border: 0;
-	padding: 0;
-}
 
-button#theme-toggle svg {
-	display: none;
-}
-
-button#theme-toggle #moon {
-	display: block;
-}
-
-[data-theme-preference="dark"] button#theme-toggle #sun {
-	display: block;
-}
-
-[data-theme-preference="dark"] button#theme-toggle #moon {
-	display: none;
-}
 
 #menu {
 	list-style: none;

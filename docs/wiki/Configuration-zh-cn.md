@@ -1,6 +1,6 @@
 # 配置说明
 
-[English](../en/Configuration.md) · [返回 Wiki 首页](./Home.md)
+[English](Configuration-en) · [返回 Wiki 首页](Home)
 
 ## 配置入口
 

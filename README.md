@@ -1,114 +1,87 @@
-# newspaper
+# Newspaper - Astro Blog Theme
 
-[English README](./README.en.md) | [中文文档](./docs/wiki/zh-cn/Home.md) | [English Wiki](https://github.com/mufengyian/astro-newspaper/wiki)
+`newspaper` is a minimal, accessible, and SEO-friendly Astro blog theme designed for long-form writing. It is an ideal starter for personal blogs, technical notes, and project journals, with built-in support for bilingual content (Chinese and English).
 
-`newspaper` 是一个面向长期写作的 Astro 博客主题 starter，适合个人博客、技术笔记、项目日志与中英文双语内容。它延续了 [Paper](https://github.com/nanxiaobei/hugo-paper) 与 [PaperMod](https://github.com/adityatelange/hugo-PaperMod) 的阅读气质，同时尽量直接使用 Astro 官方能力来组织主题结构。
+This theme extends the clean, readable aesthetic of themes like Paper and PaperMod, while leveraging Astro's native features for a modern, performant, and maintainable structure.
 
-## 演示
+## Features
 
-- 演示站：<https://mufengyian.github.io/astro-newspaper/>
-- 演示分支：[`demo`](https://github.com/mufengyian/astro-newspaper/tree/demo)
+- **Bilingual Structure**: Pre-configured for `zh-cn` and `en` content.
+- **Content-First**: Built with `astro:content` for robust content management.
+- **Markdown & MDX**: Write in standard Markdown or use Astro components with MDX.
+- **Responsive Images**: Automatic image optimization with `astro:assets` and `sharp`.
+- **Core Blog Features**: Homepage, pagination, archive, tags, search, about page, 404, and RSS feeds.
+- **Enhanced Reading Experience**: Table of contents, reading progress bar, code block copy button, back-to-top link, and view transitions.
+- **Theming**: Light and dark mode support.
+- **Comments**: Optional integration with Waline for comments.
 
-演示站通过 GitHub Pages 自动部署，部署来源为 `demo` 分支上的 GitHub Actions 工作流。
+## Live Demo
 
-## 功能
+- **Demo Site**: [https://mufengyian.github.io/astro-newspaper/](https://mufengyian.github.io/astro-newspaper/)
+- **GitHub Wiki (Full Docs)**: [https://github.com/mufengyian/astro-newspaper/wiki](https://github.com/mufengyian/astro-newspaper/wiki)
 
-- `zh-cn` / `en` 双语结构
-- `astro:content` 内容集合
-- Markdown 与 MDX
-- `astro:assets` + `sharp` 本地响应式图片
-- 首页、分页、归档、标签、搜索、关于、404、RSS
-- 目录、阅读进度、代码复制、回到顶部、视图过渡
-- 亮色 / 暗色主题
-- 可选 Waline 评论
+## Quick Start
 
-## 快速开始
-
-环境要求：
-
+**Prerequisites:**
 - Node.js `>= 22.12.0`
 - npm `>= 10`
 
-安装依赖：
+**1. Get the Project**
+
+Clone the repository or use it as a template on GitHub:
+
+```bash
+git clone https://github.com/mufengyian/astro-newspaper.git your-blog-name
+cd your-blog-name
+```
+
+**2. Install Dependencies**
 
 ```bash
 npm install
 ```
 
-复制环境变量：
+**3. Configure Environment**
+
+Copy the example environment file and update it with your site's URL.
 
 ```bash
 cp .env.example .env
 ```
 
-本地开发：
+**File: `.env`**
+```
+PUBLIC_SITE_URL="https://your-domain.com"
+PUBLIC_WALINE_SERVER_URL="https://your-waline-server.vercel.app" # Optional
+```
+
+**4. Run the Development Server**
 
 ```bash
 npm run dev
 ```
 
-常用命令：
+Your site is now available at `http://localhost:4321`.
 
-| 命令 | 作用 |
-| --- | --- |
-| `npm run dev` | 启动开发服务器 |
-| `npm run check` | 运行 Astro 类型检查 |
-| `npm run build` | 生成生产构建 |
-| `npm run preview` | 本地预览生产构建 |
+## Project Customization
 
-## 需要先改的地方
+Key configuration files to get you started:
 
-- [`src/config.ts`](./src/config.ts)：站点标题、作者、字体、分页、社交链接
-- [`src/utils/i18n.ts`](./src/utils/i18n.ts)：中英文站点文案
-- [`.env.example`](./.env.example)：公开站点地址、Waline 服务端地址
-- [`src/content/posts`](./src/content/posts)：示例文章
-- [`src/assets/covers`](./src/assets/covers)：示例封面
+- **`src/config.ts`**: Site title, author name, typography, pagination settings, and social media links.
+- **`src/utils/i18n.ts`**: UI text for both Chinese and English versions of the site.
+- **`src/content/posts/`**: Directory for your blog posts. Feel free to remove the sample posts.
+- **`src/assets/covers/`**: Directory for post cover images.
 
-## 环境变量
+For more detailed guides on configuration, content creation, MDX, images, i18n, and deployment, please refer to the [official project Wiki](https://github.com/mufengyian/astro-newspaper/wiki).
 
-```bash
-PUBLIC_SITE_URL="https://your-domain.com"
-PUBLIC_WALINE_SERVER_URL="https://your-waline-server.vercel.app"
-```
+## Contributing
 
-说明：
+Contributions are welcome! If you find a bug or have a suggestion for improvement, please open an issue or submit a pull request. Please ensure your code follows the existing style and that all tests pass.
 
-- 未配置 `PUBLIC_SITE_URL` 时，主题不会输出生产 SEO 元数据，也不会生成 RSS 与 sitemap。
-- 未配置 `PUBLIC_WALINE_SERVER_URL` 时，文章页不显示评论区。
+## License
 
-## 写作
+This project is licensed under the **MIT License**. See the [LICENSE](./LICENSE) file for details.
 
-文章放在 [`src/content/posts`](./src/content/posts) 下，支持 `.md` 和 `.mdx`。
-
-最小 frontmatter 示例：
-
-```md
----
-title: Hello Astro
-excerpt: 用一篇文章确认主题已经能正常写作。
-publishDate: 2026-03-31
-locale: zh-cn
-translationKey: hello-astro
 ---
 
-这是一篇新的文章。
-```
-
-更完整的配置、MDX、图片、i18n、评论与部署教程，请直接看 Wiki。
-
-## 文档
-
-- 中文文档：[`docs/wiki/zh-cn`](./docs/wiki/zh-cn)
-- English Wiki：<https://github.com/mufengyian/astro-newspaper/wiki>
-- 仓库内文档源：[`docs/wiki/en`](./docs/wiki/en)
-- Astro 官方文档：<https://docs.astro.build/zh-cn/>
-- Astro Themes：<https://astro.build/themes/>
-
-## 许可证与致谢
-
-- License：[MIT](./LICENSE)
-- Inspirations:
-  - [Paper](https://github.com/nanxiaobei/hugo-paper)
-  - [PaperMod](https://github.com/adityatelange/hugo-PaperMod)
-  - [astro-paper](https://github.com/satnaing/astro-paper)
-  - [fuwari](https://github.com/saicaca/fuwari)
+*This theme is inspired by [Paper](https://github.com/nanxiaobei/hugo-paper), [PaperMod](https://github.com/adityatelange/hugo-PaperMod), and [astro-paper](https://github.com/satnaing/astro-paper).*

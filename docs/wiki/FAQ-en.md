@@ -1,6 +1,6 @@
 # FAQ
 
-[简体中文](../zh-cn/FAQ.md) · [Back to Wiki Home](./Home.md)
+[简体中文](FAQ-zh-cn) · [Back to Wiki Home](Home-en)
 
 ## Is this an installable package?
 

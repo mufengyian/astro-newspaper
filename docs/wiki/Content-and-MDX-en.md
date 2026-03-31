@@ -1,6 +1,6 @@
 # Content and MDX
 
-[简体中文](../zh-cn/Content-and-MDX.md) · [Back to Wiki Home](./Home.md)
+[简体中文](Content-and-MDX-zh-cn) · [Back to Wiki Home](Home-en)
 
 ## Content directory
 

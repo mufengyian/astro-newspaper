@@ -1,6 +1,6 @@
 # Quick Start
 
-[简体中文](../zh-cn/Quick-Start.md) · [Back to Wiki Home](./Home.md)
+[简体中文](Quick-Start-zh-cn) · [Back to Wiki Home](Home-en)
 
 ## Requirements
 

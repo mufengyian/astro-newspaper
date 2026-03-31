@@ -1,6 +1,6 @@
 # Images and astro:assets
 
-[简体中文](../zh-cn/Images-and-Assets.md) · [Back to Wiki Home](./Home.md)
+[简体中文](Images-and-Assets-zh-cn) · [Back to Wiki Home](Home-en)
 
 ## Why the theme uses `astro:assets`
 

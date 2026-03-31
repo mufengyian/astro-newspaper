@@ -1,6 +1,6 @@
 # FAQ
 
-[English](../en/FAQ.md) · [返回 Wiki 首页](./Home.md)
+[English](FAQ-en) · [返回 Wiki 首页](Home)
 
 ## 这是一个安装型主题包吗？
 

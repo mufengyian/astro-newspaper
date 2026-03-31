@@ -1,6 +1,6 @@
 # i18n
 
-[English](../en/i18n.md) · [返回 Wiki 首页](./Home.md)
+[English](i18n-en) · [返回 Wiki 首页](Home)
 
 ## 当前内置语言
 

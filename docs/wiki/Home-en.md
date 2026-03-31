@@ -1,18 +1,18 @@
 # newspaper Wiki
 
-[简体中文](../zh-cn/Home.md) · [Back to README](../../../README.en.md)
+[简体中文](Home-zh-cn) · [Back to README](../../../README.en.md)
 
 Welcome to the `newspaper` wiki. This is the extended documentation layer for the theme: more detailed than the README, but still focused on real setup and publishing work instead of implementation trivia.
 
 ## Start here
 
-- [Quick Start](./Quick-Start.md)
-- [Configuration](./Configuration.md)
-- [Content and MDX](./Content-and-MDX.md)
-- [Images and astro:assets](./Images-and-Assets.md)
-- [i18n](./i18n.md)
-- [Comments and Deployment](./Comments-and-Deployment.md)
-- [FAQ](./FAQ.md)
+- [Quick Start](Quick-Start-en)
+- [Configuration](Configuration-en)
+- [Content and MDX](Content-and-MDX-en)
+- [Images and astro:assets](Images-and-Assets-en)
+- [i18n](i18n-en)
+- [Comments and Deployment](Comments-and-Deployment-en)
+- [FAQ](FAQ-en)
 
 ## Theme positioning
 

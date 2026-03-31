@@ -1,6 +1,6 @@
 # 快速开始
 
-[English](../en/Quick-Start.md) · [返回 Wiki 首页](./Home.md)
+[English](Quick-Start-en) · [返回 Wiki 首页](Home)
 
 ## 环境要求
 

@@ -1,6 +1,6 @@
 # Configuration
 
-[简体中文](../zh-cn/Configuration.md) · [Back to Wiki Home](./Home.md)
+[简体中文](Configuration-zh-cn) · [Back to Wiki Home](Home-en)
 
 ## Main configuration entry points
 

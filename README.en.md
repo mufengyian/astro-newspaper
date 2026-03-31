@@ -1,6 +1,6 @@
 # newspaper
 
-[简体中文 README](./README.md) | [Chinese Docs](./docs/wiki/zh-cn/Home.md) | [English Wiki](https://github.com/mufengyian/astro-newspaper/wiki)
+[简体中文 README](./README.md) | [Full Chinese Docs](https://github.com/mufengyian/astro-newspaper/wiki) | [English Wiki](https://github.com/mufengyian/astro-newspaper/wiki)
 
 `newspaper` is an Astro blog theme starter for long-form publishing, personal blogs, technical writing, project journals, and bilingual content. It borrows the calm reading atmosphere of [Paper](https://github.com/nanxiaobei/hugo-paper) and [PaperMod](https://github.com/adityatelange/hugo-PaperMod) while staying close to Astro’s native feature set.
 
@@ -99,7 +99,7 @@ For full guides on configuration, MDX, images, i18n, comments, and deployment, g
 ## Docs
 
 - GitHub Wiki: <https://github.com/mufengyian/astro-newspaper/wiki>
-- In-repo docs source: [`docs/wiki/zh-cn`](./docs/wiki/zh-cn) / [`docs/wiki/en`](./docs/wiki/en)
+
 - Astro docs: <https://docs.astro.build/en/>
 - Astro Themes: <https://astro.build/themes/>
 

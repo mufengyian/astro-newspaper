@@ -1,6 +1,6 @@
 # 图片与 astro:assets
 
-[English](../en/Images-and-Assets.md) · [返回 Wiki 首页](./Home.md)
+[English](Images-and-Assets-en) · [返回 Wiki 首页](Home)
 
 ## 为什么主题使用 `astro:assets`
 

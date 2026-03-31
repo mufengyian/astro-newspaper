@@ -1,6 +1,6 @@
 # Comments and Deployment
 
-[简体中文](../zh-cn/Comments-and-Deployment.md) · [Back to Wiki Home](./Home.md)
+[简体中文](Comments-and-Deployment-zh-cn) · [Back to Wiki Home](Home-en)
 
 ## Waline comments
 

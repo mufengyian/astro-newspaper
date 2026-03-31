@@ -1,18 +1,18 @@
 # newspaper Wiki
 
-[English](../en/Home.md) · [返回 README](../../../README.md)
+[English](Home-en) · [返回 README](../../../README.md)
 
 欢迎来到 `newspaper` 的中文 Wiki。这里是 README 的延伸版文档，适合在你已经跑通项目之后，继续查具体配置、写作规范和部署细节。
 
 ## 从哪里开始
 
-- [快速开始](./Quick-Start.md)
-- [配置说明](./Configuration.md)
-- [内容与 MDX](./Content-and-MDX.md)
-- [图片与 astro:assets](./Images-and-Assets.md)
-- [i18n](./i18n.md)
-- [评论与部署](./Comments-and-Deployment.md)
-- [FAQ](./FAQ.md)
+- [快速开始](Quick-Start-zh-cn)
+- [配置说明](Configuration-zh-cn)
+- [内容与 MDX](Content-and-MDX-zh-cn)
+- [图片与 astro:assets](Images-and-Assets-zh-cn)
+- [i18n](i18n-zh-cn)
+- [评论与部署](Comments-and-Deployment-zh-cn)
+- [FAQ](FAQ-zh-cn)
 
 ## 主题定位
 

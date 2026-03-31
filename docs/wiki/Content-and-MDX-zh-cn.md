@@ -1,6 +1,6 @@
 # 内容与 MDX
 
-[English](../en/Content-and-MDX.md) · [返回 Wiki 首页](./Home.md)
+[English](Content-and-MDX-en) · [返回 Wiki 首页](Home)
 
 ## 内容目录
 

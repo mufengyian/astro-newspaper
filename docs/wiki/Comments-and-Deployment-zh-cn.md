@@ -1,6 +1,6 @@
 # 评论与部署
 
-[English](../en/Comments-and-Deployment.md) · [返回 Wiki 首页](./Home.md)
+[English](Comments-and-Deployment-en) · [返回 Wiki 首页](Home)
 
 ## Waline 评论
 
