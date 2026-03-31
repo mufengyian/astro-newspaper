@@ -28,11 +28,24 @@ jobs:
           # Fetch the main branch
           git fetch origin main
 
+          # Remove tracked files that only exist in demo.
+          # Keep the demo post directory intact so the preview site can stay content-rich.
+          while read -r file; do
+            if [[ -n "$file" ]]; then
+              git rm -f --ignore-unmatch "$file"
+            fi
+          done < <(
+            comm -23 \
+              <(git ls-tree -r --name-only HEAD | sort) \
+              <(git ls-tree -r --name-only origin/main | sort) \
+              | grep -v '^src/content/posts/' || true
+          )
+
           # Overwrite the entire working directory with the content from the main branch
           git checkout origin/main -- .
 
           # Restore the demo-specific content that should not be overwritten
-          git restore src/content/posts
+          git restore --source=HEAD --staged --worktree src/content/posts
           # git restore src/config.ts # Uncomment this line if you also have a demo-specific config
 
       - name: Commit and push changes
