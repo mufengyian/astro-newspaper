@@ -101,6 +101,32 @@
 	padding-bottom: 28px;
 }
 
+.post-entry--compact .entry-header,
+.post-entry--compact .entry-content,
+.post-entry--compact .entry-footer {
+	padding-inline: 22px;
+}
+
+.post-entry--compact .entry-header {
+	padding-top: 22px;
+}
+
+.post-entry--compact .entry-header h2,
+.post-entry--compact .entry-header h3 {
+	font-size: 1.8rem;
+	line-height: 1.24;
+}
+
+.post-entry--compact .entry-content {
+	margin: 8px 0 12px;
+	font-size: 0.96rem;
+	-webkit-line-clamp: 2;
+}
+
+.post-entry--compact .entry-footer {
+	padding-bottom: 22px;
+}
+
 .entry-link {
 	position: absolute;
 	inset: 0;
