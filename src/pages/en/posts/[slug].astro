@@ -1,9 +1,29 @@
 ---
 import type { GetStaticPaths } from "astro";
-import RenderedPostPage from "../../../components/RenderedPostPage.astro";
-import { getPostStaticPaths } from "../../../utils/page-data";
+import { getCollection, render } from "astro:content";
+import PostLayout from "../../../layouts/PostLayout.astro";
+import { getAdjacentPosts, getRelatedPosts, getSortedPosts } from "../../../utils/posts";
 
-export const getStaticPaths = (async () => getPostStaticPaths("en")) satisfies GetStaticPaths;
+export const getStaticPaths = (async () => {
+	const posts = getSortedPosts(await getCollection("posts"), "en");
+	return posts.map((post) => ({
+		params: { slug: post.id },
+		props: { post, posts },
+	}));
+}) satisfies GetStaticPaths;
+
+const { post, posts } = Astro.props;
+const { Content, headings } = await render(post);
+const relatedPosts = getRelatedPosts(post, posts);
+const { newerPost, olderPost } = getAdjacentPosts(post, posts);
 ---
 
-<RenderedPostPage post={Astro.props.post} posts={Astro.props.posts} />
+<PostLayout
+	post={post}
+	headings={headings}
+	relatedPosts={relatedPosts}
+	newerPost={newerPost}
+	olderPost={olderPost}
+>
+	<Content />
+</PostLayout>

@@ -1,16 +1,29 @@
 ---
-import PageHeader from "../../components/PageHeader.astro";
-import TagCloud from "../../components/TagCloud.astro";
+import { getCollection } from "astro:content";
 import MainLayout from "../../layouts/MainLayout.astro";
 import { getDictionary } from "../../utils/i18n";
-import { getTagIndexPageData } from "../../utils/page-data";
+import { getSortedPosts, getTagIndex, getTagPermalink } from "../../utils/posts";
 
 const locale = "zh-cn" as const;
 const dictionary = getDictionary(locale);
-const { tagIndex } = await getTagIndexPageData(locale);
+const posts = getSortedPosts(await getCollection("posts"), locale);
+const tagIndex = getTagIndex(posts);
 ---
 
 <MainLayout title={dictionary.tags.title} description={dictionary.tags.description} bodyClass="list">
-	<PageHeader title={dictionary.tags.title} description={dictionary.tags.description} />
-	<TagCloud locale={locale} tags={tagIndex} />
+	<header class="page-header">
+		<h1>{dictionary.tags.title}</h1>
+		<p>{dictionary.tags.description}</p>
+	</header>
+
+	<ul class="terms-tags">
+		{tagIndex.map((tag) => (
+			<li>
+				<a href={getTagPermalink(locale, tag.slug)} data-astro-prefetch="hover">
+					<span>#{tag.name}</span>
+					<sup>{tag.count}</sup>
+				</a>
+			</li>
+		))}
+	</ul>
 </MainLayout>

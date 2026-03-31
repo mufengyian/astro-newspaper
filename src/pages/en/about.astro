@@ -1,6 +1,6 @@
 ---
-import PageHeader from "../../components/PageHeader.astro";
 import MainLayout from "../../layouts/MainLayout.astro";
+import { siteConfig } from "../../config";
 import { getDictionary } from "../../utils/i18n";
 
 const locale = "en" as const;
@@ -9,11 +9,10 @@ const dictionary = getDictionary(locale);
 
 <MainLayout title={dictionary.about.title} description={dictionary.about.description}>
 	<article class="post-single page-single">
-		<PageHeader
-			title={`${dictionary.about.title} ${dictionary.site.tagline}`}
-			description={dictionary.about.intro}
-			align="left"
-		/>
+		<header class="post-header">
+			<h1 class="post-title">{dictionary.about.title} {siteConfig.title}</h1>
+			<div class="post-description">{dictionary.about.intro}</div>
+		</header>
 
 		<div class="post-content">
 			<p>{dictionary.about.body}</p>
@@ -30,7 +29,7 @@ const dictionary = getDictionary(locale);
 
 			<h2>{dictionary.about.capabilitiesTitle}</h2>
 			<ul>
-				{dictionary.site.capabilities.map((capability) => (
+				{siteConfig.capabilities.map((capability) => (
 					<li>{capability}</li>
 				))}
 			</ul>

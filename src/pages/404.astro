@@ -1,42 +1,80 @@
 ---
-import PageHeader from "../components/PageHeader.astro";
-import MainLayout from "../layouts/MainLayout.astro";
-import { getDictionary, resolveLocale } from "../utils/i18n";
-import { getArchivePermalink, getHomePermalink } from "../utils/routing";
+import { siteConfig } from "../config";
+import "../styles/global.css";
+import { withBase } from "../utils/routing";
 
-const locale = resolveLocale(Astro.currentLocale);
-const dictionary = getDictionary(locale);
-const redirectTarget = getHomePermalink(locale);
+const fallbackHref = withBase();
+
+const notFoundStyles = String.raw`
+	.not-found-body {
+		display: grid;
+		place-items: center;
+		min-height: 100vh;
+		margin: 0;
+		background:
+			radial-gradient(circle at top, color-mix(in srgb, var(--accent) 12%, transparent), transparent 42%),
+			var(--theme);
+	}
+
+	.not-found-shell {
+		display: grid;
+		justify-items: center;
+		gap: 10px;
+		padding: 24px;
+		text-align: center;
+	}
+
+	.not-found-code {
+		margin: 0;
+		font-family: var(--font-heading);
+		font-size: clamp(88px, 18vw, 180px);
+		line-height: 0.9;
+		letter-spacing: -0.08em;
+	}
+
+	body.font-preset-wenkai .not-found-code {
+		letter-spacing: -0.02em;
+	}
+
+	.not-found-tip {
+		margin: 0;
+		color: var(--secondary);
+		font-size: 0.95rem;
+	}
+`;
+
+const backScript = String.raw`(() => {
+	const fallbackHref = document.documentElement.dataset.fallbackHref || "/";
+
+	window.setTimeout(() => {
+		if (window.history.length > 1 && document.referrer) {
+			window.history.back();
+			return;
+		}
+
+		window.location.replace(fallbackHref);
+	}, 2000);
+})();`;
 ---
 
-<MainLayout
-	title="404"
-	description={dictionary.notFound.description}
-	bodyClass="list not-found-page"
->
-	<meta slot="head" name="robots" content="noindex, nofollow" />
-	<script slot="head" is:inline define:vars={{ redirectTarget }}>
-		window.setTimeout(() => {
-			window.location.replace(redirectTarget);
-		}, 5000);
-	</script>
+<!doctype html>
+<html lang="zh-CN" data-fallback-href={fallbackHref}>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta name="robots" content="noindex, nofollow" />
+		<meta name="description" content="404" />
+		<link rel="icon" type="image/svg+xml" href={withBase("favicon.svg")} />
+		<link rel="icon" href={withBase("favicon.ico")} />
+		<title>404 | {siteConfig.title}</title>
+		<style is:inline set:html={notFoundStyles}></style>
+		<script is:inline set:html={backScript}></script>
+	</head>
 
-	<section class="not-found surface-card">
-		<p class="not-found__code">404</p>
-		<PageHeader
-			title={dictionary.notFound.title}
-			description={dictionary.notFound.body}
-			align="center"
-			compact
-		/>
-		<p class="not-found__hint">{dictionary.notFound.redirectNotice}</p>
-		<div class="button-row button-row--center">
-			<a class="button button--primary" href={getHomePermalink(locale)} data-astro-prefetch="hover">
-				{dictionary.notFound.goHome}
-			</a>
-			<a class="button" href={getArchivePermalink(locale)} data-astro-prefetch="hover">
-				{dictionary.notFound.viewArchive}
-			</a>
-		</div>
-	</section>
-</MainLayout>
+	<body class:list={[`font-preset-${siteConfig.typography.preset}`, "not-found-body"]}>
+		<main class="not-found-shell" aria-label="Not found">
+			<h1 class="not-found-code">404</h1>
+			<p class="not-found-tip">2 秒后返回上一个页面</p>
+		</main>
+	</body>
+</html>
