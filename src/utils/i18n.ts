@@ -41,19 +41,9 @@ type Dictionary = {
 		description: string;
 		browseArchive: string;
 		startSearch: string;
-		readLatest: string;
 		postCount: (count: number) => string;
-		tagCount: (count: number) => string;
-		capabilityCount: (count: number) => string;
 		feedTitle: string;
 		feedDescription: string;
-		latestLabel: string;
-		popularTags: string;
-		stats: {
-			posts: string;
-			tags: string;
-			capabilities: string;
-		};
 	};
 	archive: {
 		title: string;
@@ -78,14 +68,6 @@ type Dictionary = {
 		emptyDescription: string;
 		unavailableTitle: string;
 		unavailableDescription: string;
-		clear: string;
-		shortcutFocus: string;
-		shortcutClear: string;
-		discoverTitle: string;
-		discoverDescription: (count: number) => string;
-		browseArchive: string;
-		browseTags: string;
-		popularTags: string;
 	};
 	about: {
 		title: string;
@@ -165,19 +147,9 @@ const dictionaries: Record<SiteLocale, Dictionary> = {
 				"主题延续 PaperMod 的清爽层次，同时吸收 astro-paper 与 fuwari 的轻盈感，把阅读、检索、多语言和长期维护放在更靠前的位置。",
 			browseArchive: "浏览归档",
 			startSearch: "开始搜索",
-			readLatest: "阅读最新文章",
 			postCount: (count) => `当前共 ${count} 篇文章`,
-			tagCount: (count) => `共 ${count} 个标签`,
-			capabilityCount: (count) => `内置 ${count} 项能力`,
 			feedTitle: "最新文章",
 			feedDescription: "按时间顺序浏览内容，首页支持连续加载，归档与标签页则适合回看。",
-			latestLabel: "最近更新",
-			popularTags: "热门标签",
-			stats: {
-				posts: "文章",
-				tags: "标签",
-				capabilities: "能力",
-			},
 		},
 		archive: {
 			title: "归档",
@@ -202,14 +174,6 @@ const dictionaries: Record<SiteLocale, Dictionary> = {
 			emptyDescription: "试试更短的关键词，或者换一个标签名。",
 			unavailableTitle: "索引暂时不可用。",
 			unavailableDescription: "你仍然可以通过归档和标签页继续浏览内容。",
-			clear: "清空",
-			shortcutFocus: "按 / 快速聚焦搜索框",
-			shortcutClear: "按 Esc 清空或退出",
-			discoverTitle: "从这里开始找内容",
-			discoverDescription: (count) => `当前已收录 ${count} 篇文章，也可以先从归档或热门标签进入。`,
-			browseArchive: "浏览归档",
-			browseTags: "查看标签",
-			popularTags: "热门标签",
 		},
 		about: {
 			title: "关于",
@@ -301,20 +265,10 @@ const dictionaries: Record<SiteLocale, Dictionary> = {
 				"newspaper takes the clarity of PaperMod, blends in the softness of astro-paper and fuwari, and focuses the whole theme around reading, indexing, multilingual support, and long-term maintainability.",
 			browseArchive: "Browse archive",
 			startSearch: "Search posts",
-			readLatest: "Read the latest post",
 			postCount: (count) => `${count} published posts`,
-			tagCount: (count) => `${count} topics`,
-			capabilityCount: (count) => `${count} built-in features`,
 			feedTitle: "Latest writing",
 			feedDescription:
 				"Follow the newest posts here, then use archive, tags, and search when you want to explore by structure.",
-			latestLabel: "Latest update",
-			popularTags: "Popular tags",
-			stats: {
-				posts: "Posts",
-				tags: "Tags",
-				capabilities: "Features",
-			},
 		},
 		archive: {
 			title: "Archive",
@@ -339,14 +293,6 @@ const dictionaries: Record<SiteLocale, Dictionary> = {
 			emptyDescription: "Try a shorter phrase, or search using a tag name instead.",
 			unavailableTitle: "The index is temporarily unavailable.",
 			unavailableDescription: "You can still browse through the archive or tag pages.",
-			clear: "Clear",
-			shortcutFocus: "Press / to focus the search field",
-			shortcutClear: "Press Esc to clear or exit",
-			discoverTitle: "Start from a topic or browse route",
-			discoverDescription: (count) => `${count} posts are indexed. You can search directly or jump in through archive and tags.`,
-			browseArchive: "Open archive",
-			browseTags: "Browse tags",
-			popularTags: "Popular tags",
 		},
 		about: {
 			title: "About",
