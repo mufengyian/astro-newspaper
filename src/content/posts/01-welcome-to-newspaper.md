@@ -4,6 +4,7 @@ excerpt: "Discover the design philosophy and core features that make Newspaper t
 publishDate: 2026-03-30
 locale: en
 featured: true
+translationKey: welcome-to-newspaper
 ---
 
 Newspaper is an Astro blog theme built for writers, publishers, and content creators. It combines a clean, readable design with a powerful set of features to help you create a beautiful and performant site.
