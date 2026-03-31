@@ -1,4 +1,4 @@
-name: Sync main to demo
+name: Sync Theme Updates to Demo
 
 on:
   push:
@@ -13,13 +13,35 @@ jobs:
   sync:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout demo branch
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          ref: demo
 
-      - name: Push to demo branch
+      - name: Configure Git
         run: |
-          git config user.name github-actions
-          git config user.email github-actions@github.com
-          git push --force origin main:demo
+          git config user.name 'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+
+      - name: Sync from main branch
+        run: |
+          # Fetch the main branch
+          git fetch origin main
+
+          # Overwrite the entire working directory with the content from the main branch
+          git checkout origin/main -- .
+
+          # Restore the demo-specific content that should not be overwritten
+          git restore src/content/posts
+          # git restore src/config.ts # Uncomment this line if you also have a demo-specific config
+
+      - name: Commit and push changes
+        run: |
+          # Check if there are any changes to commit
+          if [[ -z $(git status -s) ]]; then
+            echo "No theme changes to sync."
+          else
+            git add .
+            git commit -m "chore: Sync theme updates from main"
+            git push origin demo
+          fi
