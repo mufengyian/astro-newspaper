@@ -1,17 +1,25 @@
 ---
-import { resolveLocale } from "../utils/i18n";
+import { getDictionary, resolveLocale, type SiteLocale } from "../utils/i18n";
 import { getTagPermalink } from "../utils/posts";
 
 interface Props {
 	tag: string;
+	locale?: SiteLocale;
+	slug?: string;
 	count?: number;
 }
 
-const locale = resolveLocale(Astro.currentLocale);
-const { tag, count } = Astro.props;
+const currentLocale = resolveLocale(Astro.currentLocale);
+const { tag, count, slug, locale = currentLocale } = Astro.props;
+const dictionary = getDictionary(locale);
 ---
 
-<a class="tag-pill" href={getTagPermalink(locale, tag)} data-astro-prefetch="hover">
+<a
+	class="tag-pill"
+	href={getTagPermalink(locale, slug ?? tag)}
+	data-astro-prefetch="hover"
+	aria-label={dictionary.common.openTag(tag)}
+>
 	<span>#{tag}</span>
 	{typeof count === "number" && <span class="tag-pill__count">{count}</span>}
 </a>

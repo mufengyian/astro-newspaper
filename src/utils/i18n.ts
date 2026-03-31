@@ -11,11 +11,13 @@ type Principle = {
 type Dictionary = {
 	langName: string;
 	langSwitchLabel: string;
+	localeLabels: Record<SiteLocale, string>;
 	skipToContent: string;
 	site: {
 		tagline: string;
 		description: string;
 		authorBlurb: string;
+		capabilities: string[];
 	};
 	navigation: {
 		label: string;
@@ -27,6 +29,22 @@ type Dictionary = {
 	};
 	footer: {
 		builtWith: string;
+		sourceCode: string;
+		rss: string;
+	};
+	common: {
+		rssLabel: string;
+		repositoryLabel: string;
+		socialLinksLabel: string;
+		backHome: string;
+		backToTop: string;
+		paginationLabel: string;
+		breadcrumbLabel: string;
+		postNavigationLabel: string;
+		openPost: (title: string) => string;
+		openRelatedPost: (title: string) => string;
+		openSearchResult: (title: string) => string;
+		openTag: (tag: string) => string;
 	};
 	notFound: {
 		title: string;
@@ -34,6 +52,7 @@ type Dictionary = {
 		body: string;
 		goHome: string;
 		viewArchive: string;
+		redirectNotice: string;
 	};
 	home: {
 		eyebrow: string;
@@ -41,7 +60,12 @@ type Dictionary = {
 		description: string;
 		browseArchive: string;
 		startSearch: string;
+		viewSource: string;
+		readRss: string;
+		repositoryHint: string;
 		postCount: (count: number) => string;
+		featuredCount: (count: number) => string;
+		languageCount: (count: number) => string;
 		feedTitle: string;
 		feedDescription: string;
 	};
@@ -85,9 +109,6 @@ type Dictionary = {
 		relatedPosts: string;
 		newerPost: string;
 		olderPost: string;
-		shareOnX: string;
-		shareOnLinkedIn: string;
-		shareByEmail: string;
 	};
 	pagination: {
 		previous: string;
@@ -103,11 +124,22 @@ type Dictionary = {
 		dark: string;
 		system: string;
 		current: (label: string) => string;
+		next: (label: string) => string;
+	};
+	comments: {
+		title: string;
+		description: string;
 	};
 	copy: {
 		idle: string;
 		success: string;
 		failure: string;
+	};
+	rss: {
+		redirectTitle: string;
+		redirectAvailable: (target: string) => string;
+		redirectUnavailable: string;
+		unavailableFeed: string;
 	};
 };
 
@@ -115,12 +147,27 @@ const dictionaries: Record<SiteLocale, Dictionary> = {
 	"zh-cn": {
 		langName: "简体中文",
 		langSwitchLabel: "切换语言",
+		localeLabels: {
+			"zh-cn": "中文",
+			en: "English",
+		},
 		skipToContent: "跳到正文",
 		site: {
-			tagline: "一个简洁、耐读的 Astro 博客主题",
+			tagline: "为长期写作准备的安静 Astro 报刊主题",
 			description:
-				"为个人博客准备的 Astro 主题，支持多语言、分页、搜索、标签、目录、阅读进度、代码复制和响应式图片。",
-			authorBlurb: "适合写技术博客、项目记录、读书笔记和长期积累型内容。",
+				"一个强调阅读节奏、信息索引与长期维护体验的 Astro 博客主题，内建多语言、分页、搜索、标签、目录、阅读进度、代码复制与响应式图片。",
+			authorBlurb:
+				"适合技术博客、项目记录、读书笔记与持续积累型内容站点，也适合作为团队内部知识库的轻量外壳。",
+			capabilities: [
+				"Astro 原生 i18n 路由与 hreflang",
+				"Content Collections 内容校验",
+				"MDX / Markdown 双格式写作",
+				"响应式图片与现代格式输出",
+				"按语言分离的 RSS 与搜索索引",
+				"高对比浅色 / 深色 / 跟随系统主题",
+				"标签索引、归档页与相关文章推荐",
+				"Waline 评论、代码复制与阅读进度",
+			],
 		},
 		navigation: {
 			label: "主导航",
@@ -131,70 +178,92 @@ const dictionaries: Record<SiteLocale, Dictionary> = {
 			about: "关于",
 		},
 		footer: {
-			builtWith: "Built with",
+			builtWith: "构建于",
+			sourceCode: "源码",
+			rss: "RSS",
+		},
+		common: {
+			rssLabel: "RSS 订阅",
+			repositoryLabel: "项目仓库",
+			socialLinksLabel: "社交链接",
+			backHome: "返回首页",
+			backToTop: "回到顶部",
+			paginationLabel: "分页导航",
+			breadcrumbLabel: "面包屑导航",
+			postNavigationLabel: "文章上下篇导航",
+			openPost: (title) => `打开文章：${title}`,
+			openRelatedPost: (title) => `打开相关文章：${title}`,
+			openSearchResult: (title) => `打开搜索结果：${title}`,
+			openTag: (tag) => `查看标签：${tag}`,
 		},
 		notFound: {
 			title: "页面不存在",
-			description: "你访问的页面不存在，请尝试回到首页或归档继续浏览。",
+			description: "你访问的页面不存在，可以返回首页或前往归档继续浏览。",
 			body: "链接可能已经移动，或者这个地址从未存在过。",
 			goHome: "返回首页",
 			viewArchive: "查看归档",
+			redirectNotice: "5 秒后自动返回首页。",
 		},
 		home: {
-			eyebrow: "Paper-like reading, Astro-native architecture",
-			title: "让博客像一份安静的数字报纸，适合长期写作与归档。",
+			eyebrow: "Astro 原生、多语言、为阅读设计",
+			title: "像一份现代数字报刊那样组织你的长期写作。",
 			description:
-				"主题延续 PaperMod 的清爽层次，同时吸收 astro-paper 与 fuwari 的轻盈感，把阅读、检索、多语言和长期维护放在更靠前的位置。",
+				"这套主题把首页、分页、搜索、归档、标签与文章详情串成一条清晰的阅读路径，用更少的客户端脚本和更稳的设计系统支撑长期维护。",
 			browseArchive: "浏览归档",
 			startSearch: "开始搜索",
-			postCount: (count) => `当前共 ${count} 篇文章`,
-			feedTitle: "最新文章",
-			feedDescription: "按时间顺序浏览内容，首页支持连续加载，归档与标签页则适合回看。",
+			viewSource: "查看仓库",
+			readRss: "RSS 订阅",
+			repositoryHint: "你可以直接开始写作，也可以先阅读 README 了解安装与扩展方式。",
+			postCount: (count) => `${count} 篇已发布文章`,
+			featuredCount: (count) => `${count} 个首页优先展示位`,
+			languageCount: (count) => `${count} 种站点语言`,
+			feedTitle: "最新内容",
+			feedDescription: "按时间顺序浏览文章，继续向下滚动即可查看分页后的内容。",
 		},
 		archive: {
 			title: "归档",
-			description: "按年份浏览站点中的全部文章。",
+			description: "按年份快速浏览站点中的全部文章。",
 			yearCount: (count) => `${count} 篇`,
 		},
 		tags: {
 			title: "标签",
-			description: "按主题聚合浏览内容。",
-			relatedDescription: "与这个主题相关的全部文章。",
-			pageDescription: (tag) => `浏览与 ${tag} 相关的全部文章。`,
+			description: "按主题聚合内容，快速跳转到同一话题下的文章。",
+			relatedDescription: "以下是与当前标签相关的全部文章。",
+			pageDescription: (tag) => `浏览标签“${tag}”下的全部文章。`,
 		},
 		search: {
 			title: "搜索",
-			description: "支持标题、摘要、标签、分类和正文关键词检索。",
-			label: "搜索关键词",
-			placeholder: "输入标题、摘要、标签、分类或正文关键词",
-			loading: "正在加载文章索引…",
-			ready: (count) => `已加载 ${count} 篇文章，输入后开始搜索。`,
-			matches: (query, count) => `“${query}” 共命中 ${count} 条结果。`,
-			emptyTitle: "没有找到匹配内容。",
-			emptyDescription: "试试更短的关键词，或者换一个标签名。",
-			unavailableTitle: "索引暂时不可用。",
-			unavailableDescription: "你仍然可以通过归档和标签页继续浏览内容。",
+			description: "支持标题、摘要、标签、分类与正文关键字检索。",
+			label: "搜索关键字",
+			placeholder: "输入标题、摘要、标签、分类或正文关键字",
+			loading: "正在准备搜索索引…",
+			ready: (count) => `已加载 ${count} 篇文章的搜索索引，输入后即可检索。`,
+			matches: (query, count) => `“${query}” 共找到 ${count} 条结果。`,
+			emptyTitle: "没有找到匹配内容",
+			emptyDescription: "试试更短的关键词，或者直接搜索标签名称。",
+			unavailableTitle: "搜索索引暂时不可用",
+			unavailableDescription: "你仍然可以通过归档页或标签页继续浏览内容。",
 		},
 		about: {
 			title: "关于",
-			description: "了解 newspaper 的设计思路与功能取向。",
-			intro: "一个偏阅读体验的个人博客主题，重点放在列表、索引、文章页和长期写作需要的基础功能。",
-			body: "newspaper 不是应用壳，也不打算把博客做成沉重的内容平台。它更像一套干净的写作界面，把首页、分页、归档、标签、搜索和文章页组织成一套稳定的阅读路径。",
-			principlesTitle: "主题原则",
-			capabilitiesTitle: "内置能力",
+			description: "了解 newspaper 的设计思路、能力边界与长期维护方向。",
+			intro: "一个以阅读优先为核心的 Astro 主题，重点打磨结构、排版、检索与长期可维护性。",
+			body: "newspaper 不追求臃肿的应用壳层，而是把首页、分页、归档、标签、搜索与文章详情组织成稳定清晰的内容路径，让写作和阅读都更轻松。",
+			principlesTitle: "设计原则",
+			capabilitiesTitle: "内建能力",
 		},
 		principles: [
 			{
 				title: "内容优先",
-				description: "页面结构服务于阅读和索引，而不是用花哨样式抢走正文注意力。",
+				description: "视觉层次服务于阅读与检索，而不是用复杂装饰抢走正文注意力。",
 			},
 			{
 				title: "Astro 原生",
-				description: "优先使用 i18n、Content Collections、astro:assets、预取和视图过渡等官方能力。",
+				description: "尽量依赖 Astro 官方能力，减少不必要的框架负担与客户端脚本。",
 			},
 			{
 				title: "长期可维护",
-				description: "功能保持克制，代码尽量复用，让主题适合持续写作和后续扩展。",
+				description: "通过统一配置、共享页面逻辑和设计令牌，让主题适合持续演进。",
 			},
 		],
 		post: {
@@ -204,14 +273,11 @@ const dictionaries: Record<SiteLocale, Dictionary> = {
 			relatedPosts: "相关文章",
 			newerPost: "较新的文章",
 			olderPost: "较早的文章",
-			shareOnX: "分享到 X / Twitter",
-			shareOnLinkedIn: "分享到 LinkedIn",
-			shareByEmail: "通过 Email 分享",
 		},
 		pagination: {
 			previous: "上一页",
 			next: "下一页",
-			summary: (currentPage, totalPages) => `第 ${currentPage} 页 / 共 ${totalPages} 页`,
+			summary: (currentPage, totalPages) => `第 ${currentPage} 页，共 ${totalPages} 页`,
 		},
 		reading: {
 			minutes: (count) => `${count} 分钟阅读`,
@@ -221,24 +287,49 @@ const dictionaries: Record<SiteLocale, Dictionary> = {
 			light: "浅色模式",
 			dark: "深色模式",
 			system: "跟随系统",
-			current: (label) => `切换主题，当前为${label}`,
+			current: (label) => `当前主题：${label}`,
+			next: (label) => `点击切换到：${label}`,
+		},
+		comments: {
+			title: "评论",
+			description: "欢迎留下你的想法、补充或问题。",
 		},
 		copy: {
 			idle: "复制",
 			success: "已复制",
-			failure: "失败",
+			failure: "复制失败",
+		},
+		rss: {
+			redirectTitle: "RSS 订阅",
+			redirectAvailable: (target) => `RSS 地址已切换到 ${target}`,
+			redirectUnavailable: "当前还没有可用的 RSS，需要先配置公开站点地址。",
+			unavailableFeed: "RSS 订阅暂时不可用，请先配置公开站点地址。",
 		},
 	},
 	en: {
 		langName: "English",
 		langSwitchLabel: "Switch language",
+		localeLabels: {
+			"zh-cn": "中文",
+			en: "English",
+		},
 		skipToContent: "Skip to content",
 		site: {
-			tagline: "An elegant Astro blog theme built for focused reading",
+			tagline: "An editorial Astro theme designed for long-form publishing",
 			description:
-				"An Astro theme for long-form writing with i18n, pagination, search, tags, table of contents, reading progress, copyable code blocks, and responsive images.",
+				"A reading-first Astro blog theme with multilingual routes, pagination, search, tags, table of contents, reading progress, copyable code blocks, and responsive images.",
 			authorBlurb:
-				"A good fit for technical blogs, project notes, reading journals, and steadily growing knowledge bases.",
+				"A strong fit for technical blogs, product notes, project journals, and steadily growing documentation-driven sites.",
+			capabilities: [
+				"Astro-native i18n routing with hreflang alternates",
+				"Content Collections schema validation",
+				"MDX and Markdown authoring support",
+				"Responsive images with modern output formats",
+				"Per-locale RSS feeds and search indexes",
+				"Accessible light, dark, and system theme modes",
+				"Tag archive, yearly archive, and related posts",
+				"Waline comments, code copy, and reading progress",
+			],
 		},
 		navigation: {
 			label: "Main navigation",
@@ -250,6 +341,22 @@ const dictionaries: Record<SiteLocale, Dictionary> = {
 		},
 		footer: {
 			builtWith: "Built with",
+			sourceCode: "Source",
+			rss: "RSS",
+		},
+		common: {
+			rssLabel: "RSS feed",
+			repositoryLabel: "Project repository",
+			socialLinksLabel: "Social links",
+			backHome: "Back home",
+			backToTop: "Back to top",
+			paginationLabel: "Pagination",
+			breadcrumbLabel: "Breadcrumb",
+			postNavigationLabel: "Post navigation",
+			openPost: (title) => `Open post: ${title}`,
+			openRelatedPost: (title) => `Open related post: ${title}`,
+			openSearchResult: (title) => `Open search result: ${title}`,
+			openTag: (tag) => `Open tag: ${tag}`,
 		},
 		notFound: {
 			title: "Page not found",
@@ -257,18 +364,23 @@ const dictionaries: Record<SiteLocale, Dictionary> = {
 			body: "The link may have moved, or this address may never have existed.",
 			goHome: "Back home",
 			viewArchive: "Open archive",
+			redirectNotice: "Redirecting to the homepage in 5 seconds.",
 		},
 		home: {
-			eyebrow: "Paper-like reading, Astro-native architecture",
-			title: "A calm digital newspaper layout for long-form writing and thoughtful archives.",
+			eyebrow: "Astro-native, multilingual, and tuned for reading",
+			title: "Publish long-form writing in a calm digital newspaper layout.",
 			description:
-				"newspaper takes the clarity of PaperMod, blends in the softness of astro-paper and fuwari, and focuses the whole theme around reading, indexing, multilingual support, and long-term maintainability.",
+				"newspaper turns homepage, search, tags, archive, and article pages into one consistent editorial system with less client-side JavaScript and more reusable structure.",
 			browseArchive: "Browse archive",
 			startSearch: "Search posts",
+			viewSource: "View source",
+			readRss: "Open RSS",
+			repositoryHint: "Start writing right away, or read the README first to understand installation and extension points.",
 			postCount: (count) => `${count} published posts`,
+			featuredCount: (count) => `${count} featured slots on the homepage`,
+			languageCount: (count) => `${count} site languages`,
 			feedTitle: "Latest writing",
-			feedDescription:
-				"Follow the newest posts here, then use archive, tags, and search when you want to explore by structure.",
+			feedDescription: "Browse posts in reverse chronological order and continue into paginated archives below.",
 		},
 		archive: {
 			title: "Archive",
@@ -277,46 +389,43 @@ const dictionaries: Record<SiteLocale, Dictionary> = {
 		},
 		tags: {
 			title: "Tags",
-			description: "Browse posts by topic.",
-			relatedDescription: "Every post related to this topic.",
+			description: "Browse the site by topic and jump directly into related writing.",
+			relatedDescription: "Every post connected to this topic appears below.",
 			pageDescription: (tag) => `Browse every post related to ${tag}.`,
 		},
 		search: {
 			title: "Search",
-			description: "Search by title, excerpt, tags, category, or post body.",
+			description: "Search across titles, excerpts, tags, categories, and full post content.",
 			label: "Search terms",
 			placeholder: "Search titles, excerpts, tags, categories, or body text",
-			loading: "Loading the search index…",
+			loading: "Preparing the search index…",
 			ready: (count) => `${count} posts indexed and ready to search.`,
 			matches: (query, count) => `${count} matches for “${query}”.`,
-			emptyTitle: "No results found.",
-			emptyDescription: "Try a shorter phrase, or search using a tag name instead.",
-			unavailableTitle: "The index is temporarily unavailable.",
+			emptyTitle: "No results found",
+			emptyDescription: "Try a shorter phrase, or search with a tag instead.",
+			unavailableTitle: "The search index is temporarily unavailable",
 			unavailableDescription: "You can still browse through the archive or tag pages.",
 		},
 		about: {
 			title: "About",
-			description: "Learn how newspaper approaches structure, reading, and long-term writing.",
-			intro:
-				"A reading-first blog theme that focuses on lists, indexes, article pages, and the essentials needed for sustained publishing.",
-			body: "newspaper is not an app shell, and it does not try to turn a blog into a heavy content platform. It is closer to a clean editorial interface that organizes the homepage, pagination, archive, tags, search, and article pages into a stable reading path.",
+			description: "Learn how newspaper approaches structure, styling, and long-term maintainability.",
+			intro: "A reading-first Astro theme built to keep publishing smooth, fast, and maintainable over time.",
+			body: "newspaper avoids turning a blog into a heavy app shell. Instead, it focuses on the steady essentials: homepage discovery, search, pagination, archive structure, and a comfortable article reading experience.",
 			principlesTitle: "Design principles",
 			capabilitiesTitle: "Built-in capabilities",
 		},
 		principles: [
 			{
 				title: "Content first",
-				description: "The layout serves reading and discovery instead of competing with the article body.",
+				description: "Visual design supports reading and discovery instead of competing with the article body.",
 			},
 			{
 				title: "Astro native",
-				description:
-					"The theme leans on official Astro features such as i18n, Content Collections, astro:assets, prefetching, and view transitions.",
+				description: "The theme leans on official Astro features to stay lightweight and future-friendly.",
 			},
 			{
 				title: "Built to last",
-				description:
-					"The feature set stays focused and the code stays reusable so the theme can support years of writing.",
+				description: "Shared page logic, strong design tokens, and centralized configuration make future work easier.",
 			},
 		],
 		post: {
@@ -326,9 +435,6 @@ const dictionaries: Record<SiteLocale, Dictionary> = {
 			relatedPosts: "Related posts",
 			newerPost: "Newer post",
 			olderPost: "Older post",
-			shareOnX: "Share on X / Twitter",
-			shareOnLinkedIn: "Share on LinkedIn",
-			shareByEmail: "Share by email",
 		},
 		pagination: {
 			previous: "Previous",
@@ -342,13 +448,24 @@ const dictionaries: Record<SiteLocale, Dictionary> = {
 			label: "Switch theme",
 			light: "Light mode",
 			dark: "Dark mode",
-			system: "System",
-			current: (label) => `Switch theme, current setting: ${label}`,
+			system: "System mode",
+			current: (label) => `Current theme: ${label}`,
+			next: (label) => `Switch to: ${label}`,
+		},
+		comments: {
+			title: "Comments",
+			description: "Join the discussion and share your perspective.",
 		},
 		copy: {
 			idle: "Copy",
 			success: "Copied",
 			failure: "Error",
+		},
+		rss: {
+			redirectTitle: "RSS feed",
+			redirectAvailable: (target) => `The RSS feed is available at ${target}`,
+			redirectUnavailable: "The RSS feed is unavailable until a public site URL is configured.",
+			unavailableFeed: "The RSS feed is unavailable until a public site URL is configured.",
 		},
 	},
 };

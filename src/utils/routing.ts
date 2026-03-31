@@ -78,35 +78,37 @@ export function getHomePermalink(locale: SiteLocale) {
 }
 
 export function getArchivePermalink(locale: SiteLocale) {
-	return getLocalizedPath(locale, "archive");
+	return getLocalizedPath(locale, siteConfig.routes.archive);
 }
 
 export function getTagsPermalink(locale: SiteLocale) {
-	return getLocalizedPath(locale, "tags");
+	return getLocalizedPath(locale, siteConfig.routes.tags);
 }
 
 export function getSearchPermalink(locale: SiteLocale) {
-	return getLocalizedPath(locale, "search");
+	return getLocalizedPath(locale, siteConfig.routes.search);
 }
 
 export function getSearchIndexPermalink(locale: SiteLocale) {
-	return getLocalizedFilePath(locale, "search.json");
+	return getLocalizedFilePath(locale, siteConfig.routes.searchIndex);
 }
 
 export function getAboutPermalink(locale: SiteLocale) {
-	return getLocalizedPath(locale, "about");
+	return getLocalizedPath(locale, siteConfig.routes.about);
 }
 
 export function getPagePermalink(locale: SiteLocale, page: number) {
-	return page <= 1 ? getHomePermalink(locale) : getLocalizedPath(locale, `page/${page}`);
+	return page <= 1
+		? getHomePermalink(locale)
+		: getLocalizedPath(locale, `${siteConfig.routes.page}/${page}`);
 }
 
 export function getRssPermalink(locale: SiteLocale) {
-	return getLocalizedFilePath(locale, "rss.xml");
+	return getLocalizedFilePath(locale, siteConfig.routes.rssFile);
 }
 
 export function getRssPagePermalink(locale: SiteLocale) {
-	return getLocalizedPath(locale, "rss");
+	return getLocalizedPath(locale, siteConfig.routes.rss);
 }
 
 type LocaleAlternate = {
@@ -137,8 +139,8 @@ function getLocalizedPostAlternate(locale: SiteLocale, translationKey: string, p
 	const exactMatch = posts.find((post) => post.data.locale === locale && getTranslationKey(post) === translationKey);
 	if (exactMatch) {
 		return {
-			relativeUrl: getLocalizedPath(locale, `posts/${exactMatch.id}`),
-			absoluteUrl: getAbsoluteLocalizedPath(locale, `posts/${exactMatch.id}`),
+			relativeUrl: getLocalizedPath(locale, `${siteConfig.routes.posts}/${exactMatch.id}`),
+			absoluteUrl: getAbsoluteLocalizedPath(locale, `${siteConfig.routes.posts}/${exactMatch.id}`),
 		};
 	}
 
@@ -151,8 +153,8 @@ function getLocalizedPostAlternate(locale: SiteLocale, translationKey: string, p
 		}
 
 		return {
-			relativeUrl: getLocalizedPath(DEFAULT_LOCALE, `posts/${defaultMatch.id}`),
-			absoluteUrl: getAbsoluteLocalizedPath(DEFAULT_LOCALE, `posts/${defaultMatch.id}`),
+			relativeUrl: getLocalizedPath(DEFAULT_LOCALE, `${siteConfig.routes.posts}/${defaultMatch.id}`),
+			absoluteUrl: getAbsoluteLocalizedPath(DEFAULT_LOCALE, `${siteConfig.routes.posts}/${defaultMatch.id}`),
 		};
 	}
 
@@ -162,7 +164,7 @@ function getLocalizedPostAlternate(locale: SiteLocale, translationKey: string, p
 export async function getLocaleAlternates(pathname: string, currentLocale = getLocaleFromPathname(pathname)): Promise<LocaleAlternate[]> {
 	const path = stripLocaleFromPath(pathname);
 	const segments = trimSlashes(path).split("/").filter(Boolean);
-	const isPostPath = segments[0] === "posts" && segments.length > 1;
+	const isPostPath = segments[0] === siteConfig.routes.posts && segments.length > 1;
 
 	if (!isPostPath) {
 		return LOCALES.map((locale) => ({

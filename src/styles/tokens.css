@@ -1,0 +1,139 @@
+:root {
+	--color-brand-50: #e6f2fb;
+	--color-brand-100: #cddff0;
+	--color-brand-200: #a9c3dd;
+	--color-brand-300: #7ba0c1;
+	--color-brand-400: #4c7c9d;
+	--color-brand-500: #275c79;
+	--color-brand-600: #1f4b63;
+	--color-brand-700: #18394d;
+	--color-brand-800: #112736;
+	--color-brand-900: #0a1822;
+	--color-accent-50: #fff6de;
+	--color-accent-100: #f8e8b3;
+	--color-accent-200: #edcf76;
+	--color-accent-300: #dcb447;
+	--color-accent-400: #be9125;
+	--color-accent-500: #9a7213;
+	--color-neutral-0: #fffdf9;
+	--color-neutral-50: #f7f1e8;
+	--color-neutral-100: #efe5d7;
+	--color-neutral-200: #dccdb8;
+	--color-neutral-300: #bea98d;
+	--color-neutral-400: #907d67;
+	--color-neutral-500: #665848;
+	--color-neutral-700: #3b342d;
+	--color-neutral-800: #27231f;
+	--color-neutral-900: #161a22;
+	--color-success-500: #0d8a61;
+	--color-warning-500: #b37c12;
+	--color-danger-500: #c75243;
+	--color-info-500: #2563eb;
+	--surface-canvas: var(--color-neutral-0);
+	--surface-canvas-muted: var(--color-neutral-50);
+	--surface-panel: rgb(255 251 243 / 0.88);
+	--surface-panel-strong: rgb(255 255 255 / 0.94);
+	--surface-panel-soft: rgb(250 244 235 / 0.82);
+	--surface-panel-inverse: var(--color-neutral-900);
+	--border-subtle: rgb(174 154 128 / 0.28);
+	--border-strong: rgb(109 88 60 / 0.3);
+	--text-primary: var(--color-neutral-900);
+	--text-secondary: rgb(63 56 48 / 0.8);
+	--text-muted: rgb(86 76 66 / 0.64);
+	--text-inverse: #f8fafc;
+	--interactive-primary: var(--color-brand-500);
+	--interactive-primary-strong: var(--color-brand-700);
+	--interactive-accent: var(--color-accent-300);
+	--ring-color: rgb(39 92 121 / 0.28);
+	--shadow-xs: 0 1px 2px rgb(22 26 34 / 0.05);
+	--shadow-sm: 0 10px 24px rgb(39 38 32 / 0.08);
+	--shadow-md: 0 18px 42px rgb(24 31 42 / 0.12);
+	--shadow-lg: 0 32px 64px rgb(17 24 39 / 0.14);
+	--radius-xs: 0.5rem;
+	--radius-sm: 0.875rem;
+	--radius-md: 1.25rem;
+	--radius-lg: 1.75rem;
+	--radius-pill: 999px;
+	--space-2xs: 0.375rem;
+	--space-xs: 0.625rem;
+	--space-sm: 0.875rem;
+	--space-md: 1.125rem;
+	--space-lg: 1.5rem;
+	--space-xl: 2rem;
+	--space-2xl: 3rem;
+	--space-3xl: 4.5rem;
+	--container-content: 72rem;
+	--container-narrow: 54rem;
+	--container-prose: 46rem;
+	--header-height: 4.25rem;
+	--footer-height: 5rem;
+	--font-body:
+		"Manrope Variable",
+		"IBM Plex Sans",
+		"Segoe UI",
+		sans-serif;
+	--font-heading:
+		"Newsreader Variable",
+		"Iowan Old Style",
+		"Palatino Linotype",
+		serif;
+	--font-code:
+		"SFMono-Regular",
+		"JetBrains Mono",
+		"Fira Code",
+		ui-monospace,
+		monospace;
+	--text-xs: 0.82rem;
+	--text-sm: 0.94rem;
+	--text-md: 1rem;
+	--text-lg: 1.125rem;
+	--text-xl: clamp(1.35rem, 1.15rem + 0.7vw, 1.8rem);
+	--text-2xl: clamp(1.8rem, 1.2rem + 2vw, 2.8rem);
+	--text-3xl: clamp(2.6rem, 2rem + 3vw, 4.4rem);
+	--leading-body: 1.72;
+	--leading-content: 1.88;
+	--transition-fast: 140ms ease;
+	--transition-base: 220ms ease;
+	color-scheme: light;
+}
+
+:root[data-theme="dark"] {
+	--surface-canvas: #101821;
+	--surface-canvas-muted: #111d2a;
+	--surface-panel: rgb(17 30 43 / 0.82);
+	--surface-panel-strong: rgb(21 35 51 / 0.95);
+	--surface-panel-soft: rgb(18 28 42 / 0.78);
+	--surface-panel-inverse: #eff5fb;
+	--border-subtle: rgb(160 189 217 / 0.16);
+	--border-strong: rgb(173 203 233 / 0.24);
+	--text-primary: #eef4fb;
+	--text-secondary: rgb(223 232 245 / 0.78);
+	--text-muted: rgb(197 209 226 / 0.58);
+	--text-inverse: #0f172a;
+	--interactive-primary: #7bb4d6;
+	--interactive-primary-strong: #a5cde5;
+	--interactive-accent: #f0d478;
+	--ring-color: rgb(123 180 214 / 0.3);
+	--shadow-xs: 0 1px 2px rgb(0 0 0 / 0.2);
+	--shadow-sm: 0 14px 28px rgb(0 0 0 / 0.24);
+	--shadow-md: 0 20px 42px rgb(0 0 0 / 0.32);
+	--shadow-lg: 0 28px 70px rgb(0 0 0 / 0.38);
+	color-scheme: dark;
+}
+
+body.font-preset-wenkai {
+	--font-body:
+		"LXGW WenKai",
+		"PingFang SC",
+		"Hiragino Sans GB",
+		"Microsoft YaHei",
+		serif;
+	--font-heading:
+		"LXGW WenKai",
+		"PingFang SC",
+		"Hiragino Sans GB",
+		"Microsoft YaHei",
+		serif;
+	--leading-body: 1.84;
+	--leading-content: 1.96;
+}

@@ -15,13 +15,25 @@ import ThemeToggle from "./ThemeToggle.astro";
 const locale = resolveLocale(Astro.currentLocale);
 const dictionary = getDictionary(locale);
 const pathname = stripBasePath(Astro.url.pathname).replace(/\/$/, "") || "/";
-const navigation = [
-	{ label: dictionary.navigation.home, href: getHomePermalink(locale) },
-	{ label: dictionary.navigation.archive, href: getArchivePermalink(locale) },
-	{ label: dictionary.navigation.tags, href: getTagsPermalink(locale) },
-	{ label: dictionary.navigation.search, href: getSearchPermalink(locale) },
-	{ label: dictionary.navigation.about, href: getAboutPermalink(locale) },
-];
+const hrefByKey = {
+	home: getHomePermalink(locale),
+	archive: getArchivePermalink(locale),
+	tags: getTagsPermalink(locale),
+	search: getSearchPermalink(locale),
+	about: getAboutPermalink(locale),
+};
+const labelByKey = {
+	home: dictionary.navigation.home,
+	archive: dictionary.navigation.archive,
+	tags: dictionary.navigation.tags,
+	search: dictionary.navigation.search,
+	about: dictionary.navigation.about,
+};
+const navigation = siteConfig.navigation.map((key) => ({
+	key,
+	label: labelByKey[key],
+	href: hrefByKey[key],
+}));
 
 function isActive(href: string) {
 	const target = stripBasePath(href).replace(/\/$/, "") || "/";
@@ -44,7 +56,7 @@ function isActive(href: string) {
 			</a>
 			<div class="logo-switches">
 				<ThemeToggle />
-				<span class="logo-switches__divider" aria-hidden="true">|</span>
+				<span class="logo-switches__divider" aria-hidden="true"></span>
 				<LocaleSwitch />
 			</div>
 		</div>

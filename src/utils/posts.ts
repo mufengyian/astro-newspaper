@@ -1,3 +1,4 @@
+import { getCollection } from "astro:content";
 import type { CollectionEntry } from "astro:content";
 import readingTime from "reading-time";
 import type { SiteLocale } from "./i18n";
@@ -5,6 +6,8 @@ import { DEFAULT_LOCALE } from "./i18n";
 import { getLocalizedPath } from "./routing";
 
 export type PostEntry = CollectionEntry<"posts">;
+
+let allPostsPromise: Promise<PostEntry[]> | undefined;
 
 const tagSymbolTokens: Record<string, string> = {
 	"#": "sharp",
@@ -67,6 +70,18 @@ export function stripMarkdown(source: string) {
 
 export function isVisiblePost(post: PostEntry) {
 	return import.meta.env.DEV || !post.data.draft;
+}
+
+export async function loadPosts() {
+	if (!allPostsPromise) {
+		allPostsPromise = getCollection("posts");
+	}
+
+	return allPostsPromise;
+}
+
+export async function loadLocalizedPosts(locale: SiteLocale = DEFAULT_LOCALE) {
+	return getSortedPosts(await loadPosts(), locale);
 }
 
 export function getLocalizedPosts(posts: PostEntry[], locale: SiteLocale = DEFAULT_LOCALE) {
