@@ -48,6 +48,19 @@ locale: en
 translationKey: astro-assets-guide
 ```
 
+Recommended workflow:
+
+1. write the default-locale post first
+2. create the translated post only when the translation is actually ready
+3. reuse the same `translationKey`
+4. keep each locale on its own route
+
+Current theme behavior:
+
+- article pages are generated only for locales that really exist
+- untranslated posts stay on the default-locale route instead of being duplicated under `/en/`
+- locale switch links and alternate metadata are generated from the real translation pair, not from a synthetic fallback page
+
 ## When you need to change the i18n configuration
 
 If you are only publishing in the current two languages:

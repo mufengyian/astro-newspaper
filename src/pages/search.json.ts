@@ -15,7 +15,6 @@ export const GET: APIRoute = async () => {
 		category: post.data.category ?? "",
 		tags: post.data.tags,
 		url: getPostPermalink(locale, post),
-		published: post.data.publishDate.toISOString(),
 		publishedLabel: formatDate(post.data.publishDate, locale),
 		readingMinutesLabel: dictionary.reading.minutes(getReadingMinutes(post)),
 		body: stripMarkdown(post.body ?? ""),

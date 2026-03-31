@@ -34,6 +34,10 @@ const canonicalUrl = publicSiteUrl
 		? new URL(canonical, publicSiteUrl).href
 		: getCanonicalPath(locale, Astro.url.pathname)
 	: undefined;
+const wenkaiStylesheet =
+	siteConfig.typography.preset === "wenkai"
+		? (await import("../styles/wenkai.css?url")).default
+		: undefined;
 const socialImagePath = withBase("social-card.svg");
 const socialImage = publicSiteUrl ? new URL(image ?? socialImagePath, publicSiteUrl).href : undefined;
 const alternateLocales = publicSiteUrl ? await getLocaleAlternates(Astro.url.pathname, locale) : [];
@@ -117,6 +121,7 @@ const structuredData =
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#171923" />
 <link rel="icon" type="image/svg+xml" href={withBase("favicon.svg")} />
 <link rel="icon" href={withBase("favicon.ico")} />
+{siteConfig.typography.preset === "wenkai" && <link rel="stylesheet" href={wenkaiStylesheet} />}
 {canonicalUrl && <link rel="canonical" href={canonicalUrl} />}
 {!publicSiteUrl && <meta name="robots" content="noindex, nofollow" />}
 
