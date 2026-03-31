@@ -1,6 +1,6 @@
 ---
-title: Welcome to Newspaper: A Theme for Writers
-excerpt: Discover the design philosophy and core features that make Newspaper the perfect theme for long-form writing.
+title: "Welcome to Newspaper: A Theme for Writers"
+excerpt: "Discover the design philosophy and core features that make Newspaper the perfect theme for long-form writing."
 publishDate: 2026-03-30
 locale: en
 featured: true
