@@ -16,3 +16,4 @@ Newspaper is an Astro blog theme built for writers, publishers, and content crea
 - **Bilingual Content**: Pre-configured for both Chinese and English, with easy-to-manage i18n routing.
 
 This demo site will walk you through the core features of the theme. Feel free to explore the different post types and see what's possible.
+
