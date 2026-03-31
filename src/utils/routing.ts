@@ -55,6 +55,16 @@ export function getLocalizedPath(locale: SiteLocale, path = "") {
 	return getRelativeLocaleUrl(locale, trimSlashes(path));
 }
 
+export function getLocalizedFilePath(locale: SiteLocale, path = "") {
+	const trimmedPath = trimSlashes(path);
+	if (!trimmedPath) {
+		return getLocalizedPath(locale);
+	}
+
+	const localizedPath = locale === DEFAULT_LOCALE ? trimmedPath : `${locale}/${trimmedPath}`;
+	return withBase(localizedPath);
+}
+
 export function getAbsoluteLocalizedPath(locale: SiteLocale, path = "") {
 	if (!siteConfig.siteUrl) {
 		return undefined;
@@ -80,7 +90,7 @@ export function getSearchPermalink(locale: SiteLocale) {
 }
 
 export function getSearchIndexPermalink(locale: SiteLocale) {
-	return getLocalizedPath(locale, "search.json");
+	return getLocalizedFilePath(locale, "search.json");
 }
 
 export function getAboutPermalink(locale: SiteLocale) {
@@ -92,7 +102,7 @@ export function getPagePermalink(locale: SiteLocale, page: number) {
 }
 
 export function getRssPermalink(locale: SiteLocale) {
-	return getLocalizedPath(locale, "rss.xml");
+	return getLocalizedFilePath(locale, "rss.xml");
 }
 
 type LocaleAlternate = {

@@ -1,24 +1,214 @@
 ---
+import { siteConfig } from "../config";
 import MainLayout from "../layouts/MainLayout.astro";
-import { DEFAULT_LOCALE, getDictionary, isSiteLocale } from "../utils/i18n";
-import { getArchivePermalink, getHomePermalink, stripBasePath, trimSlashes } from "../utils/routing";
+import { DEFAULT_LOCALE, getDictionary, getHtmlLang, type SiteLocale } from "../utils/i18n";
+import {
+	getAboutPermalink,
+	getArchivePermalink,
+	getHomePermalink,
+	getSearchPermalink,
+	getTagsPermalink,
+} from "../utils/routing";
 
-const pathSegments = trimSlashes(stripBasePath(Astro.url.pathname)).split("/").filter(Boolean);
-const locale = pathSegments[0] && isSiteLocale(pathSegments[0]) ? pathSegments[0] : DEFAULT_LOCALE;
-const dictionary = getDictionary(locale);
+type NotFoundLocaleContent = {
+	htmlLang: string;
+	pageTitle: string;
+	pageDescription: string;
+	body: string;
+	goHome: string;
+	viewArchive: string;
+	homeHref: string;
+	archiveHref: string;
+	navigationLabel: string;
+	navigation: Array<{ label: string; href: string }>;
+	skipToContent: string;
+	langSwitchLabel: string;
+	currentLocaleLabel: string;
+	alternateLocaleLabel: string;
+	alternateLocaleHref: string;
+	themeLabel: string;
+	themeLight: string;
+	themeDark: string;
+	backToTopLabel: string;
+	footerBuiltWith: string;
+};
+
+function getNotFoundContent(locale: SiteLocale): NotFoundLocaleContent {
+	const dictionary = getDictionary(locale);
+
+	return {
+		htmlLang: getHtmlLang(locale),
+		pageTitle: dictionary.notFound.title,
+		pageDescription: dictionary.notFound.description,
+		body: dictionary.notFound.body,
+		goHome: dictionary.notFound.goHome,
+		viewArchive: dictionary.notFound.viewArchive,
+		homeHref: getHomePermalink(locale),
+		archiveHref: getArchivePermalink(locale),
+		navigationLabel: dictionary.navigation.label,
+		navigation: [
+			{ label: dictionary.navigation.home, href: getHomePermalink(locale) },
+			{ label: dictionary.navigation.archive, href: getArchivePermalink(locale) },
+			{ label: dictionary.navigation.tags, href: getTagsPermalink(locale) },
+			{ label: dictionary.navigation.search, href: getSearchPermalink(locale) },
+			{ label: dictionary.navigation.about, href: getAboutPermalink(locale) },
+		],
+		skipToContent: dictionary.skipToContent,
+		langSwitchLabel: dictionary.langSwitchLabel,
+		currentLocaleLabel: locale === "en" ? "En" : "Zh",
+		alternateLocaleLabel: locale === "en" ? "Zh" : "En",
+		alternateLocaleHref: getHomePermalink(locale === "en" ? DEFAULT_LOCALE : "en"),
+		themeLabel: dictionary.theme.label,
+		themeLight: dictionary.theme.light,
+		themeDark: dictionary.theme.dark,
+		backToTopLabel: locale === "en" ? "Back to top" : "回到顶部",
+		footerBuiltWith: dictionary.footer.builtWith,
+	};
+}
+
+const localeContent: Record<SiteLocale, NotFoundLocaleContent> = {
+	"zh-cn": getNotFoundContent("zh-cn"),
+	en: getNotFoundContent("en"),
+};
+
+const initialContent = localeContent[DEFAULT_LOCALE];
+const notFoundClientData = JSON.stringify({
+	base: import.meta.env.BASE_URL,
+	defaultLocale: DEFAULT_LOCALE,
+	siteTitle: siteConfig.title,
+	locales: localeContent,
+});
 ---
 
-<MainLayout title={dictionary.notFound.title} description={dictionary.notFound.description}>
+<MainLayout title={initialContent.pageTitle} description={initialContent.pageDescription}>
 	<section class="page-header">
 		<h1>404</h1>
-		<p>{dictionary.notFound.body}</p>
+		<p data-not-found-body>{initialContent.body}</p>
 		<div class="button-row">
-			<a class="button button--primary" href={getHomePermalink(locale)} data-astro-prefetch="hover">
-				{dictionary.notFound.goHome}
+			<a
+				class="button button--primary"
+				href={initialContent.homeHref}
+				data-astro-prefetch="hover"
+				data-not-found-home
+			>
+				{initialContent.goHome}
 			</a>
-			<a class="button" href={getArchivePermalink(locale)} data-astro-prefetch="hover">
-				{dictionary.notFound.viewArchive}
+			<a
+				class="button"
+				href={initialContent.archiveHref}
+				data-astro-prefetch="hover"
+				data-not-found-archive
+			>
+				{initialContent.viewArchive}
 			</a>
 		</div>
 	</section>
+
+	<script is:inline type="application/json" id="not-found-i18n" set:html={notFoundClientData}></script>
+	<script is:inline>
+		(() => {
+			const dataNode = document.getElementById("not-found-i18n");
+			if (!dataNode?.textContent) return;
+
+			const { base, defaultLocale, siteTitle, locales } = JSON.parse(dataNode.textContent);
+
+			const normalizedBase = base === "/" ? "/" : base.replace(/\/+$/, "");
+
+			const stripBase = (pathname) => {
+				if (normalizedBase === "/") return pathname || "/";
+				if (pathname === normalizedBase) return "/";
+				return pathname.startsWith(`${normalizedBase}/`)
+					? pathname.slice(normalizedBase.length) || "/"
+					: pathname;
+			};
+
+			const resolveRuntimeLocale = () => {
+				const pathname = stripBase(window.location.pathname);
+				return pathname === "/en" || pathname.startsWith("/en/") ? "en" : defaultLocale;
+			};
+
+			const locale = resolveRuntimeLocale();
+			const content = locales[locale] ?? locales[defaultLocale];
+			if (!content) return;
+
+			document.documentElement.lang = content.htmlLang;
+			document.title = `${content.pageTitle} | ${siteTitle}`;
+
+			const description = document.querySelector('meta[name="description"]');
+			description?.setAttribute("content", content.pageDescription);
+
+			const skipLink = document.querySelector(".skip-link");
+			if (skipLink) {
+				skipLink.textContent = content.skipToContent;
+			}
+
+			const navigation = document.querySelector(".nav");
+			navigation?.setAttribute("aria-label", content.navigationLabel);
+
+			const brand = document.querySelector(".logo__brand");
+			if (brand) {
+				brand.href = content.homeHref;
+			}
+
+			const menuLinks = Array.from(document.querySelectorAll("#menu a"));
+			content.navigation.forEach((item, index) => {
+				const link = menuLinks[index];
+				if (!link) return;
+
+				link.href = item.href;
+				link.removeAttribute("aria-current");
+				const label = link.querySelector("span");
+				if (label) {
+					label.textContent = item.label;
+					label.classList.remove("active");
+				}
+			});
+
+			const localeSwitch = document.querySelector(".locale-switch");
+			if (localeSwitch) {
+				localeSwitch.setAttribute("aria-label", content.langSwitchLabel);
+				localeSwitch.innerHTML =
+					locale === "en"
+						? `<a class="locale-switch__link" href="${content.alternateLocaleHref}" data-astro-prefetch="hover">${content.alternateLocaleLabel}</a><span class="locale-switch__current" aria-current="page">${content.currentLocaleLabel}</span>`
+						: `<span class="locale-switch__current" aria-current="page">${content.currentLocaleLabel}</span><a class="locale-switch__link" href="${content.alternateLocaleHref}" data-astro-prefetch="hover">${content.alternateLocaleLabel}</a>`;
+			}
+
+			const themeToggle = document.querySelector("[data-theme-toggle]");
+			if (themeToggle) {
+				themeToggle.dataset.themeLabel = content.themeLabel;
+				themeToggle.dataset.themeLight = content.themeLight;
+				themeToggle.dataset.themeDark = content.themeDark;
+				themeToggle.setAttribute("aria-label", content.themeLabel);
+				themeToggle.setAttribute("title", content.themeLabel);
+			}
+
+			const body = document.querySelector("[data-not-found-body]");
+			if (body) {
+				body.textContent = content.body;
+			}
+
+			const homeLink = document.querySelector("[data-not-found-home]");
+			if (homeLink) {
+				homeLink.href = content.homeHref;
+				homeLink.textContent = content.goHome;
+			}
+
+			const archiveLink = document.querySelector("[data-not-found-archive]");
+			if (archiveLink) {
+				archiveLink.href = content.archiveHref;
+				archiveLink.textContent = content.viewArchive;
+			}
+
+			const footerText = document.querySelector("footer.footer span:last-of-type");
+			if (footerText?.firstChild) {
+				footerText.firstChild.textContent = `${content.footerBuiltWith} `;
+			}
+
+			const backToTop = document.querySelector("[data-top-link]");
+			if (backToTop) {
+				backToTop.setAttribute("aria-label", content.backToTopLabel);
+				backToTop.setAttribute("title", content.backToTopLabel);
+			}
+		})();
+	</script>
 </MainLayout>
