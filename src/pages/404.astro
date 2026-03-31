@@ -1,285 +1,80 @@
 ---
 import { siteConfig } from "../config";
 import "../styles/global.css";
-import { getDictionary, type SiteLocale } from "../utils/i18n";
-import { getArchivePermalink, getHomePermalink, withBase } from "../utils/routing";
+import { withBase } from "../utils/routing";
 
-type NotFoundLocaleContent = {
-	lang: string;
-	title: string;
-	description: string;
-	eyebrow: string;
-	body: string;
-	goHome: string;
-	viewArchive: string;
-	homeHref: string;
-	archiveHref: string;
-	switchHref: string;
-	switchLabel: string;
-	switchAction: string;
-	skipToContent: string;
-};
-
-function getNotFoundContent(locale: SiteLocale): NotFoundLocaleContent {
-	const dictionary = getDictionary(locale);
-
-	return {
-		lang: locale === "en" ? "en" : "zh-CN",
-		title: dictionary.notFound.title,
-		description: dictionary.notFound.description,
-		eyebrow: locale === "en" ? "Lost your way?" : "暂时找不到这页",
-		body: dictionary.notFound.body,
-		goHome: dictionary.notFound.goHome,
-		viewArchive: dictionary.notFound.viewArchive,
-		homeHref: getHomePermalink(locale),
-		archiveHref: getArchivePermalink(locale),
-		switchHref: getHomePermalink(locale === "en" ? "zh-cn" : "en"),
-		switchLabel: locale === "en" ? "中文首页" : "English Home",
-		switchAction: locale === "en" ? "Switch to Chinese" : "切换到英文",
-		skipToContent: dictionary.skipToContent,
-	};
-}
-
-const defaultLocale = siteConfig.defaultLocale;
-
-const notFoundContent: Record<SiteLocale, NotFoundLocaleContent> = {
-	"zh-cn": getNotFoundContent("zh-cn"),
-	en: getNotFoundContent("en"),
-};
-
-const defaultContent = notFoundContent[defaultLocale];
-const wenkaiStylesheet =
-	siteConfig.typography.preset === "wenkai"
-		? (await import("../styles/wenkai.css?url")).default
-		: undefined;
-
-const runtimeConfig = JSON.stringify({
-	base: import.meta.env.BASE_URL,
-	defaultLocale,
-	siteTitle: siteConfig.title,
-	locales: notFoundContent,
-});
+const fallbackHref = withBase();
 
 const notFoundStyles = String.raw`
-	[data-locale-content="zh-cn"] {
-		display: block;
-	}
-
-	[data-locale-content="en"] {
-		display: none;
-	}
-
-	[data-locale-inline="zh-cn"] {
-		display: inline;
-	}
-
-	[data-locale-inline="en"] {
-		display: none;
-	}
-
-	html[data-runtime-locale="en"] [data-locale-content="zh-cn"] {
-		display: none;
-	}
-
-	html[data-runtime-locale="en"] [data-locale-content="en"] {
-		display: block;
-	}
-
-	html[data-runtime-locale="en"] [data-locale-inline="zh-cn"] {
-		display: none;
-	}
-
-	html[data-runtime-locale="en"] [data-locale-inline="en"] {
-		display: inline;
-	}
-
 	.not-found-body {
-		background:
-			radial-gradient(circle at top, color-mix(in srgb, var(--accent) 14%, transparent), transparent 38%),
-			linear-gradient(180deg, color-mix(in srgb, var(--entry) 88%, var(--theme)), var(--theme));
-	}
-
-	.not-found-main {
-		min-height: 100vh;
 		display: grid;
 		place-items: center;
-		max-width: min(760px, calc(100% - var(--gap) * 2));
-		padding-block: clamp(48px, 12vh, 112px);
+		min-height: 100vh;
+		margin: 0;
+		background:
+			radial-gradient(circle at top, color-mix(in srgb, var(--accent) 12%, transparent), transparent 42%),
+			var(--theme);
 	}
 
-	.not-found-panel {
-		width: 100%;
-		padding: clamp(28px, 6vw, 52px);
+	.not-found-shell {
+		display: grid;
+		justify-items: center;
+		gap: 10px;
+		padding: 24px;
 		text-align: center;
-		border: 1px solid color-mix(in srgb, var(--glass-border) 70%, var(--border));
-		border-radius: 28px;
-		background: var(--glass-panel-strong);
-		backdrop-filter: blur(18px) saturate(150%);
-		-webkit-backdrop-filter: blur(18px) saturate(150%);
-		box-shadow: var(--glass-shadow);
 	}
 
-	.not-found-brand {
-		display: inline-block;
-		margin-bottom: 24px;
-		font-family: var(--font-heading);
-		font-size: clamp(32px, 6vw, 44px);
-		font-weight: 650;
-		letter-spacing: -0.04em;
-	}
-
-	body.font-preset-wenkai .not-found-brand {
-		letter-spacing: 0;
-	}
-
-	.not-found-eyebrow {
-		margin: 0 0 14px;
-		color: var(--secondary);
-		font-size: 0.95rem;
-		letter-spacing: 0.08em;
-		text-transform: uppercase;
-	}
-
-	.not-found-panel h1 {
+	.not-found-code {
 		margin: 0;
 		font-family: var(--font-heading);
-		font-size: clamp(80px, 18vw, 132px);
-		line-height: 0.92;
-		letter-spacing: -0.06em;
+		font-size: clamp(88px, 18vw, 180px);
+		line-height: 0.9;
+		letter-spacing: -0.08em;
 	}
 
-	body.font-preset-wenkai .not-found-panel h1 {
+	body.font-preset-wenkai .not-found-code {
 		letter-spacing: -0.02em;
 	}
 
-	.not-found-description {
-		max-width: 34ch;
-		margin: 18px auto 0;
+	.not-found-tip {
+		margin: 0;
 		color: var(--secondary);
-		font-size: 1.02rem;
-	}
-
-	.not-found-actions {
-		justify-content: center;
-		margin-top: 28px;
-	}
-
-	.not-found-switch {
-		margin: 22px 0 0;
-		color: var(--secondary);
-		font-size: 0.96rem;
-	}
-
-	.not-found-switch a {
-		margin-inline-start: 8px;
-		color: var(--primary);
-		text-decoration: underline;
-		text-decoration-style: dashed;
-		text-underline-offset: 4px;
-	}
-
-	@media screen and (max-width: 640px) {
-		.not-found-panel {
-			border-radius: 22px;
-		}
+		font-size: 0.95rem;
 	}
 `;
 
-const bootstrapScript = String.raw`(() => {
-	const storageKey = "newspaper-theme";
-	const root = document.documentElement;
-	const configNode = document.getElementById("not-found-config");
-	if (!configNode?.textContent) return;
+const backScript = String.raw`(() => {
+	const fallbackHref = document.documentElement.dataset.fallbackHref || "/";
 
-	const config = JSON.parse(configNode.textContent);
-	const base = config.base === "/" ? "/" : config.base.replace(/\/+$/, "");
-	const pathname = window.location.pathname;
-	const strippedPath =
-		base === "/"
-			? pathname || "/"
-			: pathname === base
-				? "/"
-				: pathname.startsWith(base + "/")
-					? pathname.slice(base.length) || "/"
-					: pathname;
-	const locale = strippedPath === "/en" || strippedPath.startsWith("/en/") ? "en" : config.defaultLocale;
-	const content = config.locales[locale] || config.locales[config.defaultLocale];
+	window.setTimeout(() => {
+		if (window.history.length > 1 && document.referrer) {
+			window.history.back();
+			return;
+		}
 
-	root.dataset.runtimeLocale = locale;
-	root.lang = content.lang;
-
-	const title = document.getElementById("not-found-title");
-	if (title) title.textContent = content.title + " | " + config.siteTitle;
-
-	const description = document.querySelector('meta[name="description"]');
-	if (description) description.setAttribute("content", content.description);
-
-	try {
-		const preference = localStorage.getItem(storageKey) || "light";
-		root.dataset.themePreference = preference;
-		root.dataset.theme = preference;
-		root.style.colorScheme = preference;
-	} catch (error) {
-		root.dataset.themePreference = "light";
-		root.dataset.theme = "light";
-		root.style.colorScheme = "light";
-	}
+		window.location.replace(fallbackHref);
+	}, 2000);
 })();`;
 ---
 
 <!doctype html>
-<html lang={defaultContent.lang} data-runtime-locale={defaultLocale}>
+<html lang="zh-CN" data-fallback-href={fallbackHref}>
 	<head>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<meta name="robots" content="noindex, nofollow" />
-		<meta name="description" content={defaultContent.description} />
-		<meta name="theme-color" media="(prefers-color-scheme: light)" content="#F7FAFC" />
-		<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#171923" />
+		<meta name="description" content="404" />
 		<link rel="icon" type="image/svg+xml" href={withBase("favicon.svg")} />
 		<link rel="icon" href={withBase("favicon.ico")} />
-		{siteConfig.typography.preset === "wenkai" && <link rel="stylesheet" href={wenkaiStylesheet} />}
-		<title id="not-found-title">{defaultContent.title} | {siteConfig.title}</title>
-		<script is:inline type="application/json" id="not-found-config" set:html={runtimeConfig}></script>
-		<script is:inline set:html={bootstrapScript}></script>
+		<title>404 | {siteConfig.title}</title>
 		<style is:inline set:html={notFoundStyles}></style>
+		<script is:inline set:html={backScript}></script>
 	</head>
 
 	<body class:list={[`font-preset-${siteConfig.typography.preset}`, "not-found-body"]}>
-		<a class="skip-link" href="#main-content">
-			<span data-locale-inline="zh-cn">{notFoundContent["zh-cn"].skipToContent}</span>
-			<span data-locale-inline="en">{notFoundContent.en.skipToContent}</span>
-		</a>
-
-		<main id="main-content" class="main not-found-main">
-			{(["zh-cn", "en"] as const).map((locale) => {
-				const content = notFoundContent[locale];
-				return (
-					<section class="not-found-panel" data-locale-content={locale}>
-						<a class="not-found-brand" href={content.homeHref}>
-							{siteConfig.title}
-						</a>
-
-						<p class="not-found-eyebrow">{content.eyebrow}</p>
-						<h1>404</h1>
-						<p class="not-found-description">{content.body}</p>
-
-						<div class="button-row not-found-actions">
-							<a class="button button--primary" href={content.homeHref}>
-								{content.goHome}
-							</a>
-							<a class="button" href={content.archiveHref}>
-								{content.viewArchive}
-							</a>
-						</div>
-
-						<p class="not-found-switch">
-							<span>{content.switchAction}</span>
-							<a href={content.switchHref}>{content.switchLabel}</a>
-						</p>
-					</section>
-				);
-			})}
+		<main class="not-found-shell" aria-label="Not found">
+			<h1 class="not-found-code">404</h1>
+			<p class="not-found-tip">2 秒后返回上一个页面</p>
 		</main>
 	</body>
 </html>
