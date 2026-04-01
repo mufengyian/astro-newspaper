@@ -7,30 +7,30 @@
 - `zh-cn`
 - `en`
 
-The default locale is `zh-cn`, and it does not use a URL prefix.
+The default locale is `zh-cn`, and it does not receive a URL prefix.
 
-## Current route structure
+## Route structure
 
 - Chinese homepage: `/`
 - English homepage: `/en/`
-- Chinese post: `/posts/<slug>/`
-- English post: `/en/posts/<slug>/`
+- Chinese post: `/posts/slug/`
+- English post: `/en/posts/slug/`
 - Chinese search: `/search/`
 - English search: `/en/search/`
 
-## Where the locale copy lives
+## Where the UI strings live
 
-Site-level bilingual copy now lives in:
+All site-level bilingual copy is centralized in:
 
-- [`src/config/i18n/zh-cn.ts`](../../../src/config/i18n/zh-cn.ts)
-- [`src/config/i18n/en.ts`](../../../src/config/i18n/en.ts)
-- [`src/config/i18n/types.ts`](../../../src/config/i18n/types.ts)
+```text
+src/utils/i18n.ts
+```
 
-`src/utils/i18n.ts` is now mainly responsible for locale resolution and helpers instead of storing the full dictionaries.
+That includes navigation, buttons, search strings, article UI copy, and site descriptions.
 
 ## How to write bilingual posts
 
-The safest pattern is:
+The most stable pattern is:
 
 1. write one Chinese post
 2. write one English post
@@ -48,21 +48,30 @@ locale: en
 translationKey: astro-assets-guide
 ```
 
-## Current theme behavior
+Recommended workflow:
 
-- article pages are generated only for locales that actually exist
-- locale switching prefers the matched translated post
-- alternate metadata and `hreflang` are built from real translation pairs
-- search, navigation, RSS pages, and article UI copy all follow the active locale
+1. write the default-locale post first
+2. create the translated post only when the translation is actually ready
+3. reuse the same `translationKey`
+4. keep each locale on its own route
 
-## If you want to add a third locale
+Current theme behavior:
 
-That is beyond the default theme surface. You will usually need to update:
+- article pages are generated only for locales that really exist
+- untranslated posts stay on the default-locale route instead of being duplicated under `/en/`
+- locale switch links and alternate metadata are generated from the real translation pair, not from a synthetic fallback page
 
-- `astro.config.mjs`
-- `src/config/i18n/types.ts`
-- a new `src/config/i18n/<locale>.ts`
-- `src/utils/i18n.ts`
-- the related locale routes and content organization
+## When you need to change the i18n configuration
 
-It is best to stabilize the Chinese/English flow first before expanding further.
+If you are only publishing in the current two languages:
+
+- you do not need to touch Astro’s core i18n setup
+
+If you want to add a third locale:
+
+- update `astro.config.mjs`
+- update `src/utils/i18n.ts`
+- update `src/config.ts`
+- add the required routes and content paths
+
+That is beyond the default theme surface, so it is better done after the existing Chinese/English flow is stable.

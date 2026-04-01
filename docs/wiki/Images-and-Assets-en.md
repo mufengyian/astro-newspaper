@@ -2,50 +2,34 @@
 
 [简体中文](Images-and-Assets-zh-cn) · [Back to Wiki Home](Home-en)
 
-## Why the theme prefers `astro:assets`
+## Why the theme uses `astro:assets`
 
-The current version relies on Astro’s official image pipeline instead of dropping raw source images straight into the UI.
+The theme relies on Astro’s official image pipeline instead of pushing raw external images straight into the UI.
 
 Benefits:
 
 - responsive image generation
-- modern formats such as `avif` and `webp`
-- build-time processing through `sharp`
+- modern output formats such as `webp` and `avif`
+- build-time processing with `sharp`
 - preserved width and height metadata to reduce layout shift
-- one consistent media strategy across listing cards and article pages
 
 Official references:
 
 - [Images guide](https://docs.astro.build/en/guides/images/)
 - [astro:assets reference](https://docs.astro.build/en/reference/modules/astro-assets/)
 
-## Current image strategy
+## Cover images
 
-Media presets are centralized in:
-
-- [`src/config/site.ts`](../../../src/config/site.ts)
-
-There are two main presets:
-
-- `media.listingCover`
-  Used by the homepage, pagination pages, and listing cards.
-- `media.postCover`
-  Used by article detail pages.
-
-If you want to change output sizes, formats, or quality globally, update these presets first instead of editing individual components.
-
-## Cover image usage
-
-Reference a local asset in frontmatter:
+Use a local image in frontmatter:
 
 ```yaml
 cover: ../../assets/covers/paper-constellation.svg
 coverAlt: Deep blue geometric illustration
 ```
 
-Listing pages and article pages will automatically use the theme’s existing `Picture` logic.
+The homepage cards and article pages will use the same cover rendering logic automatically.
 
-## Using `Image` inside MDX
+## Using `Image` in MDX
 
 ```mdx
 ---
@@ -61,7 +45,9 @@ import image from "../../assets/covers/signal-grid.svg";
 />
 ```
 
-## Using `Picture` inside MDX
+## Using `Picture` in MDX
+
+If you want explicit multi-format output:
 
 ```mdx
 ---
@@ -81,6 +67,6 @@ import image from "../../assets/covers/craft-wave.svg";
 ## Practical advice
 
 - prefer local files for cover images
-- write clear `alt` text for editorial imagery
-- pre-filter extremely large sources to keep builds fast
-- keep cover art direction consistent if you want the site to feel intentionally editorial
+- always write meaningful `alt` text for editorial images
+- pre-filter extremely large source files to keep builds fast
+- keep the visual style of covers consistent if you want the site to feel editorial rather than random

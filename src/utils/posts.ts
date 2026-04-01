@@ -20,8 +20,6 @@ const tagSymbolTokens: Record<string, string> = {
 };
 
 let allPostsPromise: Promise<PostEntry[]> | undefined;
-let visiblePostsPromise: Promise<PostEntry[]> | undefined;
-const postsByLocalePromise = new Map<SiteLocale, Promise<PostEntry[]>>();
 
 function getTranslationKey(post: PostEntry) {
 	return post.data.translationKey?.trim() || post.id;
@@ -41,14 +39,6 @@ export async function getAllPosts() {
 	}
 
 	return allPostsPromise;
-}
-
-export async function getVisiblePosts() {
-	if (!visiblePostsPromise) {
-		visiblePostsPromise = getAllPosts().then((posts) => posts.filter(isVisiblePost));
-	}
-
-	return visiblePostsPromise;
 }
 
 export function slugifyTag(tag: string) {
@@ -101,19 +91,6 @@ export function getLocalizedPosts(posts: PostEntry[], locale: SiteLocale = DEFAU
 
 export function getSortedPosts(posts: PostEntry[], locale: SiteLocale = DEFAULT_LOCALE) {
 	return sortPosts(getLocalizedPosts(posts, locale));
-}
-
-export async function getPostsByLocale(locale: SiteLocale = DEFAULT_LOCALE) {
-	const cached = postsByLocalePromise.get(locale);
-	if (cached) {
-		return cached;
-	}
-
-	const request = getVisiblePosts().then((posts) =>
-		sortPosts(posts.filter((post) => post.data.locale === locale)),
-	);
-	postsByLocalePromise.set(locale, request);
-	return request;
 }
 
 export function getHomePosts(posts: PostEntry[], featuredCount = 3) {

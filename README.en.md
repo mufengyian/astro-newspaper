@@ -1,179 +1,124 @@
-# newspaper
+# Newspaper - Astro Blog Theme
 
-<p align="center">
-  A bilingual Astro blog theme for long-form publishing, built around stable information architecture, restrained client-side enhancements, and an editorial reading experience.
-</p>
+`newspaper` is a minimal, accessible, and SEO-friendly Astro blog theme designed for long-form writing. It is an ideal starter for personal blogs, technical notes, and project journals, with built-in support for bilingual content (Chinese and English).
 
-<p align="center">
-  <a href="./README.md">简体中文</a> ·
-  <a href="./docs/wiki/Home-en.md">Wiki</a> ·
-  <a href="./docs/wiki/Home.md">Wiki (ZH)</a>
-</p>
+This theme extends the clean, readable aesthetic of themes like Paper and PaperMod, while leveraging Astro's native features for a modern, performant, and maintainable structure.
 
 ## Features
 
-- Bilingual route trees with default `zh-cn` on `/` and English on `/en/`
-- Complete page surface: home, pagination, archive, tags, search, about, RSS, 404, and article pages
-- Content workflow powered by Astro Content Collections with Markdown / MDX support
-- Light / dark themes, search, code copy, reading progress, back-to-top, and optional Waline comments
-- Clean style architecture split into `tokens / base / layout / listing / article / responsive`
-- Centralized theme configuration in `src/config/`, including navigation, homepage info, footer data, media presets, and interaction thresholds
-- Strong metadata defaults for canonical URLs, `hreflang`, RSS, Open Graph, Twitter cards, and structured data
+- **Bilingual Structure**: Pre-configured for `zh-cn` and `en` content.
+- **Content-First**: Built with `astro:content` for robust content management.
+- **Markdown & MDX**: Write in standard Markdown or use Astro components with MDX.
+- **Responsive Images**: Automatic image optimization with `astro:assets` and `sharp`.
+- **Core Blog Features**: Homepage, pagination, archive, tags, search, about page, 404, and RSS feeds.
+- **Enhanced Reading Experience**: Table of contents, reading progress bar, code block copy button, back-to-top link, and view transitions.
+- **Theming**: Light and dark mode support.
+- **Comments**: Optional integration with Waline for comments.
 
-## Screenshots
+## Live Demo
 
-> Placeholder assets are already reserved in `docs/readme-assets/`. You can replace those files directly later, or switch the README paths to real PNG/JPG captures.
-
-| Interface | Light Mode | Dark Mode |
-| --- | --- | --- |
-| Chinese | ![Chinese light placeholder](./docs/readme-assets/home-zh-light.svg) | ![Chinese dark placeholder](./docs/readme-assets/home-zh-dark.svg) |
-| English | ![English light placeholder](./docs/readme-assets/home-en-light.svg) | ![English dark placeholder](./docs/readme-assets/home-en-dark.svg) |
+- **Demo Site**: [https://mufengyian.github.io/astro-newspaper/](https://mufengyian.github.io/astro-newspaper/)
+- **GitHub Wiki (Full Docs)**: [https://github.com/mufengyian/astro-newspaper/wiki](https://github.com/mufengyian/astro-newspaper/wiki)
 
 ## Quick Start
 
-### Requirements
-
+**Prerequisites:**
 - Node.js `>= 22.12.0`
 - npm `>= 10`
 
-### Install
+**1. Get the Project**
+
+Clone the repository or use it as a template on GitHub:
 
 ```bash
 git clone https://github.com/mufengyian/astro-newspaper.git your-blog-name
 cd your-blog-name
+```
+
+**2. Install Dependencies**
+
+```bash
 npm install
 ```
 
-### Environment variables
+**3. Configure Environment**
 
-Copy [`.env.example`](./.env.example) to `.env`:
+Copy the example environment file and update it with your site's URL.
 
 ```bash
 cp .env.example .env
 ```
 
-```bash
+**File: `.env`**
+```
 PUBLIC_SITE_URL="https://your-domain.com"
-PUBLIC_WALINE_SERVER_URL="https://your-waline-server.vercel.app"
+PUBLIC_WALINE_SERVER_URL="https://your-waline-server.vercel.app" # Optional
 ```
 
-Notes:
-
-- `PUBLIC_SITE_URL` powers canonical URLs, sitemap, RSS, Open Graph, Twitter cards, `hreflang`, and `robots.txt`
-- `PUBLIC_WALINE_SERVER_URL` is optional; without it, article pages do not render a comment section
-
-### Local development and validation
+**4. Run the Development Server**
 
 ```bash
 npm run dev
-npm run check
-npm run build
 ```
 
-## Configuration
+Your site is now available at `http://localhost:4321`.
 
-### `src/config/site.ts`
+## Project Customization
 
-The main site-level configuration entry. It covers:
+Key configuration files to get you started:
 
-- `navigationItems`: top navigation order
-- `homeInfo.enabled`: visibility switch for the homepage `home-info` block
-- `footer`: copyright, ICP link, and external footer links
-- `content`: featured count, pagination size, and related-post limit
-- `search`: search threshold, result count, and meta separator
-- `comments`: default Waline options
-- `media`: cover output sizes, formats, and quality
+- **`src/config.ts`**: Site title, author name, typography, pagination settings, and social media links.
+- **`src/utils/i18n.ts`**: UI text for both Chinese and English versions of the site.
+- **`src/content/posts/`**: Directory for your blog posts. Feel free to remove the sample posts.
+- **`src/assets/covers/`**: Directory for post cover images.
 
-### `src/config/about.ts`
+## Bilingual Publishing Workflow
 
-Long-form content and section structure for the About page.
+This theme treats Chinese and English as two independent route trees:
 
-### `src/config/i18n/`
+- Chinese homepage: `/`
+- English homepage: `/en/`
+- Chinese posts: `/posts/<slug>/`
+- English posts: `/en/posts/<slug>/`
 
-Locale dictionaries and type definitions. When adding new UI copy, update `types.ts` first and then both locale files.
-
-### `src/styles/tokens.css`
-
-The main entry for theme variables. Colors, spacing, radius, shadow, motion, and listing-card sizing all live here.
-
-### `astro.config.mjs`
-
-Astro infrastructure config for i18n, prefetch, Markdown / MDX, Shiki, and image handling.
-
-## Content Model
-
-Example frontmatter:
+To publish the same article in both languages, create two files and give them the same `translationKey`.
 
 ```yaml
 ---
 title: Hello Astro
-excerpt: Use one post to validate your publishing flow.
-publishDate: 2026-04-01
-locale: en
+excerpt: Confirm your bilingual setup with one post in each language.
+publishDate: 2026-03-31
+locale: zh-cn
 translationKey: hello-astro
-tags:
-  - astro
-  - theme
-cover: ../../assets/covers/paper-constellation.svg
-coverAlt: Abstract paper constellation cover
 ---
 ```
 
-Common fields:
-
-- `locale`: locale of the current post
-- `translationKey`: mapping key for bilingual post pairs
-- `excerpt`: listing summary and base SEO description
-- `cover` / `coverAlt`: cover asset and alternative text
-
-## Project Structure
-
-```text
-src/
-  assets/
-  components/
-    pages/
-  config/
-    i18n/
-  content/
-    posts/
-  layouts/
-  pages/
-  scripts/
-  styles/
-  utils/
-docs/
-  readme-assets/
-  wiki/
-public/
-astro.config.mjs
+```yaml
+---
+title: Hello Astro
+excerpt: Confirm your bilingual setup with one post in each language.
+publishDate: 2026-03-31
+locale: en
+translationKey: hello-astro
+---
 ```
 
-## Commands
+Current behavior:
 
-| Command | Action |
-| --- | --- |
-| `npm run dev` | Start local development |
-| `npm run check` | Run Astro type checks |
-| `npm run build` | Create the production build |
-| `npm run preview` | Preview the production build |
-| `npm run sync` | Sync Astro generated types |
+- Localized article pages are generated only when that locale really exists.
+- If an English translation does not exist, the theme keeps the post on the default-locale route instead of generating a duplicate `/en/...` page.
+- Shared UI strings such as navigation, buttons, and search messages live in `src/utils/i18n.ts`.
 
-## Documentation
+For more detailed guides on configuration, content creation, MDX, images, i18n, and deployment, please refer to the [official project Wiki](https://github.com/mufengyian/astro-newspaper/wiki).
 
-- [Wiki Home](./docs/wiki/Home-en.md)
-- [Quick Start](./docs/wiki/Quick-Start-en.md)
-- [Configuration](./docs/wiki/Configuration-en.md)
-- [Content and MDX](./docs/wiki/Content-and-MDX-en.md)
-- [Images and astro:assets](./docs/wiki/Images-and-Assets-en.md)
-- [i18n](./docs/wiki/i18n-en.md)
-- [Comments and Deployment](./docs/wiki/Comments-and-Deployment-en.md)
-- [FAQ](./docs/wiki/FAQ-en.md)
+## Contributing
 
-## Acknowledgements
-
-Inspired by [Paper](https://github.com/nanxiaobei/hugo-paper), [PaperMod](https://github.com/adityatelange/hugo-PaperMod), [astro-paper](https://github.com/satnaing/astro-paper), and [fuwari](https://github.com/saicaca/fuwari).
+Contributions are welcome! If you find a bug or have a suggestion for improvement, please open an issue or submit a pull request. Please ensure your code follows the existing style and that all tests pass.
 
 ## License
 
-MIT. See [LICENSE](./LICENSE).
+This project is licensed under the **MIT License**. See the [LICENSE](./LICENSE) file for details.
+
+---
+
+*This theme is inspired by [Paper](https://github.com/nanxiaobei/hugo-paper), [PaperMod](https://github.com/adityatelange/hugo-PaperMod), and [astro-paper](https://github.com/satnaing/astro-paper).*

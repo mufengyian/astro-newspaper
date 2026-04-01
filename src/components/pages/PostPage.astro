@@ -1,6 +1,5 @@
 ---
 import { render } from "astro:content";
-import { siteConfig } from "../../config";
 import PostLayout from "../../layouts/PostLayout.astro";
 import { getAdjacentPosts, getRelatedPosts, type PostEntry } from "../../utils/posts";
 
@@ -11,7 +10,7 @@ interface Props {
 
 const { post, posts } = Astro.props;
 const { Content, headings } = await render(post);
-const relatedPosts = getRelatedPosts(post, posts, siteConfig.content.relatedPostsLimit);
+const relatedPosts = getRelatedPosts(post, posts);
 const { newerPost, olderPost } = getAdjacentPosts(post, posts);
 ---
 

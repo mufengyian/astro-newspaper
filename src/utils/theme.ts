@@ -2,71 +2,39 @@ import { THEME_STORAGE_KEY } from "../config";
 
 export function getThemeBootstrapScript() {
 	return String.raw`(() => {
-		const storageKey = ${JSON.stringify(THEME_STORAGE_KEY)};
-		const root = document.documentElement;
-		const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+	const storageKey = ${JSON.stringify(THEME_STORAGE_KEY)};
+	const root = document.documentElement;
 
-		const getStoredPreference = () => {
-			try {
-				const value = localStorage.getItem(storageKey);
-				return value === "light" || value === "dark" ? value : null;
-			} catch (error) {
-				console.warn("[newspaper] Failed to read theme preference.", error);
-				return null;
-			}
-		};
+	const readPreference = () => {
+		try {
+			return localStorage.getItem(storageKey) || "light";
+		} catch (error) {
+			console.warn("[newspaper] Failed to read theme preference.", error);
+			return "light";
+		}
+	};
 
-		const resolveTheme = (preference) => {
-			if (preference === "light" || preference === "dark") {
-				return preference;
-			}
+	const applyTheme = (preference) => {
+		root.dataset.themePreference = preference;
+		root.dataset.theme = preference;
+		root.style.colorScheme = preference;
+	};
 
-			return mediaQuery.matches ? "dark" : "light";
-		};
-
-		const applyTheme = (preference, shouldNotify = false) => {
-			const resolvedTheme = resolveTheme(preference);
-			root.dataset.themePreference = preference || "system";
-			root.dataset.theme = resolvedTheme;
-			root.style.colorScheme = resolvedTheme;
-
-			if (shouldNotify) {
-				window.dispatchEvent(new CustomEvent("newspaper:themechange", { detail: resolvedTheme }));
-			}
-		};
-
-		window.__getNewspaperTheme = () => root.dataset.theme || resolveTheme(getStoredPreference());
-		window.__applyNewspaperTheme = () => {
-			applyTheme(getStoredPreference());
-		};
-		window.__setNewspaperTheme = (preference) => {
-			try {
-				if (preference === "light" || preference === "dark") {
-					localStorage.setItem(storageKey, preference);
-				} else {
-					localStorage.removeItem(storageKey);
-				}
-			} catch (error) {
-				console.warn("[newspaper] Failed to persist theme preference.", error);
-			}
-
-			applyTheme(preference, true);
-		};
-
-		const handleSystemThemeChange = () => {
-			if (getStoredPreference()) {
-				return;
-			}
-
-			applyTheme(null, true);
-		};
-
-		if (typeof mediaQuery.addEventListener === "function") {
-			mediaQuery.addEventListener("change", handleSystemThemeChange);
-		} else if (typeof mediaQuery.addListener === "function") {
-			mediaQuery.addListener(handleSystemThemeChange);
+	window.__getNewspaperTheme = () => root.dataset.themePreference || readPreference();
+	window.__applyNewspaperTheme = () => {
+		applyTheme(readPreference());
+	};
+	window.__setNewspaperTheme = (preference) => {
+		try {
+			localStorage.setItem(storageKey, preference);
+		} catch (error) {
+			console.warn("[newspaper] Failed to persist theme preference.", error);
 		}
 
-		window.__applyNewspaperTheme();
-	})();`;
+		applyTheme(preference);
+		window.dispatchEvent(new CustomEvent("newspaper:themechange", { detail: preference }));
+	};
+
+	window.__applyNewspaperTheme();
+})();`;
 }

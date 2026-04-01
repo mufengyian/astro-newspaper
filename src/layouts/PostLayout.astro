@@ -1,7 +1,7 @@
 ---
 import { Picture } from "astro:assets";
 import type { MarkdownHeading } from "astro";
-import { hasWalineServerUrl, siteConfig } from "../config";
+import { hasWalineServerUrl } from "../config";
 import Breadcrumbs from "../components/Breadcrumbs.astro";
 import PostMeta from "../components/PostMeta.astro";
 import PostNavLinks from "../components/PostNavLinks.astro";
@@ -33,7 +33,6 @@ const walineStylesheet = shouldRenderComments
 const WalineComments = shouldRenderComments
 	? (await import("../components/WalineComments.astro")).default
 	: null;
-const postCover = siteConfig.media.postCover;
 ---
 
 <MainLayout
@@ -44,7 +43,6 @@ const postCover = siteConfig.media.postCover;
 	publishedTime={post.data.publishDate}
 	updatedTime={post.data.updatedDate}
 	tags={post.data.tags}
-	section={post.data.category}
 >
 	{walineStylesheet && <link slot="head" rel="stylesheet" href={walineStylesheet} />}
 	<ReadingProgress />
@@ -68,10 +66,10 @@ const postCover = siteConfig.media.postCover;
 				<Picture
 					src={post.data.cover}
 					alt={post.data.coverAlt ?? post.data.title}
-					widths={[...postCover.widths]}
-					sizes={postCover.sizes}
-					formats={[...postCover.formats]}
-					quality={postCover.quality}
+					widths={[960, 1280, 1680]}
+					sizes="(max-width: 1100px) 100vw, 960px"
+					formats={["avif", "webp"]}
+					quality={90}
 					layout="constrained"
 					decoding="async"
 				/>

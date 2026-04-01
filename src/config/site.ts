@@ -14,35 +14,6 @@ export type TypographyPreset = "editorial" | "wenkai";
 
 export type NavigationKey = "home" | "archive" | "tags" | "search" | "about";
 
-export type ConfigurableLink = {
-	label: string;
-	href: string;
-	newTab?: boolean;
-	rel?: string;
-};
-
-export type HomeInfoConfig = {
-	enabled: boolean;
-};
-
-export type FooterIcpConfig = {
-	enabled: boolean;
-	label: string;
-	href: string;
-};
-
-export type FooterConfig = {
-	copyrightYear: number;
-	owner: ConfigurableLink;
-	icp: FooterIcpConfig;
-	poweredBy: ConfigurableLink;
-	theme: ConfigurableLink;
-	labels: {
-		poweredBy: string;
-		themeIs: string;
-	};
-};
-
 const navigationItems = ["home", "archive", "tags", "search", "about"] as const satisfies readonly NavigationKey[];
 
 const repositoryReadmePathByLocale: Record<SiteLocale, string> = {
@@ -66,47 +37,16 @@ export const siteConfig = {
 	},
 	seo: {
 		themeColor: {
-			light: "#F5F1E8",
-			dark: "#0F1720",
+			light: "#F7FAFC",
+			dark: "#171923",
 		},
 	},
 	typography: {
 		preset: "editorial" as TypographyPreset,
 	},
-	homeInfo: {
-		enabled: true,
-	} as HomeInfoConfig,
 	author: {
 		name: "JiU",
 	},
-	footer: {
-		copyrightYear: 2026,
-		owner: {
-			label: "赵阿卷",
-			href: "https://blog.zwying.com/",
-		},
-		icp: {
-			enabled: true,
-			label: "京ICP备17025554号-2",
-			href: "https://beian.miit.gov.cn/#/Integrated/index",
-		},
-		poweredBy: {
-			label: "Typecho",
-			href: "http://typecho.org",
-			newTab: true,
-			rel: "noreferrer",
-		},
-		theme: {
-			label: "Cuteen",
-			href: "https://blog.zwying.com",
-			newTab: true,
-			rel: "noreferrer",
-		},
-		labels: {
-			poweredBy: "Powered by",
-			themeIs: "Theme is",
-		},
-	} as FooterConfig,
 	comments: {
 		serverURL: walineServerURL,
 		meta: ["nick", "mail", "link"],
@@ -117,41 +57,8 @@ export const siteConfig = {
 		reaction: false,
 	},
 	socialLinks: [] as SocialLink[],
-	content: {
-		featuredCount: 2,
-		postsPerPage: 6,
-		relatedPostsLimit: 3,
-	},
-	search: {
-		resultLimit: 10,
-		threshold: 0.32,
-		metaSeparator: " · ",
-	},
-	interactions: {
-		backToTopOffset: 520,
-		copyFeedbackDurationMs: 1400,
-	},
-	media: {
-		listingCover: {
-			widths: [720, 1040, 1480],
-			sizes: "(max-width: 768px) 100vw, 720px",
-			formats: ["avif", "webp"] as const,
-			quality: 86,
-		},
-		postCover: {
-			widths: [960, 1280, 1680],
-			sizes: "(max-width: 1100px) 100vw, 960px",
-			formats: ["avif", "webp"] as const,
-			quality: 90,
-		},
-	},
-	icons: {
-		search: "⌕",
-		backToTop: "↑",
-	},
-	notFound: {
-		redirectDelayMs: 2000,
-	},
+	featuredCount: 2,
+	postsPerPage: 6,
 	capabilities: [
 		"Astro i18n",
 		"Content Collections",
