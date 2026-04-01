@@ -4,11 +4,11 @@
 
 ## Is this an installable package?
 
-Not in the way an Astro integration is. The current positioning is a starter repository, so the recommended workflow is to clone it or use it as a template.
+Not in the way an Astro integration is. The current project shape is a starter repository that can be initialized by cloning or using it as a template.
 
 ## Can I publish only in one language?
 
-Yes. The second locale can stay unused, although keeping the structure in place is usually the better long-term choice.
+Yes. The second locale can stay unused, and the existing route structure can remain in place.
 
 ## Can I stick to plain Markdown?
 
@@ -28,4 +28,4 @@ Yes. The theme ships with `editorial` and `wenkai`, and you can extend `typograp
 
 ## Is this a good fit for a documentation site?
 
-It can work for lighter documentation or notes. If you need a full documentation information architecture with versioning and multi-level navigation, a dedicated docs framework may still be the better tool.
+It can be used for lighter documentation or notes. Versioned documentation and multi-level navigation are outside the default theme structure.

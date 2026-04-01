@@ -2,41 +2,29 @@
 
 [简体中文](i18n-zh-cn) · [Back to Wiki Home](Home-en)
 
-## Built-in locales
+## Built-in Locales
 
 - `zh-cn`
 - `en`
 
-The default locale is `zh-cn`, and it does not receive a URL prefix.
+The default locale is `zh-cn`, and the default locale has no URL prefix.
 
-## Route structure
+## Route Structure
 
 - Chinese homepage: `/`
 - English homepage: `/en/`
-- Chinese post: `/posts/slug/`
-- English post: `/en/posts/slug/`
+- Chinese post: `/posts/<slug>/`
+- English post: `/en/posts/<slug>/`
 - Chinese search: `/search/`
 - English search: `/en/search/`
 
-## Where the UI strings live
+## Copy Location
 
-All site-level bilingual copy is centralized in:
+Site-level bilingual copy is centralized in [`src/utils/i18n.ts`](../../../src/utils/i18n.ts).
 
-```text
-src/utils/i18n.ts
-```
+## Bilingual Posts
 
-That includes navigation, buttons, search strings, article UI copy, and site descriptions.
-
-## How to write bilingual posts
-
-The most stable pattern is:
-
-1. write one Chinese post
-2. write one English post
-3. give them the same `translationKey`
-
-Example:
+Bilingual posts are paired through the same `translationKey`.
 
 ```yaml
 locale: zh-cn
@@ -48,30 +36,8 @@ locale: en
 translationKey: astro-assets-guide
 ```
 
-Recommended workflow:
+## Current Behavior
 
-1. write the default-locale post first
-2. create the translated post only when the translation is actually ready
-3. reuse the same `translationKey`
-4. keep each locale on its own route
-
-Current theme behavior:
-
-- article pages are generated only for locales that really exist
-- untranslated posts stay on the default-locale route instead of being duplicated under `/en/`
-- locale switch links and alternate metadata are generated from the real translation pair, not from a synthetic fallback page
-
-## When you need to change the i18n configuration
-
-If you are only publishing in the current two languages:
-
-- you do not need to touch Astro’s core i18n setup
-
-If you want to add a third locale:
-
-- update `astro.config.mjs`
-- update `src/utils/i18n.ts`
-- update `src/config.ts`
-- add the required routes and content paths
-
-That is beyond the default theme surface, so it is better done after the existing Chinese/English flow is stable.
+- article pages are generated only for locales that actually exist
+- locale switching prefers the matched translated post
+- alternate metadata is generated from the real translation pair

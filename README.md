@@ -1,151 +1,154 @@
 # newspaper
 
-[English README](./README.en.md) | [中文文档](./docs/wiki/Home.md) | [English Wiki](https://github.com/mufengyian/astro-newspaper/wiki)
+<p align="center">
+  一个面向长期写作的双语 Astro 博客主题，聚焦稳定的信息架构、静态优先的内容流，以及清晰克制的阅读体验。
+</p>
 
-`newspaper` 是一个面向长期写作的 Astro 博客主题 starter，适合个人博客、技术笔记、项目日志与中英文双语内容。它延续了 [Paper](https://github.com/nanxiaobei/hugo-paper) 与 [PaperMod](https://github.com/adityatelange/hugo-PaperMod) 的阅读气质，同时尽量直接使用 Astro 官方能力来组织主题结构。
+<p align="center">
+  <a href="./README.en.md">English</a> ·
+  <a href="./docs/wiki/Home.md">Wiki</a> ·
+  <a href="./docs/wiki/Home-en.md">Wiki (EN)</a>
+</p>
 
-## 演示
+## 特性
 
-- 演示站：<https://mufengyian.github.io/astro-newspaper/>
-- 演示分支：[`demo`](https://github.com/mufengyian/astro-newspaper/tree/demo)
-
-演示站通过 GitHub Pages 自动部署，部署来源为 `demo` 分支上的 GitHub Actions 工作流。
-
-## 功能
-
-- `zh-cn` / `en` 双语结构
-- `astro:content` 内容集合
-- Markdown 与 MDX
-- `astro:assets` + `sharp` 本地响应式图片
-- 首页、分页、归档、标签、搜索、关于、404、RSS
-- 目录、阅读进度、代码复制、回到顶部、视图过渡
-- 亮色 / 暗色主题
-- 可选 Waline 评论
+- 双语路由结构，默认 `zh-cn` 位于 `/`，英文位于 `/en/`
+- 完整页面体系：首页、分页、归档、标签、搜索、关于、RSS、404 与文章页
+- 基于 Astro Content Collections 的 Markdown / MDX 内容流
+- 浅色 / 深色模式、搜索、代码复制、阅读进度、回到顶部、可选 Waline 评论
+- 首页 `home-info` 支持在配置文件中直接开关
+- 列表页、文章页与 SEO 元信息均围绕长期发布与静态部署设计
 
 ## 快速开始
 
-环境要求：
+### 环境要求
 
 - Node.js `>= 22.12.0`
 - npm `>= 10`
 
-安装依赖：
+### 安装
 
 ```bash
+git clone https://github.com/mufengyian/astro-newspaper.git your-blog-name
+cd your-blog-name
 npm install
 ```
 
-复制环境变量：
+### 环境变量
+
+复制 [`.env.example`](./.env.example) 为 `.env`：
 
 ```bash
 cp .env.example .env
 ```
-
-本地开发：
-
-```bash
-npm run dev
-```
-
-常用命令：
-
-| 命令 | 作用 |
-| --- | --- |
-| `npm run dev` | 启动开发服务器 |
-| `npm run check` | 运行 Astro 类型检查 |
-| `npm run build` | 生成生产构建 |
-| `npm run preview` | 本地预览生产构建 |
-
-## 需要先改的地方
-
-- [`src/config.ts`](./src/config.ts)：站点标题、作者、字体、分页、社交链接
-- [`src/utils/i18n.ts`](./src/utils/i18n.ts)：中英文站点文案
-- [`.env.example`](./.env.example)：公开站点地址、Waline 服务端地址
-- [`src/content/posts`](./src/content/posts)：示例文章
-- [`src/assets/covers`](./src/assets/covers)：示例封面
-
-## 多语言内容工作流
-
-主题把中文和英文视为两套独立路由：
-
-- 中文首页：`/`
-- 英文首页：`/en/`
-- 中文文章：`/posts/<slug>/`
-- 英文文章：`/en/posts/<slug>/`
-
-如果你要发布同一篇文章的中英文版本，推荐创建两篇内容文件，并为它们设置相同的 `translationKey`。
-
-```yaml
----
-title: Hello Astro
-excerpt: 用一篇中英文文章确认多语言链路已经配置完成。
-publishDate: 2026-03-31
-locale: zh-cn
-translationKey: hello-astro
----
-```
-
-```yaml
----
-title: Hello Astro
-excerpt: Use one post in each language to verify the bilingual flow.
-publishDate: 2026-03-31
-locale: en
-translationKey: hello-astro
----
-```
-
-当前行为说明：
-
-- 只有真实存在的译文才会生成对应语言文章页。
-- 如果英文译文不存在，主题不会生成一个重复的 `/en/...` 页面。
-- 导航、按钮、搜索提示等站点级双语文案统一维护在 `src/utils/i18n.ts`。
-
-## 环境变量
 
 ```bash
 PUBLIC_SITE_URL="https://your-domain.com"
 PUBLIC_WALINE_SERVER_URL="https://your-waline-server.vercel.app"
 ```
 
-说明：
+### 本地开发
 
-- 未配置 `PUBLIC_SITE_URL` 时，主题不会输出生产 SEO 元数据，也不会生成 RSS 与 sitemap。
-- 未配置 `PUBLIC_WALINE_SERVER_URL` 时，文章页不显示评论区。
-
-## 写作
-
-文章放在 [`src/content/posts`](./src/content/posts) 下，支持 `.md` 和 `.mdx`。
-
-最小 frontmatter 示例：
-
-```md
----
-title: Hello Astro
-excerpt: 用一篇文章确认主题已经能正常写作。
-publishDate: 2026-03-31
-locale: zh-cn
-translationKey: hello-astro
----
-
-这是一篇新的文章。
+```bash
+npm run dev
+npm run check
+npm run build
 ```
 
-更完整的配置、MDX、图片、i18n、评论与部署教程，请直接看 Wiki。
+## 配置入口
+
+### `src/config/site.ts`
+
+站点级配置总入口，包含：
+
+- `navigationItems`：导航顺序
+- `homeInfo.enabled`：首页 `home-info` 显示开关
+- `footer`：版权、备案与外链信息
+- `featuredCount`：首页置顶文章数量
+- `postsPerPage`：分页大小
+- `comments`：Waline 默认配置
+- `socialLinks`：首页社交链接
+
+### `src/utils/i18n.ts`
+
+中英文 UI 文案与 locale 类型定义。
+
+### `astro.config.mjs`
+
+Astro 的 i18n、prefetch、Markdown / MDX、Shiki 与图片处理配置。
+
+## 内容模型
+
+示例 frontmatter：
+
+```yaml
+---
+title: Hello Astro
+excerpt: 用一篇文章验证内容链路。
+publishDate: 2026-04-01
+locale: zh-cn
+translationKey: hello-astro
+tags:
+  - astro
+  - theme
+cover: ../../assets/covers/paper-constellation.svg
+coverAlt: Abstract paper constellation cover
+---
+```
+
+常用字段：
+
+- `locale`：文章所属语言
+- `translationKey`：双语文章映射键
+- `excerpt`：列表摘要与基础描述
+- `cover` / `coverAlt`：文章封面资源与替代文本
+
+## 项目结构
+
+```text
+src/
+  assets/
+  components/
+    pages/
+  config/
+  content/
+    posts/
+  layouts/
+  pages/
+  scripts/
+  styles/
+  utils/
+docs/
+  wiki/
+public/
+astro.config.mjs
+```
+
+## 常用命令
+
+| 命令 | 作用 |
+| --- | --- |
+| `npm run dev` | 启动本地开发 |
+| `npm run check` | 运行 Astro 类型检查 |
+| `npm run build` | 生成生产构建 |
+| `npm run preview` | 预览生产构建 |
+| `npm run sync` | 同步 Astro 生成类型 |
 
 ## 文档
 
-- 中文文档：[`docs/wiki/Home.md`](./docs/wiki/Home.md)
-- English Wiki：<https://github.com/mufengyian/astro-newspaper/wiki>
-- 仓库内英文文档源：[`docs/wiki/Home-en.md`](./docs/wiki/Home-en.md)
-- Astro 官方文档：<https://docs.astro.build/zh-cn/>
-- Astro Themes：<https://astro.build/themes/>
+- [Wiki 首页](./docs/wiki/Home.md)
+- [快速开始](./docs/wiki/Quick-Start-zh-cn.md)
+- [配置说明](./docs/wiki/Configuration-zh-cn.md)
+- [内容与 MDX](./docs/wiki/Content-and-MDX-zh-cn.md)
+- [图片与 astro:assets](./docs/wiki/Images-and-Assets-zh-cn.md)
+- [i18n](./docs/wiki/i18n-zh-cn.md)
+- [评论与部署](./docs/wiki/Comments-and-Deployment-zh-cn.md)
+- [FAQ](./docs/wiki/FAQ-zh-cn.md)
 
-## 许可证与致谢
+## 致谢
 
-- License：[MIT](./LICENSE)
-- Inspirations:
-  - [Paper](https://github.com/nanxiaobei/hugo-paper)
-  - [PaperMod](https://github.com/adityatelange/hugo-PaperMod)
-  - [astro-paper](https://github.com/satnaing/astro-paper)
-  - [fuwari](https://github.com/saicaca/fuwari)
+项目灵感来自 [Paper](https://github.com/nanxiaobei/hugo-paper)、[PaperMod](https://github.com/adityatelange/hugo-PaperMod)、[astro-paper](https://github.com/satnaing/astro-paper) 与 [fuwari](https://github.com/saicaca/fuwari)。
+
+## 许可
+
+MIT，详见 [LICENSE](./LICENSE)。

@@ -2,9 +2,9 @@
 
 [简体中文](Home) · [Back to README](../../../README.en.md)
 
-Welcome to the `newspaper` wiki. This is the extended documentation layer for the theme: more detailed than the README, but still focused on real setup and publishing work instead of implementation trivia.
+`newspaper` is a bilingual Astro blog theme for long-form publishing, technical writing, project logs, and structured archives. The theme keeps the stack static-first, configuration-driven, and intentionally light on client-side enhancements.
 
-## Start here
+## Documentation Map
 
 - [Quick Start](Quick-Start-en)
 - [Configuration](Configuration-en)
@@ -14,12 +14,23 @@ Welcome to the `newspaper` wiki. This is the extended documentation layer for th
 - [Comments and Deployment](Comments-and-Deployment-en)
 - [FAQ](FAQ-en)
 
-## Theme positioning
+## Theme Structure
 
-`newspaper` is a starter for long-form publishing in Astro. It is closer to an editorial writing template than an application shell, which is why the emphasis stays on reading, archives, search, and sustainable content structure.
+- Page surface: home, pagination, archive, tags, search, about, RSS, 404, and article pages
+- Content layer: Markdown / MDX publishing powered by Astro Content Collections
+- Configuration layer: `src/config/site.ts` and `src/utils/i18n.ts`
+- Style layer: `tokens / base / layout / listing / article / responsive`
+- Interaction layer: theme switching, search, code copy, reading progress, back-to-top, and Waline
 
-If this is your first time with the theme, start with [Quick Start](Quick-Start-en).
+## Core Directories
 
-## Release Notes
-
-- [2026-03-31 Release Notes](Release-Notes-2026-03-31-en)
+- `src/config/site.ts`
+  Site title, navigation, homepage info, footer data, comments, pagination, and social links.
+- `src/utils/i18n.ts`
+  Bilingual copy and locale helpers.
+- `src/components/pages/*`
+  Page implementation layer.
+- `src/styles/*`
+  Design tokens and global styles.
+- `src/scripts/*`
+  Client-side enhancement scripts.

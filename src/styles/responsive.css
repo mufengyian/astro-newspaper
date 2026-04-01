@@ -1,14 +1,30 @@
 @media screen and (max-width: 768px) {
 	:root {
 		--gap: 14px;
-	}
-
-	.footer {
-		padding: calc((var(--footer-height) - var(--gap) - 10px) / 2) var(--gap);
+		--home-main-padding-top: 34px;
 	}
 }
 
 @media screen and (max-width: 640px) {
+	:root {
+		--home-main-padding-top: 30px;
+		--home-info-margin-bottom: 40px;
+		--listing-card-padding-inline: 20px;
+		--listing-card-padding-top: 18px;
+		--listing-card-padding-bottom: 18px;
+		--listing-card-title-size: 1.25rem;
+		--listing-card-title-line-height: 1.26;
+		--listing-card-excerpt-font-size: 0.92rem;
+		--listing-card-excerpt-margin-top: 8px;
+		--listing-card-excerpt-margin-bottom: 12px;
+		--listing-card-compact-padding-inline: 16px;
+		--listing-card-compact-padding-top: 16px;
+		--listing-card-compact-padding-bottom: 16px;
+		--listing-card-compact-title-size: 1.08rem;
+		--listing-card-compact-title-line-height: 1.28;
+		--listing-card-compact-excerpt-font-size: 0.86rem;
+	}
+
 	.nav {
 		line-height: 1.8;
 		padding-block: 10px;
@@ -43,36 +59,6 @@
 
 	.post-content h2 {
 		font-size: 28px;
-	}
-
-	.entry-header h2,
-	.entry-header h3 {
-		font-size: 22px;
-	}
-
-	.post-entry--compact .entry-header h2,
-	.post-entry--compact .entry-header h3 {
-		font-size: 20px;
-	}
-
-	.entry-header,
-	.entry-content,
-	.entry-footer {
-		padding-inline: 22px;
-	}
-
-	.post-entry--compact .entry-header,
-	.post-entry--compact .entry-content,
-	.post-entry--compact .entry-footer {
-		padding-inline: 18px;
-	}
-
-	.post-entry--compact .entry-header {
-		padding-top: 18px;
-	}
-
-	.post-entry--compact .entry-footer {
-		padding-bottom: 18px;
 	}
 
 	.pagination,

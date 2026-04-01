@@ -75,7 +75,7 @@ import cover from "../../assets/covers/paper-constellation.svg";
 <Image src={cover} alt="示例图片" widths={[480, 720, 1080]} />
 ```
 
-## 多语言写作建议
+## 多语言写作
 
 如果同一篇文章有中英文版本，给它们相同的 `translationKey`：
 

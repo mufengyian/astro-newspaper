@@ -2,71 +2,45 @@
 
 [简体中文](Comments-and-Deployment-zh-cn) · [Back to Wiki Home](Home-en)
 
-## Waline comments
+## Waline Comments
 
-The theme uses [Waline](https://waline.js.org/) as an optional comment system.
+The theme supports Waline as an optional comment system.
 
-### Enable it
-
-Add this to `.env`:
+### Environment Variable
 
 ```bash
 PUBLIC_WALINE_SERVER_URL="https://your-waline-server.vercel.app"
 ```
 
-### Default behavior
-
-- no `PUBLIC_WALINE_SERVER_URL`
-  - no comment section is rendered
-- valid `PUBLIC_WALINE_SERVER_URL`
-  - article pages load Waline automatically
-
-### Disable comments for a single post
+### Disable Comments for a Single Post
 
 ```yaml
 comments: false
 ```
 
-### Current defaults
+### Default Configuration Location
 
-Defined in [`src/config.ts`](../../../src/config.ts):
+The `comments` field in [`src/config/site.ts`](../../../src/config/site.ts):
 
-- `meta`: `["nick", "mail", "link"]`
-- `requiredMeta`: `["nick", "mail"]`
-- `login`: `"enable"`
-- `commentSorting`: `"latest"`
-- `pageSize`: `10`
-- `reaction`: `false`
+- `meta`
+- `requiredMeta`
+- `login`
+- `commentSorting`
+- `pageSize`
+- `reaction`
 
-## Deployment checklist
+## Deployment Checklist
 
-Before going live, make sure:
+- `PUBLIC_SITE_URL` is configured
+- `npm run check` passes
+- `npm run build` passes
+- sample posts, covers, and author information are replaced
 
-1. `PUBLIC_SITE_URL` is set
-2. `npm run check` passes
-3. `npm run build` passes
-4. sample posts and sample covers are replaced
-5. author name, site title, and descriptions reflect the real project
+## Static Hosting
 
-## Recommended platforms
-
-`newspaper` works well on:
+The theme can be deployed to any static host, including:
 
 - Vercel
 - Netlify
 - Cloudflare Pages
 - GitHub Pages
-- any static host backed by object storage or a CDN
-
-## Why `PUBLIC_SITE_URL` matters
-
-It affects:
-
-- canonical URLs
-- Open Graph
-- Twitter cards
-- RSS
-- sitemap
-- `hreflang`
-
-Without a real public site address, the theme intentionally prefers silence over broken metadata.

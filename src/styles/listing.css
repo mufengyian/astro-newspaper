@@ -62,15 +62,15 @@
 .entry-header h2,
 .entry-header h3 {
 	margin: 0;
-	font-size: 2.45rem;
-	line-height: 1.2;
+	font-size: var(--listing-card-title-size);
+	line-height: var(--listing-card-title-line-height);
 }
 
 .entry-content {
 	display: -webkit-box;
-	margin: 12px 0 16px;
+	margin: var(--listing-card-excerpt-margin-top) 0 var(--listing-card-excerpt-margin-bottom);
 	color: var(--secondary);
-	font-size: 1.08rem;
+	font-size: var(--listing-card-excerpt-font-size);
 	line-height: 1.72;
 	overflow: hidden;
 	-webkit-box-orient: vertical;
@@ -90,41 +90,41 @@
 .entry-header,
 .entry-content,
 .entry-footer {
-	padding-inline: 32px;
+	padding-inline: var(--listing-card-padding-inline);
 }
 
 .entry-header {
-	padding-top: 28px;
+	padding-top: var(--listing-card-padding-top);
 }
 
 .entry-footer {
-	padding-bottom: 28px;
+	padding-bottom: var(--listing-card-padding-bottom);
 }
 
 .post-entry--compact .entry-header,
 .post-entry--compact .entry-content,
 .post-entry--compact .entry-footer {
-	padding-inline: 22px;
+	padding-inline: var(--listing-card-compact-padding-inline);
 }
 
 .post-entry--compact .entry-header {
-	padding-top: 22px;
+	padding-top: var(--listing-card-compact-padding-top);
 }
 
 .post-entry--compact .entry-header h2,
 .post-entry--compact .entry-header h3 {
-	font-size: 1.8rem;
-	line-height: 1.24;
+	font-size: var(--listing-card-compact-title-size);
+	line-height: var(--listing-card-compact-title-line-height);
 }
 
 .post-entry--compact .entry-content {
-	margin: 8px 0 12px;
-	font-size: 0.96rem;
+	margin: var(--listing-card-compact-excerpt-margin-top) 0 var(--listing-card-compact-excerpt-margin-bottom);
+	font-size: var(--listing-card-compact-excerpt-font-size);
 	-webkit-line-clamp: 2;
 }
 
 .post-entry--compact .entry-footer {
-	padding-bottom: 22px;
+	padding-bottom: var(--listing-card-compact-padding-bottom);
 }
 
 .entry-link {

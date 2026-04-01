@@ -14,6 +14,29 @@ export type TypographyPreset = "editorial" | "wenkai";
 
 export type NavigationKey = "home" | "archive" | "tags" | "search" | "about";
 
+export type ConfigurableLink = {
+	label: string;
+	href: string;
+	newTab?: boolean;
+	rel?: string;
+};
+
+export type FooterConfig = {
+	copyrightYear: number;
+	owner: ConfigurableLink;
+	icp: {
+		enabled: boolean;
+		label: string;
+		href: string;
+	};
+	poweredBy: ConfigurableLink;
+	theme: ConfigurableLink;
+	labels: {
+		poweredBy: string;
+		themeIs: string;
+	};
+};
+
 const navigationItems = ["home", "archive", "tags", "search", "about"] as const satisfies readonly NavigationKey[];
 
 const repositoryReadmePathByLocale: Record<SiteLocale, string> = {
@@ -44,9 +67,40 @@ export const siteConfig = {
 	typography: {
 		preset: "editorial" as TypographyPreset,
 	},
+	homeInfo: {
+		enabled: true,
+	},
 	author: {
 		name: "JiU",
 	},
+	footer: {
+		copyrightYear: 2026,
+		owner: {
+			label: "赵阿卷",
+			href: "https://blog.zwying.com/",
+		},
+		icp: {
+			enabled: true,
+			label: "京ICP备17025554号-2",
+			href: "https://beian.miit.gov.cn/#/Integrated/index",
+		},
+		poweredBy: {
+			label: "Typecho",
+			href: "http://typecho.org",
+			newTab: true,
+			rel: "noreferrer",
+		},
+		theme: {
+			label: "Cuteen",
+			href: "https://blog.zwying.com",
+			newTab: true,
+			rel: "noreferrer",
+		},
+		labels: {
+			poweredBy: "Powered by",
+			themeIs: "Theme is",
+		},
+	} as FooterConfig,
 	comments: {
 		serverURL: walineServerURL,
 		meta: ["nick", "mail", "link"],
