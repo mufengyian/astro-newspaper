@@ -1,4 +1,3 @@
-import { siteConfig } from "../config";
 import { bindOnce, onPageLoad } from "./runtime";
 
 function handleClick() {
@@ -28,10 +27,7 @@ export function initBackToTop() {
 			return;
 		}
 
-		activeButton.classList.toggle(
-			"is-visible",
-			window.scrollY > siteConfig.interactions.backToTopOffset,
-		);
+		activeButton.classList.toggle("is-visible", window.scrollY > 520);
 	};
 
 	syncButton();

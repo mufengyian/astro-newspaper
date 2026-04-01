@@ -1,7 +1,8 @@
 ---
 import { ClientRouter } from "astro:transitions";
 import BaseHead from "../components/BaseHead.astro";
-import GlobalEnhancements from "../components/GlobalEnhancements.astro";
+import BackToTop from "../components/BackToTop.astro";
+import CopyCodeScript from "../components/CopyCodeScript.astro";
 import SiteFooter from "../components/SiteFooter.astro";
 import SiteHeader from "../components/SiteHeader.astro";
 import "../styles/global.css";
@@ -17,7 +18,6 @@ interface Props {
 	publishedTime?: Date;
 	updatedTime?: Date;
 	tags?: string[];
-	section?: string;
 	bodyClass?: string;
 }
 
@@ -37,7 +37,6 @@ const locale = resolveLocale(Astro.currentLocale);
 			publishedTime={props.publishedTime}
 			updatedTime={props.updatedTime}
 			tags={props.tags}
-			section={props.section}
 		/>
 		<ClientRouter />
 		<slot name="head" />
@@ -51,6 +50,7 @@ const locale = resolveLocale(Astro.currentLocale);
 		</main>
 
 		<SiteFooter />
-		<GlobalEnhancements />
+		<BackToTop />
+		<CopyCodeScript />
 	</body>
 </html>

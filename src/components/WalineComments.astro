@@ -43,7 +43,7 @@ const walineRequiredMeta = siteConfig.comments.requiredMeta.join(",");
 
 {
 	canRenderWaline && (
-		<script>
+		<script is:inline>
 			import { bindWalineLifecycle } from "../scripts/waline";
 
 			bindWalineLifecycle();

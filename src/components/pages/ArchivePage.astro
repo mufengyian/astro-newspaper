@@ -1,11 +1,10 @@
 ---
 import MainLayout from "../../layouts/MainLayout.astro";
-import { siteConfig } from "../../config";
+import { formatDate } from "../../utils/date";
 import { getDictionary, type SiteLocale } from "../../utils/i18n";
-import { getPostPermalink } from "../../utils/posts";
+import { getPostPermalink, getReadingMinutes } from "../../utils/posts";
 import { getArchivePageData } from "../../utils/page-data";
 import PageHeader from "../PageHeader.astro";
-import PostMeta from "../PostMeta.astro";
 
 interface Props {
 	locale: SiteLocale;
@@ -17,11 +16,7 @@ const { groupedPosts } = await getArchivePageData(locale);
 ---
 
 <MainLayout title={dictionary.archive.title} description={dictionary.archive.description} bodyClass="list">
-	<PageHeader
-		title={dictionary.archive.title}
-		description={dictionary.archive.description}
-		eyebrow={siteConfig.title}
-	/>
+	<PageHeader title={dictionary.archive.title} description={dictionary.archive.description} />
 
 	<div class="archive-posts">
 		{groupedPosts.map(([year, entries]) => (
@@ -38,7 +33,17 @@ const { groupedPosts } = await getArchivePageData(locale);
 								{post.data.title}
 							</a>
 						</h3>
-						<PostMeta post={post} class="archive-meta" />
+						<div class="archive-meta">
+							<time>{formatDate(post.data.publishDate, locale)}</time>
+							<span aria-hidden="true">&middot;</span>
+							<span>{dictionary.reading.minutes(getReadingMinutes(post))}</span>
+							{post.data.category && (
+								<>
+									<span aria-hidden="true">&middot;</span>
+									<span>{post.data.category}</span>
+								</>
+							)}
+						</div>
 					</article>
 				))}
 			</section>
