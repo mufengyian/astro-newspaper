@@ -9,19 +9,19 @@
 
 ## Installation
 
-### 1. Get the project
-
-Clone the repository or use GitHub’s “Use this template”.
-
-### 2. Install dependencies
-
 ```bash
+git clone https://github.com/mufengyian/astro-newspaper.git your-blog-name
+cd your-blog-name
 npm install
 ```
 
-### 3. Copy environment variables
+## Configure environment variables
 
-Copy [`.env.example`](../../../.env.example) to `.env`, then fill in the values you need:
+Copy [`.env.example`](../../../.env.example) to `.env`:
+
+```bash
+cp .env.example .env
+```
 
 ```bash
 PUBLIC_SITE_URL="https://your-domain.com"
@@ -30,30 +30,56 @@ PUBLIC_WALINE_SERVER_URL="https://your-waline-server.vercel.app"
 
 Notes:
 
-- `PUBLIC_SITE_URL` is important for production SEO and feeds
-- `PUBLIC_WALINE_SERVER_URL` is optional, and comments stay hidden without it
+- `PUBLIC_SITE_URL`
+  should be configured before deployment.
+  It affects canonical URLs, sitemap, RSS, Open Graph, Twitter cards, `hreflang`, and `robots.txt` behavior.
+- `PUBLIC_WALINE_SERVER_URL`
+  is optional; without it, comments are not rendered.
 
-### 4. Start the dev server
+## Local development
 
 ```bash
 npm run dev
 ```
 
-Open:
+## Pages to review on the first run
 
-```text
-http://localhost:4321
+- `/`
+- `/archive/`
+- `/tags/`
+- `/search/`
+- `/about/`
+- `/rss/`
+- `/posts/...`
+- `/en/`
+- `/en/archive/`
+- `/en/tags/`
+- `/en/search/`
+- `/en/about/`
+
+## First customization pass
+
+Start with these files:
+
+1. [`src/config/site.ts`](../../../src/config/site.ts)
+   Site title, navigation, pagination, search, comments, media presets, and interaction thresholds.
+2. [`src/config/about.ts`](../../../src/config/about.ts)
+   About-page content.
+3. [`src/config/i18n/`](../../../src/config/i18n)
+   Bilingual UI copy.
+4. [`src/content/posts/`](../../../src/content/posts)
+   Replace the sample posts.
+5. [`src/assets/covers/`](../../../src/assets/covers)
+   Replace the sample cover assets.
+6. [`src/styles/tokens.css`](../../../src/styles/tokens.css)
+   Start here if you want to replace the visual system itself.
+
+## Recommended first validation commands
+
+```bash
+npm run check
+npm run build
 ```
-
-## What to replace first
-
-The first round of cleanup usually looks like this:
-
-1. update site title, author, typography, and pagination in [`src/config.ts`](../../../src/config.ts)
-2. update UI copy in [`src/utils/i18n.ts`](../../../src/utils/i18n.ts)
-3. replace sample posts in [`src/content/posts`](../../../src/content/posts)
-4. replace sample covers in [`src/assets/covers`](../../../src/assets/covers)
-5. add your real `.env` values
 
 ## Common commands
 
@@ -61,21 +87,12 @@ The first round of cleanup usually looks like this:
 | --- | --- |
 | `npm run dev` | Start local development |
 | `npm run check` | Run Astro type checks |
-| `npm run build` | Create a production build |
+| `npm run build` | Build the production output |
 | `npm run preview` | Preview the production build |
-| `npm run sync` | Sync content collection types |
+| `npm run sync` | Sync Astro generated types |
 
-## First QA pass
+## Next steps
 
-Before you start writing seriously, it is worth checking these routes:
-
-- `/`
-- `/archive/`
-- `/tags/`
-- `/search/`
-- `/about/`
-- `/posts/...`
-- `/en/`
-- `/en/posts/...`
-
-That catches most routing, i18n, cover image, and comment setup issues early.
+- Continue with [Configuration](Configuration-en)
+- If you want to start authoring content, go to [Content and MDX](Content-and-MDX-en)
+- If you want to shape the bilingual experience first, go to [i18n](i18n-en)

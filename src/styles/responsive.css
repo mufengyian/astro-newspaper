@@ -1,27 +1,92 @@
-@media screen and (max-width: 768px) {
+@media screen and (max-width: 1024px) {
 	:root {
-		--gap: 14px;
+		--gap: 1.25rem;
+		--post-layout-width: 1180px;
 	}
 
-	.footer {
-		padding: calc((var(--footer-height) - var(--gap) - 10px) / 2) var(--gap);
+	.home-info__principles {
+		grid-template-columns: 1fr;
 	}
 }
 
-@media screen and (max-width: 640px) {
-	.nav {
-		line-height: 1.8;
-		padding-block: 10px;
+@media screen and (max-width: 768px) {
+	:root {
+		--gap: 1rem;
+		--content-gap: 1rem;
+		--header-height: auto;
+		--home-main-padding-top: calc(var(--space-xl) + var(--space-xs));
+		--listing-feed-gap: var(--space-lg);
+		--listing-card-padding-inline: 1.125rem;
+		--listing-card-padding-top: 1.25rem;
+		--listing-card-padding-bottom: 1.125rem;
+		--listing-card-title-size: clamp(1.55rem, 6vw, 1.9rem);
+		--listing-card-excerpt-margin-top: 0.5rem;
+		--listing-card-excerpt-margin-bottom: 0.95rem;
+		--listing-card-excerpt-font-size: 0.96rem;
+		--listing-card-compact-padding-inline: 1rem;
+		--listing-card-compact-padding-top: 1rem;
+		--listing-card-compact-padding-bottom: 1rem;
+		--listing-card-compact-title-size: clamp(1.28rem, 5vw, 1.5rem);
+		--listing-card-compact-excerpt-font-size: 0.92rem;
 	}
 
-	.logo,
-	#menu {
-		margin: 0 var(--gap);
+	.nav {
+		padding-block: var(--space-sm);
+	}
+
+	.nav__top {
+		flex-wrap: wrap;
 	}
 
 	#menu {
 		width: 100%;
-		padding-top: 10px;
+		gap: var(--space-sm);
+	}
+
+	.main {
+		padding-top: var(--space-xl);
+	}
+
+	.home-info {
+		padding: var(--space-lg);
+	}
+
+	.home-info__title-row {
+		flex-direction: column;
+	}
+
+	.home-info__actions {
+		width: 100%;
+		justify-content: flex-start;
+	}
+
+	.home .main {
+		padding-top: var(--home-main-padding-top);
+	}
+
+	.footer {
+		text-align: center;
+	}
+}
+
+@media screen and (max-width: 640px) {
+	:root {
+		--gap: 0.875rem;
+		--home-main-padding-top: calc(var(--space-xl) + var(--space-sm));
+		--listing-card-padding-inline: 1rem;
+		--listing-card-padding-top: 1.125rem;
+		--listing-card-padding-bottom: 1rem;
+		--listing-card-title-size: 1.45rem;
+		--listing-card-excerpt-font-size: 0.93rem;
+		--listing-card-compact-padding-inline: 0.92rem;
+		--listing-card-compact-padding-top: 0.92rem;
+		--listing-card-compact-padding-bottom: 0.92rem;
+		--listing-card-compact-title-size: 1.18rem;
+		--listing-card-compact-excerpt-font-size: 0.89rem;
+	}
+
+	.logo__brand {
+		font-size: 2rem;
 	}
 
 	.page-header h1,
@@ -29,62 +94,21 @@
 	.post-title,
 	.post-content h1,
 	.home-info h1 {
-		font-size: 32px;
-	}
-
-	.search-page-header h1 {
-		font-size: 32px;
+		font-size: clamp(2rem, 10vw, 2.8rem);
 	}
 
 	.archive-year h2,
 	.archive-entry-title {
-		font-size: 28px;
+		font-size: clamp(1.6rem, 8vw, 2rem);
 	}
 
 	.post-content h2 {
-		font-size: 28px;
-	}
-
-	.entry-header h2,
-	.entry-header h3 {
-		font-size: 22px;
-	}
-
-	.post-entry--compact .entry-header h2,
-	.post-entry--compact .entry-header h3 {
-		font-size: 20px;
-	}
-
-	.entry-header,
-	.entry-content,
-	.entry-footer {
-		padding-inline: 22px;
-	}
-
-	.post-entry--compact .entry-header,
-	.post-entry--compact .entry-content,
-	.post-entry--compact .entry-footer {
-		padding-inline: 18px;
-	}
-
-	.post-entry--compact .entry-header {
-		padding-top: 18px;
-	}
-
-	.post-entry--compact .entry-footer {
-		padding-bottom: 18px;
+		font-size: clamp(1.6rem, 8vw, 2rem);
 	}
 
 	.pagination,
 	.post-nav {
 		grid-template-columns: 1fr;
-		display: grid;
-	}
-
-	.pagination {
-		justify-content: stretch;
-		gap: 12px;
-		padding-inline: 0;
 	}
 
 	.pagination__meta {
@@ -98,6 +122,26 @@
 	.post-nav__item--next {
 		text-align: left;
 	}
+
+	.search-field {
+		min-height: 62px;
+		padding-inline: 1rem;
+	}
+
+	.system-card__actions {
+		flex-direction: column;
+	}
+
+	.system-card__link {
+		justify-content: center;
+	}
+
+	.top-link {
+		right: 18px;
+		bottom: 18px;
+		width: 48px;
+		height: 48px;
+	}
 }
 
 @media (hover: none) {
@@ -106,10 +150,26 @@
 	}
 }
 
-@media (prefers-reduced-motion) {
-	.terms-tags a:active,
-	#searchResults li:active,
-	.post-entry:hover {
+@media (prefers-reduced-motion: reduce) {
+	html {
+		scroll-behavior: auto;
+	}
+
+	*,
+	*::before,
+	*::after {
+		animation-duration: 0.01ms !important;
+		animation-iteration-count: 1 !important;
+		transition-duration: 0.01ms !important;
+		scroll-behavior: auto !important;
+	}
+
+	.post-entry:hover,
+	#searchResults li:hover,
+	.tag-pill:hover,
+	.system-card__link:hover,
+	.home-info__links a:hover,
+	.pagination a:hover {
 		transform: none;
 	}
 }

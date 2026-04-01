@@ -2,30 +2,34 @@
 
 [简体中文](FAQ-zh-cn) · [Back to Wiki Home](Home-en)
 
-## Is this an installable package?
+## Is this an installable theme package?
 
-Not in the way an Astro integration is. The current positioning is a starter repository, so the recommended workflow is to clone it or use it as a template.
+Not really. It is better treated as a starter repository or template repository, so the recommended workflow is to clone it or use it as a template.
 
-## Can I publish only in one language?
+## Can I publish only in Chinese?
 
-Yes. The second locale can stay unused, although keeping the structure in place is usually the better long-term choice.
+Yes. The English structure can stay unused for now, although keeping the bilingual directory structure usually makes future expansion easier.
 
-## Can I stick to plain Markdown?
+## Can I use only plain Markdown?
 
-Yes. The theme supports both `.md` and `.mdx`. If you do not need components, regular Markdown is completely fine.
+Yes. The theme supports both `.md` and `.mdx`. If you do not need component-level composition, plain Markdown is enough.
 
 ## Why are homepage social links hidden by default?
 
-Because shipping public placeholder handles such as `username` or `yourmail` is not a good default. You need to opt in by filling `socialLinks` yourself.
+Because exposing placeholder handles or placeholder email addresses is neither professional nor safe. The icons appear only after you explicitly fill `siteConfig.socialLinks`.
 
-## Why is RSS missing without `PUBLIC_SITE_URL`?
+## Why are RSS and sitemap incomplete without `PUBLIC_SITE_URL`?
 
-That is a deliberate safety default. The theme should not emit broken feeds, canonical URLs, or sitemaps when it does not know the real public site address.
+That is an intentional safety default. Without the real public address, the theme prefers silence over broken metadata.
 
-## Can I swap the typography?
+## Where should I change the visual language in this version?
 
-Yes. The theme ships with `editorial` and `wenkai`, and you can extend `typography.preset` further if you want more options.
+Start with [`src/styles/tokens.css`](../../../src/styles/tokens.css) before editing component-level CSS.
+
+## Does the theme default to light mode or dark mode?
+
+It follows the system theme by default. Once the user toggles it manually, the preference is persisted locally.
 
 ## Is this a good fit for a documentation site?
 
-It can work for lighter documentation or notes. If you need a full documentation information architecture with versioning and multi-level navigation, a dedicated docs framework may still be the better tool.
+It works well for lighter docs, notes, and knowledge-base style sites. If you need deep side navigation, versioning, and a docs-specific information architecture, a dedicated docs framework is still the better tool.

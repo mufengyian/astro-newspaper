@@ -6,7 +6,7 @@
 
 The theme uses [Waline](https://waline.js.org/) as an optional comment system.
 
-### Enable it
+### How to enable it
 
 Add this to `.env`:
 
@@ -14,22 +14,13 @@ Add this to `.env`:
 PUBLIC_WALINE_SERVER_URL="https://your-waline-server.vercel.app"
 ```
 
-### Default behavior
+### Where the defaults live
 
-- no `PUBLIC_WALINE_SERVER_URL`
-  - no comment section is rendered
-- valid `PUBLIC_WALINE_SERVER_URL`
-  - article pages load Waline automatically
+Comment defaults are configured in:
 
-### Disable comments for a single post
+- [`src/config/site.ts`](../../../src/config/site.ts)
 
-```yaml
-comments: false
-```
-
-### Current defaults
-
-Defined in [`src/config.ts`](../../../src/config.ts):
+Current key fields:
 
 - `meta`: `["nick", "mail", "link"]`
 - `requiredMeta`: `["nick", "mail"]`
@@ -38,35 +29,57 @@ Defined in [`src/config.ts`](../../../src/config.ts):
 - `pageSize`: `10`
 - `reaction`: `false`
 
-## Deployment checklist
+### Default behavior
 
-Before going live, make sure:
+- without `PUBLIC_WALINE_SERVER_URL`
+  no comment section is rendered
+- with `PUBLIC_WALINE_SERVER_URL`
+  Waline mounts automatically on article pages
 
-1. `PUBLIC_SITE_URL` is set
+### Disable comments for a single post
+
+```yaml
+comments: false
+```
+
+## Always verify `PUBLIC_SITE_URL` before deployment
+
+It affects:
+
+- canonical URLs
+- sitemap
+- RSS
+- Open Graph / Twitter cards
+- `hreflang`
+- `robots.txt`
+
+Without it:
+
+- the site can still build
+- but `robots.txt` returns `Disallow: /`
+- sitemap stays disabled
+- the RSS page renders an unavailable state instead of a broken feed URL
+
+## Recommended deployment checklist
+
+1. `PUBLIC_SITE_URL` points to the real public address
 2. `npm run check` passes
 3. `npm run build` passes
-4. sample posts and sample covers are replaced
-5. author name, site title, and descriptions reflect the real project
+4. sample posts and covers have been replaced
+5. site title, author name, about-page copy, and bilingual UI strings are all real
+6. if Waline is enabled, comment mounting, page-switch cleanup, and theme styling have been tested
 
-## Recommended platforms
+## Good deployment targets
 
-`newspaper` works well on:
+`newspaper` is a static site and works well on:
 
 - Vercel
 - Netlify
 - Cloudflare Pages
 - GitHub Pages
-- any static host backed by object storage or a CDN
+- any other static hosting platform
 
-## Why `PUBLIC_SITE_URL` matters
+## One practical recommendation
 
-It affects:
-
-- canonical URLs
-- Open Graph
-- Twitter cards
-- RSS
-- sitemap
-- `hreflang`
-
-Without a real public site address, the theme intentionally prefers silence over broken metadata.
+If you do not have the final public domain during local development, leave `PUBLIC_SITE_URL` unset at first.
+Once the production address is stable, add it and run one final build verification pass.

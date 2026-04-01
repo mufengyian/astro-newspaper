@@ -1,6 +1,6 @@
 import { getRelativeLocaleUrl } from "astro:i18n";
 import { siteConfig } from "../config";
-import { getAllPosts, isVisiblePost, type PostEntry } from "./posts";
+import { getVisiblePosts, type PostEntry } from "./posts";
 import { DEFAULT_LOCALE, LOCALES, isSiteLocale, type SiteLocale } from "./i18n";
 
 export function trimSlashes(value = "") {
@@ -118,11 +118,6 @@ type LocaleAlternate = {
 
 function getTranslationKey(post: Pick<PostEntry, "id" | "data">) {
 	return post.data.translationKey?.trim() || post.id;
-}
-
-async function getVisiblePosts() {
-	const posts = await getAllPosts();
-	return posts.filter(isVisiblePost);
 }
 
 function getLocalizedPostAlternate(locale: SiteLocale, translationKey: string, posts: PostEntry[]) {

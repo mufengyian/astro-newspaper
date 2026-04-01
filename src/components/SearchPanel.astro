@@ -1,4 +1,5 @@
 ---
+import { siteConfig } from "../config";
 import { getDictionary, resolveLocale } from "../utils/i18n";
 import { getSearchIndexPermalink } from "../utils/routing";
 
@@ -13,24 +14,42 @@ const searchMessages = {
 	unavailableTitle: dictionary.search.unavailableTitle,
 	unavailableDescription: dictionary.search.unavailableDescription,
 	openLabel: dictionary.search.openLabel("__TITLE__"),
-	metaSeparator: " · ",
+	metaSeparator: siteConfig.search.metaSeparator,
 };
 ---
 
-<section data-search-root data-search-endpoint={searchEndpoint}>
-	<div id="searchbox">
+<section
+	class="search-panel"
+	data-search-root
+	data-search-endpoint={searchEndpoint}
+	data-search-result-limit={String(siteConfig.search.resultLimit)}
+	data-search-threshold={String(siteConfig.search.threshold)}
+>
+	<div class="search-field" id="searchbox">
+		<span class="search-field__icon" aria-hidden="true">{siteConfig.icons.search}</span>
 		<label class="sr-only" for="search-input">{dictionary.search.label}</label>
 		<input
+			class="search-field__input"
 			id="search-input"
 			type="search"
 			placeholder={dictionary.search.placeholder}
 			autocomplete="off"
 			enterkeyhint="search"
+			aria-autocomplete="list"
+			aria-controls="searchResults"
+			aria-expanded="false"
+			data-search-input
 		/>
 	</div>
 
 	<p class="search-status" data-search-status hidden role="status" aria-live="polite"></p>
-	<ul id="searchResults" data-search-results hidden></ul>
+	<ul
+		id="searchResults"
+		data-search-results
+		hidden
+		role="listbox"
+		aria-label={dictionary.search.label}
+	></ul>
 </section>
 
 <script is:inline type="application/json" data-search-messages set:html={JSON.stringify(searchMessages)}></script>

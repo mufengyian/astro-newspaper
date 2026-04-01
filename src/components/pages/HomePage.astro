@@ -1,5 +1,6 @@
 ---
 import MainLayout from "../../layouts/MainLayout.astro";
+import { siteConfig } from "../../config";
 import { getDictionary, type SiteLocale } from "../../utils/i18n";
 import { getHomePageData, getPostFeedRouteConfig } from "../../utils/page-data";
 import PostFeed from "../PostFeed.astro";
@@ -16,7 +17,7 @@ const { firstPageUrl, pageUrlPattern } = getPostFeedRouteConfig(locale);
 ---
 
 <MainLayout title={dictionary.home.title} description={dictionary.home.description} bodyClass="list home">
-	<HomeHero locale={locale} />
+	{siteConfig.homeInfo.enabled && <HomeHero locale={locale} />}
 
 	<PostFeed
 		posts={pagePosts}

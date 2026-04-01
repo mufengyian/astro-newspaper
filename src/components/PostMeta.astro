@@ -5,19 +5,21 @@ import { getReadingMinutes, type PostEntry } from "../utils/posts";
 
 interface Props {
 	post: PostEntry;
+	class?: string;
+	showCategory?: boolean;
 }
 
 const locale = resolveLocale(Astro.currentLocale);
 const dictionary = getDictionary(locale);
-const { post } = Astro.props;
+const { post, class: className, showCategory = true } = Astro.props;
 const readingMinutes = getReadingMinutes(post);
 ---
 
-<div class="post-meta">
+<div class:list={["post-meta", className]}>
 	<time datetime={formatMachineDate(post.data.publishDate)}>{formatDate(post.data.publishDate, locale)}</time>
 	<span aria-hidden="true">&middot;</span>
 	<span>{dictionary.reading.minutes(readingMinutes)}</span>
-	{post.data.category && (
+	{showCategory && post.data.category && (
 		<>
 			<span aria-hidden="true">&middot;</span>
 			<span>{post.data.category}</span>

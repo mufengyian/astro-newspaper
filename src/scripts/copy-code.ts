@@ -1,3 +1,4 @@
+import { siteConfig } from "../config";
 import { bindOnce, onPageLoad } from "./runtime";
 
 function updateButtonState(button: HTMLButtonElement, label: string) {
@@ -37,7 +38,7 @@ export function initCodeCopy() {
 			} finally {
 				window.setTimeout(() => {
 					updateButtonState(button, idleLabel);
-				}, 1400);
+				}, siteConfig.interactions.copyFeedbackDurationMs);
 			}
 		});
 

@@ -1,52 +1,16 @@
 ---
 import { siteConfig } from "../config";
 import "../styles/global.css";
-import { getDictionary } from "../utils/i18n";
+import { getDictionary, getHtmlLang } from "../utils/i18n";
 import { withBase } from "../utils/routing";
 
 const fallbackHref = withBase();
-const dictionary = getDictionary("zh-cn");
-
-const notFoundStyles = String.raw`
-	.not-found-body {
-		display: grid;
-		place-items: center;
-		min-height: 100vh;
-		margin: 0;
-		background:
-			radial-gradient(circle at top, color-mix(in srgb, var(--accent) 12%, transparent), transparent 42%),
-			var(--theme);
-	}
-
-	.not-found-shell {
-		display: grid;
-		justify-items: center;
-		gap: 10px;
-		padding: 24px;
-		text-align: center;
-	}
-
-	.not-found-code {
-		margin: 0;
-		font-family: var(--font-heading);
-		font-size: clamp(88px, 18vw, 180px);
-		line-height: 0.9;
-		letter-spacing: -0.08em;
-	}
-
-	body.font-preset-wenkai .not-found-code {
-		letter-spacing: -0.02em;
-	}
-
-	.not-found-tip {
-		margin: 0;
-		color: var(--secondary);
-		font-size: 0.95rem;
-	}
-`;
+const locale = siteConfig.defaultLocale;
+const dictionary = getDictionary(locale);
 
 const backScript = String.raw`(() => {
 	const fallbackHref = document.documentElement.dataset.fallbackHref || "/";
+	const redirectDelay = Number(document.documentElement.dataset.redirectDelay || "2000");
 
 	window.setTimeout(() => {
 		if (window.history.length > 1 && document.referrer) {
@@ -55,12 +19,16 @@ const backScript = String.raw`(() => {
 		}
 
 		window.location.replace(fallbackHref);
-	}, 2000);
+	}, redirectDelay);
 })();`;
 ---
 
 <!doctype html>
-<html lang="zh-CN" data-fallback-href={fallbackHref}>
+<html
+	lang={getHtmlLang(locale)}
+	data-fallback-href={fallbackHref}
+	data-redirect-delay={String(siteConfig.notFound.redirectDelayMs)}
+>
 	<head>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -69,14 +37,15 @@ const backScript = String.raw`(() => {
 		<link rel="icon" type="image/svg+xml" href={withBase(siteConfig.assets.faviconSvg)} />
 		<link rel="icon" href={withBase(siteConfig.assets.faviconIco)} />
 		<title>{dictionary.notFound.title} | {siteConfig.title}</title>
-		<style is:inline set:html={notFoundStyles}></style>
 		<script is:inline set:html={backScript}></script>
 	</head>
 
-	<body class:list={[`font-preset-${siteConfig.typography.preset}`, "not-found-body"]}>
-		<main class="not-found-shell" aria-label={dictionary.notFound.ariaLabel}>
-			<h1 class="not-found-code">404</h1>
-			<p class="not-found-tip">{dictionary.notFound.redirectHint}</p>
+	<body class:list={[`font-preset-${siteConfig.typography.preset}`, "system-page-body"]}>
+		<main class="system-page system-page--404" aria-label={dictionary.notFound.ariaLabel}>
+			<h1 class="system-page__code">404</h1>
+			<p class="system-page__title">{dictionary.notFound.title}</p>
+			<p class="system-page__description">{dictionary.notFound.description}</p>
+			<p class="system-page__hint">{dictionary.notFound.redirectHint}</p>
 		</main>
 	</body>
 </html>

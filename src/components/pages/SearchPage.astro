@@ -1,8 +1,9 @@
 ---
 import MainLayout from "../../layouts/MainLayout.astro";
+import { siteConfig } from "../../config";
 import { getDictionary, type SiteLocale } from "../../utils/i18n";
-import SearchPanel from "../SearchPanel.astro";
 import PageHeader from "../PageHeader.astro";
+import SearchPanel from "../SearchPanel.astro";
 
 interface Props {
 	locale: SiteLocale;
@@ -17,10 +18,8 @@ const dictionary = getDictionary(locale);
 		<PageHeader
 			title={dictionary.search.title}
 			description={dictionary.search.description}
-			align="left"
-			icon="⌕"
+			eyebrow={siteConfig.title}
 		/>
-
 		<SearchPanel />
 	</section>
 </MainLayout>

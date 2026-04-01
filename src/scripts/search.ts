@@ -1,4 +1,4 @@
-import Fuse from "fuse.js";
+import type Fuse from "fuse.js";
 import { bindOnce, onPageLoad } from "./runtime";
 
 interface SearchEntry {
@@ -25,8 +25,40 @@ type SearchMessages = {
 	metaSeparator: string;
 };
 
+type FuseConstructor = typeof Fuse<SearchEntry>;
+
+const searchIndexCache = new Map<string, Promise<SearchEntry[]>>();
+let fuseImportPromise: Promise<{ default: FuseConstructor }> | undefined;
+
 function formatTemplate(template: string, query: string, count: number) {
 	return template.replace("__QUERY__", query).replace("__COUNT__", String(count));
+}
+
+function loadFuse() {
+	if (!fuseImportPromise) {
+		fuseImportPromise = import("fuse.js");
+	}
+
+	return fuseImportPromise;
+}
+
+function loadSearchIndex(searchEndpoint: string) {
+	const cached = searchIndexCache.get(searchEndpoint);
+	if (cached) {
+		return cached;
+	}
+
+	const request = (async () => {
+		const response = await fetch(searchEndpoint, { credentials: "same-origin" });
+		if (!response.ok) {
+			throw new Error(`Unexpected response: ${response.status}`);
+		}
+
+		return (await response.json()) as SearchEntry[];
+	})();
+
+	searchIndexCache.set(searchEndpoint, request);
+	return request;
 }
 
 export function initSearch() {
@@ -36,7 +68,7 @@ export function initSearch() {
 	}
 
 	root.dataset.ready = "true";
-	const input = root.querySelector<HTMLInputElement>("#search-input");
+	const input = root.querySelector<HTMLInputElement>("[data-search-input]");
 	const status = root.querySelector<HTMLElement>("[data-search-status]");
 	const results = root.querySelector<HTMLElement>("[data-search-results]");
 	const messagesNode = document.querySelector<HTMLScriptElement>("[data-search-messages]");
@@ -47,20 +79,31 @@ export function initSearch() {
 
 	const messages = JSON.parse(messagesNode.textContent) as SearchMessages;
 	const searchEndpoint = root.dataset.searchEndpoint || "/search.json";
+	const resultLimit = Number(root.dataset.searchResultLimit || "10");
+	const threshold = Number(root.dataset.searchThreshold || "0.32");
 	let activeIndex = 0;
 	let fuse: Fuse<SearchEntry> | null = null;
 	let loadPromise: Promise<void> | null = null;
+	let latestQuery = "";
+
+	const setExpandedState = (isExpanded: boolean) => {
+		input.setAttribute("aria-expanded", isExpanded ? "true" : "false");
+	};
 
 	const setActive = (index: number) => {
 		const items = Array.from(results.querySelectorAll<HTMLLIElement>("li"));
 		if (items.length === 0) {
+			input.removeAttribute("aria-activedescendant");
 			return;
 		}
 
 		activeIndex = Math.max(0, Math.min(index, items.length - 1));
 		items.forEach((item, itemIndex) => {
-			item.classList.toggle("focus", itemIndex === activeIndex);
+			const isActive = itemIndex === activeIndex;
+			item.classList.toggle("focus", isActive);
+			item.setAttribute("aria-selected", isActive ? "true" : "false");
 		});
+		input.setAttribute("aria-activedescendant", items[activeIndex]?.id || "");
 	};
 
 	const syncQuery = (query: string) => {
@@ -80,11 +123,15 @@ export function initSearch() {
 		status.textContent = "";
 		results.replaceChildren();
 		activeIndex = 0;
+		setExpandedState(false);
+		input.removeAttribute("aria-activedescendant");
 	};
 
 	const createEmptyState = (title: string, description: string) => {
 		const item = document.createElement("li");
 		item.className = "search-empty";
+		item.setAttribute("role", "option");
+		item.setAttribute("aria-selected", "false");
 
 		const strong = document.createElement("strong");
 		strong.textContent = title;
@@ -99,7 +146,11 @@ export function initSearch() {
 
 	const createResultItem = (item: SearchEntry, index: number) => {
 		const resultItem = document.createElement("li");
-		if (index === 0) {
+		const isActive = index === 0;
+		resultItem.id = `search-result-${index}`;
+		resultItem.setAttribute("role", "option");
+		resultItem.setAttribute("aria-selected", isActive ? "true" : "false");
+		if (isActive) {
 			resultItem.classList.add("focus");
 		}
 
@@ -139,27 +190,32 @@ export function initSearch() {
 
 		if (!loadPromise) {
 			loadPromise = (async () => {
-				status.hidden = false;
-				status.textContent = messages.loading;
+				try {
+					status.hidden = false;
+					status.textContent = messages.loading;
+					setExpandedState(true);
 
-				const response = await fetch(searchEndpoint, { credentials: "same-origin" });
-				if (!response.ok) {
-					throw new Error(`Unexpected response: ${response.status}`);
+					const [{ default: FuseConstructor }, entries] = await Promise.all([
+						loadFuse(),
+						loadSearchIndex(searchEndpoint),
+					]);
+
+					fuse = new FuseConstructor(entries, {
+						includeScore: true,
+						threshold,
+						ignoreLocation: true,
+						keys: [
+							{ name: "title", weight: 0.45 },
+							{ name: "excerpt", weight: 0.2 },
+							{ name: "body", weight: 0.15 },
+							{ name: "category", weight: 0.08 },
+							{ name: "tags", weight: 0.12 },
+						],
+					});
+				} catch (error) {
+					loadPromise = null;
+					throw error;
 				}
-
-				const entries = (await response.json()) as SearchEntry[];
-				fuse = new Fuse(entries, {
-					includeScore: true,
-					threshold: 0.32,
-					ignoreLocation: true,
-					keys: [
-						{ name: "title", weight: 0.45 },
-						{ name: "excerpt", weight: 0.2 },
-						{ name: "body", weight: 0.15 },
-						{ name: "category", weight: 0.08 },
-						{ name: "tags", weight: 0.12 },
-					],
-				});
 			})();
 		}
 
@@ -169,39 +225,61 @@ export function initSearch() {
 	const renderResults = (items: SearchResult[], query: string) => {
 		status.hidden = false;
 		results.hidden = false;
-
+		setExpandedState(true);
 		status.textContent = formatTemplate(messages.matchesTemplate, query, items.length);
 
 		if (items.length === 0) {
 			results.replaceChildren(createEmptyState(messages.emptyTitle, messages.emptyDescription));
 			activeIndex = 0;
+			input.removeAttribute("aria-activedescendant");
 			return;
 		}
 
 		results.replaceChildren(...items.map(({ item }, index) => createResultItem(item, index)));
 		activeIndex = 0;
+		input.setAttribute("aria-activedescendant", "search-result-0");
 	};
 
 	const runSearch = async (query: string) => {
 		if (!query) {
+			latestQuery = "";
 			clearResults();
 			return;
 		}
 
+		latestQuery = query;
+
 		try {
 			await ensureIndex();
-			const matched = fuse ? (fuse.search(query).slice(0, 10) as SearchResult[]) : [];
+			if (query !== latestQuery) {
+				return;
+			}
+
+			const matched = fuse ? (fuse.search(query).slice(0, resultLimit) as SearchResult[]) : [];
 			renderResults(matched, query);
 		} catch (error) {
+			if (query !== latestQuery) {
+				return;
+			}
+
 			console.error("[newspaper] Failed to load the search index.", error);
 			status.hidden = false;
 			results.hidden = false;
+			setExpandedState(true);
 			status.textContent = messages.unavailableTitle;
 			results.replaceChildren(
 				createEmptyState(messages.unavailableTitle, messages.unavailableDescription),
 			);
 		}
 	};
+
+	input.addEventListener(
+		"focus",
+		() => {
+			void ensureIndex();
+		},
+		{ once: true },
+	);
 
 	input.addEventListener("input", () => {
 		const query = input.value.trim();
@@ -231,6 +309,12 @@ export function initSearch() {
 				event.preventDefault();
 				link.click();
 			}
+		}
+
+		if (event.key === "Escape") {
+			input.value = "";
+			syncQuery("");
+			clearResults();
 		}
 	});
 

@@ -15,15 +15,16 @@ Both of these are supported:
 - `.md`
 - `.mdx`
 
-## Frontmatter fields
+The theme uses Astro Content Collections, so frontmatter is validated by schema before it reaches lists, article pages, RSS, and the search index.
 
-The main fields look like this:
+## Current frontmatter fields
 
 ```yaml
+---
 title: Example Post
 excerpt: A short summary
-publishDate: 2026-03-31
-updatedDate: 2026-04-01
+publishDate: 2026-04-01
+updatedDate: 2026-04-02
 draft: false
 featured: false
 locale: en
@@ -37,28 +38,56 @@ authors:
 comments: true
 cover: ../../assets/covers/paper-constellation.svg
 coverAlt: Cover image description
+---
 ```
 
-## Writing in plain Markdown
+## Field reference
 
-Regular Markdown is perfect if you only need article structure and code blocks:
+- `title`
+  Article title.
+- `excerpt`
+  Used in listing cards, article descriptions, and search summaries.
+- `publishDate`
+  Publish date.
+- `updatedDate`
+  Optional; used for article update metadata.
+- `draft`
+  When `true`, visible only in development.
+- `featured`
+  Helps homepage ordering prioritize featured posts first.
+- `locale`
+  Active locale, defaults to `zh-cn`.
+- `translationKey`
+  Shared mapping key for translated versions.
+- `category`
+  Optional category used in post metadata and relevance scoring.
+- `tags`
+  Tag array.
+- `authors`
+  The schema supports multiple authors, although the default theme UI still centers the site-level author identity.
+- `comments`
+  Whether comments are enabled for this post.
+- `cover`
+  Local cover asset.
+- `coverAlt`
+  Alternative text for the cover.
 
-````md
-## Section heading
+## When plain Markdown is enough
 
-This is a paragraph.
+Regular Markdown is enough if you mainly need:
 
-```ts
-console.log("hello");
-```
-````
+- headings
+- paragraphs
+- lists
+- tables
+- code blocks
 
-## Why MDX is still useful
+## Why MDX still matters
 
-MDX helps when you want to:
+MDX is useful when you want to:
 
-- embed Astro components inside a post
-- customize image presentation
+- embed Astro components in articles
+- use `Image` / `Picture` with more control
 - build callouts, comparisons, and editorial blocks
 - keep richer presentation inside the content layer
 
@@ -75,9 +104,15 @@ import cover from "../../assets/covers/paper-constellation.svg";
 <Image src={cover} alt="Example illustration" widths={[480, 720, 1080]} />
 ```
 
-## Multilingual writing
+## Bilingual post workflow
 
-Use the same `translationKey` for translated versions of the same post:
+If the same post exists in both languages, the recommended flow is:
+
+1. write the default-locale version first
+2. create the translated post only when it is ready
+3. reuse the same `translationKey`
+
+Example:
 
 ```yaml
 locale: zh-cn
@@ -89,14 +124,14 @@ locale: en
 translationKey: astro-assets-guide
 ```
 
-## Disabling comments per post
+## Disabling comments for one post
 
 ```yaml
 comments: false
 ```
 
-That is useful for:
+Useful for:
 
-- standalone pages
 - announcements
+- standalone informational pages
 - reference content where discussion is unnecessary

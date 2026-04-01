@@ -2,28 +2,18 @@
 interface Props {
 	title: string;
 	description?: string;
-	align?: "center" | "left";
-	icon?: string;
+	eyebrow?: string;
 	level?: "h1" | "h2";
+	align?: "start" | "center";
 	class?: string;
 }
 
-const {
-	title,
-	description,
-	align = "center",
-	icon,
-	level = "h1",
-	class: className,
-} = Astro.props;
+const { title, description, eyebrow, level = "h1", align = "center", class: className } = Astro.props;
 const HeadingTag = level;
-const headerClass = align === "left" ? "search-page-header" : "page-header";
 ---
 
-<header class:list={[headerClass, className]}>
-	<HeadingTag>
-		<span>{title}</span>
-		{icon && <span class="search-page-header__icon" aria-hidden="true">{icon}</span>}
-	</HeadingTag>
-	{description && <p>{description}</p>}
+<header class:list={["page-header", `page-header--${align}`, className]}>
+	{eyebrow && <p class="page-header__eyebrow">{eyebrow}</p>}
+	<HeadingTag>{title}</HeadingTag>
+	{description && <p class="page-header__description">{description}</p>}
 </header>

@@ -2,9 +2,9 @@
 
 [简体中文](Home) · [Back to README](../../../README.en.md)
 
-Welcome to the `newspaper` wiki. This is the extended documentation layer for the theme: more detailed than the README, but still focused on real setup and publishing work instead of implementation trivia.
+`newspaper` is a bilingual Astro blog theme for long-form publishing, technical writing, project logs, and structured archives. It keeps the stack static-first, configuration-driven, and intentionally light on client-side enhancements.
 
-## Start here
+## Documentation Map
 
 - [Quick Start](Quick-Start-en)
 - [Configuration](Configuration-en)
@@ -14,12 +14,40 @@ Welcome to the `newspaper` wiki. This is the extended documentation layer for th
 - [Comments and Deployment](Comments-and-Deployment-en)
 - [FAQ](FAQ-en)
 
-## Theme positioning
+## Theme Capabilities
 
-`newspaper` is a starter for long-form publishing in Astro. It is closer to an editorial writing template than an application shell, which is why the emphasis stays on reading, archives, search, and sustainable content structure.
+- Ships with home, pagination, archive, tags, search, about, RSS, 404, and article pages
+- Supports separate `zh-cn` and `en` route trees, with `translationKey` used for bilingual post mapping
+- Organizes styles into `tokens / base / layout / listing / article / responsive`
+- Centralizes site settings, about-page content, and locale dictionaries in `src/config/`
+- Keeps comments, search, theme switching, code copy, reading progress, and back-to-top isolated into dedicated scripts
 
-If this is your first time with the theme, start with [Quick Start](Quick-Start-en).
+## Suggested Reading Order
 
-## Release Notes
+1. [Quick Start](Quick-Start-en)
+2. [Configuration](Configuration-en)
+3. [Content and MDX](Content-and-MDX-en)
+4. [i18n](i18n-en)
+5. [Comments and Deployment](Comments-and-Deployment-en)
 
-- [2026-03-31 Release Notes](Release-Notes-2026-03-31-en)
+## Core Directories
+
+- `src/config/site.ts`
+  Site title, navigation, homepage info, footer data, comments, search, media presets, and interaction thresholds.
+- `src/config/about.ts`
+  About-page long-form copy and structure.
+- `src/config/i18n/*`
+  Locale dictionaries and locale type definitions.
+- `src/components/pages/*`
+  Reusable page implementations.
+- `src/styles/*`
+  Design tokens and the global style system.
+- `src/scripts/*`
+  Client-side enhancement scripts.
+
+## Maintenance Entry Points
+
+- Update site settings in `src/config/site.ts`
+- Update UI copy in `src/config/i18n/*`
+- Update visual variables in `src/styles/tokens.css`
+- Update content structure in `src/content/posts/*`
