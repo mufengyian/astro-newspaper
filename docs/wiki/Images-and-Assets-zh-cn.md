@@ -64,7 +64,7 @@ import image from "../../assets/covers/craft-wave.svg";
 />
 ```
 
-## 使用建议
+## 使用说明
 
 - 封面图优先使用本地资源
 - 正文图片尽量写清楚 `alt`

@@ -2,9 +2,9 @@
 
 [English](Home-en) · [返回 README](../../../README.md)
 
-欢迎来到 `newspaper` 的中文 Wiki。这里是 README 的延伸版文档，适合在你已经跑通项目之后，继续查具体配置、写作规范和部署细节。
+`newspaper` 是一个双语 Astro 博客主题，面向长期写作、技术发布、项目记录与结构化归档。主题保持静态优先、配置集中、客户端增强克制，适合作为长期维护的内容站点基线。
 
-## 从哪里开始
+## 文档索引
 
 - [快速开始](Quick-Start-zh-cn)
 - [配置说明](Configuration-zh-cn)
@@ -14,22 +14,23 @@
 - [评论与部署](Comments-and-Deployment-zh-cn)
 - [FAQ](FAQ-zh-cn)
 
-## 主题定位
+## 主题结构
 
-`newspaper` 是一个面向长期写作的 Astro 博客主题 starter。它更像一份可直接开写的出版模板，而不是一个等待你再组装的应用外壳。
+- 页面体系：首页、分页、归档、标签、搜索、关于、RSS、404 与文章页
+- 内容层：基于 Astro Content Collections 的 Markdown / MDX 发布流程
+- 配置层：`src/config/site.ts` 与 `src/utils/i18n.ts`
+- 样式层：`tokens / base / layout / listing / article / responsive`
+- 交互层：主题切换、搜索、代码复制、阅读进度、回到顶部、Waline
 
-你会在这里看到：
+## 核心目录
 
-- 清晰的首页与分页
-- 适合回看内容的归档与标签页
-- 静态搜索
-- MD / MDX 双支持
-- Astro 原生 i18n
-- 可选评论
-- 相对克制的视觉层次
-
-如果你是第一次接触这个主题，建议先从 [快速开始](Quick-Start-zh-cn) 看起。
-
-## 发布说明
-
-- [2026-03-31 发布说明](Release-Notes-2026-03-31-zh-cn)
+- `src/config/site.ts`
+  站点标题、导航、首页信息区、Footer、评论、分页与社交链接配置。
+- `src/utils/i18n.ts`
+  中英文文案与 locale 工具函数。
+- `src/components/pages/*`
+  页面实现层。
+- `src/styles/*`
+  设计 token 与全站样式。
+- `src/scripts/*`
+  客户端增强脚本。
