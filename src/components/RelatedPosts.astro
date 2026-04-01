@@ -1,6 +1,7 @@
 ---
 import { getDictionary, resolveLocale } from "../utils/i18n";
 import type { PostEntry } from "../utils/posts";
+import PageHeader from "./PageHeader.astro";
 import PostCard from "./PostCard.astro";
 
 interface Props {
@@ -15,9 +16,7 @@ const { posts } = Astro.props;
 {
 	posts.length > 0 && (
 		<section class="related-posts">
-			<header class="page-header">
-				<h2>{dictionary.post.relatedPosts}</h2>
-			</header>
+			<PageHeader title={dictionary.post.relatedPosts} level="h2" align="start" class="page-header--section" />
 
 			<div class="related-posts__grid posts-grid posts-grid--narrow">
 				{posts.map((post) => (

@@ -1,4 +1,5 @@
 ---
+import { siteConfig } from "../config";
 import { getDictionary, resolveLocale } from "../utils/i18n";
 
 const locale = resolveLocale(Astro.currentLocale);
@@ -7,11 +8,5 @@ const label = dictionary.a11y.backToTop;
 ---
 
 <button class="top-link" type="button" aria-label={label} title={label} data-top-link>
-	<span aria-hidden="true">↑</span>
+	<span class="top-link__icon" aria-hidden="true">{siteConfig.icons.backToTop}</span>
 </button>
-
-<script>
-	import { mountBackToTop } from "../scripts/back-to-top";
-
-	mountBackToTop();
-</script>

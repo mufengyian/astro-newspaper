@@ -1,8 +1,9 @@
 ---
 import { Picture } from "astro:assets";
+import { siteConfig } from "../config";
 import { getDictionary, resolveLocale } from "../utils/i18n";
-import PostMeta from "./PostMeta.astro";
 import { getPostPermalink, type PostEntry } from "../utils/posts";
+import PostMeta from "./PostMeta.astro";
 
 interface Props {
 	post: PostEntry;
@@ -14,37 +15,37 @@ const dictionary = getDictionary(locale);
 const { post, compact = false } = Astro.props;
 const href = getPostPermalink(locale, post);
 const entryLabel = dictionary.post.openLabel(post.data.title);
+const listingCover = siteConfig.media.listingCover;
 ---
 
 <article class:list={["post-entry", compact && "post-entry--compact"]}>
-	{!compact && post.data.cover && (
-		<div class="entry-cover">
-			<Picture
-				src={post.data.cover}
-				alt={post.data.coverAlt ?? post.data.title}
-				widths={[720, 1040, 1480]}
-				sizes="(max-width: 768px) 100vw, 720px"
-				formats={["avif", "webp"]}
-				quality={86}
-				layout="constrained"
-				loading="lazy"
-				decoding="async"
-			/>
-		</div>
-	)}
+	<a class="post-entry__body" href={href} aria-label={entryLabel} data-astro-prefetch="hover">
+		{!compact && post.data.cover && (
+			<div class="entry-cover">
+				<Picture
+					src={post.data.cover}
+					alt={post.data.coverAlt ?? post.data.title}
+					widths={[...listingCover.widths]}
+					sizes={listingCover.sizes}
+					formats={[...listingCover.formats]}
+					quality={listingCover.quality}
+					layout="constrained"
+					loading="lazy"
+					decoding="async"
+				/>
+			</div>
+		)}
 
-	<header class="entry-header">
-		<h2>
-			<a href={href} transition:name={`title-${post.id}`} data-astro-prefetch="hover">
-				{post.data.title}
-			</a>
-		</h2>
-	</header>
-	<div class="entry-content">
-		<p>{post.data.excerpt}</p>
-	</div>
-	<footer class="entry-footer">
-		<PostMeta post={post} />
-	</footer>
-	<a class="entry-link" href={href} aria-label={entryLabel} data-astro-prefetch="hover"></a>
+		<div class="post-entry__content">
+			<header class="entry-header">
+				<h2 transition:name={`title-${post.id}`}>{post.data.title}</h2>
+			</header>
+			<div class="entry-content">
+				<p>{post.data.excerpt}</p>
+			</div>
+			<footer class="entry-footer">
+				<PostMeta post={post} />
+			</footer>
+		</div>
+	</a>
 </article>

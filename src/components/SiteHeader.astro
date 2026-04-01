@@ -1,6 +1,6 @@
 ---
-import { siteConfig } from "../config";
-import { getDictionary, resolveLocale } from "../utils/i18n";
+import { siteConfig, type NavigationKey } from "../config";
+import { getDictionary, resolveLocale, type SiteLocale } from "../utils/i18n";
 import {
 	getAboutPermalink,
 	getArchivePermalink,
@@ -12,21 +12,20 @@ import {
 import LocaleSwitch from "./LocaleSwitch.astro";
 import ThemeToggle from "./ThemeToggle.astro";
 
+const navigationHrefByKey = {
+	home: getHomePermalink,
+	archive: getArchivePermalink,
+	tags: getTagsPermalink,
+	search: getSearchPermalink,
+	about: getAboutPermalink,
+} satisfies Record<NavigationKey, (locale: SiteLocale) => string>;
+
 const locale = resolveLocale(Astro.currentLocale);
 const dictionary = getDictionary(locale);
 const pathname = stripBasePath(Astro.url.pathname).replace(/\/$/, "") || "/";
 const navigation = siteConfig.navigationItems.map((key) => ({
 	label: dictionary.navigation[key],
-	href:
-		key === "home"
-			? getHomePermalink(locale)
-			: key === "archive"
-				? getArchivePermalink(locale)
-				: key === "tags"
-					? getTagsPermalink(locale)
-					: key === "search"
-						? getSearchPermalink(locale)
-						: getAboutPermalink(locale),
+	href: navigationHrefByKey[key](locale),
 }));
 
 function isActive(href: string) {
@@ -39,23 +38,26 @@ function isActive(href: string) {
 
 <header class="header">
 	<nav class="nav" aria-label={dictionary.navigation.label}>
-		<div class="logo">
-			<a
-				class="logo__brand"
-				href={getHomePermalink(locale)}
-				transition:name="site-brand"
-				data-astro-prefetch="hover"
-			>
-				{siteConfig.title}
-			</a>
+		<div class="nav__top">
+			<div class="logo">
+				<a
+					class="logo__brand"
+					href={getHomePermalink(locale)}
+					transition:name="site-brand"
+					data-astro-prefetch="hover"
+				>
+					{siteConfig.title}
+				</a>
+			</div>
+
 			<div class="logo-switches">
 				<ThemeToggle />
-				<span class="logo-switches__divider" aria-hidden="true">|</span>
+				<span class="logo-switches__divider" aria-hidden="true"></span>
 				<LocaleSwitch />
 			</div>
 		</div>
 
-		<ul id="menu">
+		<ul id="menu" class="nav__menu">
 			{navigation.map((item) => (
 				<li>
 					<a

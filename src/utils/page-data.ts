@@ -9,13 +9,12 @@ import {
 	getRssPagePermalink,
 } from "./routing";
 import {
-	getAllPosts,
 	getHomePosts,
 	getPageItems,
 	getPostPermalink,
+	getPostsByLocale,
 	getPostsByTag,
 	getReadingMinutes,
-	getSortedPosts,
 	getTagIndex,
 	getTotalPages,
 	groupPostsByYear,
@@ -49,7 +48,7 @@ function escapeXml(value: string) {
 }
 
 async function getLocalePosts(locale: SiteLocale) {
-	return getSortedPosts(await getAllPosts(), locale);
+	return getPostsByLocale(locale);
 }
 
 export function getPostFeedRouteConfig(locale: SiteLocale) {
@@ -61,11 +60,11 @@ export function getPostFeedRouteConfig(locale: SiteLocale) {
 
 export async function getHomePageData(locale: SiteLocale) {
 	const posts = await getLocalePosts(locale);
-	const homePosts = getHomePosts(posts, siteConfig.featuredCount);
-	const totalPages = getTotalPages(homePosts.length, siteConfig.postsPerPage);
+	const homePosts = getHomePosts(posts, siteConfig.content.featuredCount);
+	const totalPages = getTotalPages(homePosts.length, siteConfig.content.postsPerPage);
 
 	return {
-		pagePosts: getPageItems(homePosts, 1, siteConfig.postsPerPage),
+		pagePosts: getPageItems(homePosts, 1, siteConfig.content.postsPerPage),
 		totalPages,
 	};
 }
@@ -113,8 +112,8 @@ function buildUnavailableFeed(message: string, link: string) {
 
 export function createPaginatedFeedStaticPaths(locale: SiteLocale): GetStaticPaths {
 	return async () => {
-		const posts = getHomePosts(await getLocalePosts(locale), siteConfig.featuredCount);
-		const totalPages = getTotalPages(posts.length, siteConfig.postsPerPage);
+		const posts = getHomePosts(await getLocalePosts(locale), siteConfig.content.featuredCount);
+		const totalPages = getTotalPages(posts.length, siteConfig.content.postsPerPage);
 
 		return Array.from({ length: Math.max(0, totalPages - 1) }, (_, index) => {
 			const currentPage = index + 2;
@@ -123,7 +122,7 @@ export function createPaginatedFeedStaticPaths(locale: SiteLocale): GetStaticPat
 				props: {
 					currentPage,
 					totalPages,
-					pagePosts: getPageItems(posts, currentPage, siteConfig.postsPerPage),
+					pagePosts: getPageItems(posts, currentPage, siteConfig.content.postsPerPage),
 				} satisfies PaginatedPostFeedProps,
 			};
 		});

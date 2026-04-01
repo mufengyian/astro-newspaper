@@ -1,9 +1,12 @@
 ---
+import BackToTop from "./BackToTop.astro";
 import { getDictionary, resolveLocale } from "../utils/i18n";
 
 const locale = resolveLocale(Astro.currentLocale);
 const dictionary = getDictionary(locale);
 ---
+
+<BackToTop />
 
 <template
 	data-copy-i18n
@@ -13,7 +16,7 @@ const dictionary = getDictionary(locale);
 ></template>
 
 <script>
-	import { mountCodeCopy } from "../scripts/copy-code";
+	import { mountGlobalEnhancements } from "../scripts/global-enhancements";
 
-	mountCodeCopy();
+	mountGlobalEnhancements();
 </script>

@@ -1,7 +1,9 @@
 ---
+import { getAboutContent } from "../../config/about";
 import { siteConfig } from "../../config";
 import MainLayout from "../../layouts/MainLayout.astro";
 import { getDictionary, type SiteLocale } from "../../utils/i18n";
+import PageHeader from "../PageHeader.astro";
 
 interface Props {
 	locale: SiteLocale;
@@ -9,36 +11,35 @@ interface Props {
 
 const { locale } = Astro.props;
 const dictionary = getDictionary(locale);
+const aboutContent = getAboutContent(locale);
 ---
 
-<MainLayout title={dictionary.about.title} description={dictionary.about.description}>
-	<article class="post-single page-single">
-		<header class="post-header">
-			<h1 class="post-title">{dictionary.about.title} {siteConfig.title}</h1>
-			<div class="post-description">{dictionary.about.intro}</div>
-		</header>
+<MainLayout title={dictionary.about.title} description={dictionary.about.description} bodyClass="list">
+	<section class="about-page">
+		<PageHeader
+			title={`${dictionary.about.title} ${siteConfig.title}`}
+			description={aboutContent.lead}
+			eyebrow={dictionary.site.tagline}
+		/>
 
-		<div class="post-content">
-			<p>{dictionary.about.body}</p>
-			<p>{dictionary.site.authorBlurb}</p>
-
-			<h2>{dictionary.about.principlesTitle}</h2>
-			<ul>
-				{dictionary.principles.map((principle) => (
-					<li>
-						<strong>{principle.title}</strong>
-						{locale === "en" ? ": " : "："}
-						{principle.description}
-					</li>
-				))}
-			</ul>
-
-			<h2>{dictionary.about.capabilitiesTitle}</h2>
-			<ul>
-				{siteConfig.capabilities.map((capability) => (
-					<li>{capability}</li>
-				))}
-			</ul>
+		<div class="about-page__body">
+			{aboutContent.sections.map((section) => (
+				<section class="about-section">
+					<h2>{section.title}</h2>
+					{section.paragraphs.map((paragraph) => (
+						<p>{paragraph}</p>
+					))}
+					{
+						section.list && (
+							<ul class="feature-list">
+								{section.list.map((item) => (
+									<li>{item}</li>
+								))}
+							</ul>
+						)
+					}
+				</section>
+			))}
 		</div>
-	</article>
+	</section>
 </MainLayout>

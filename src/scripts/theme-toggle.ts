@@ -9,8 +9,7 @@ function getNextThemeLabel(button: HTMLButtonElement, state: string) {
 }
 
 export function updateThemeToggleButtons() {
-	const state =
-		window.__getNewspaperTheme?.() || document.documentElement.dataset.themePreference || "light";
+	const state = window.__getNewspaperTheme?.() || document.documentElement.dataset.theme || "light";
 
 	document.querySelectorAll<HTMLButtonElement>("[data-theme-toggle]").forEach((button) => {
 		const nextLabel = getNextThemeLabel(button, state);
@@ -18,6 +17,7 @@ export function updateThemeToggleButtons() {
 		const currentTemplate = button.dataset.themeCurrent || "Switch theme, current setting: __CURRENT__";
 
 		button.setAttribute("aria-label", currentTemplate.replace("__CURRENT__", currentLabel || nextLabel));
+		button.setAttribute("aria-pressed", state === "dark" ? "true" : "false");
 		button.setAttribute("title", nextLabel);
 	});
 }
@@ -32,10 +32,7 @@ export function initThemeToggle() {
 
 		button.dataset.bound = "true";
 		button.addEventListener("click", () => {
-			const current =
-				window.__getNewspaperTheme?.() ||
-				document.documentElement.dataset.themePreference ||
-				"light";
+			const current = window.__getNewspaperTheme?.() || document.documentElement.dataset.theme || "light";
 			window.__setNewspaperTheme?.(nextTheme(current));
 			updateThemeToggleButtons();
 		});

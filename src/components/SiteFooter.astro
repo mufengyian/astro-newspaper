@@ -1,17 +1,48 @@
 ---
-import { siteConfig } from "../config";
-import { getDictionary, resolveLocale } from "../utils/i18n";
+import icpSprite from "../../ICP.svg?raw";
+import { siteConfig, type ConfigurableLink } from "../config";
 
-const locale = resolveLocale(Astro.currentLocale);
-const dictionary = getDictionary(locale);
+const { footer } = siteConfig;
+
+function getLinkAttributes(link: ConfigurableLink) {
+	return {
+		target: link.newTab ? "_blank" : undefined,
+		rel: link.newTab ? (link.rel ?? "noreferrer") : undefined,
+	};
+}
+
+const ownerLinkAttributes = getLinkAttributes(footer.owner);
+const poweredByLinkAttributes = getLinkAttributes(footer.poweredBy);
+const themeLinkAttributes = getLinkAttributes(footer.theme);
+const icpLinkAttributes = {
+	target: "_blank",
+	rel: "noreferrer",
+};
 ---
 
-<footer class="footer">
-	<span>&copy; {new Date().getFullYear()} {siteConfig.author.name}</span>
-	<span>&middot;</span>
-	<span>{siteConfig.title}</span>
-	<span>&middot;</span>
-	<span>
-		{dictionary.footer.builtWith} <a href="https://astro.build" target="_blank" rel="noreferrer">Astro</a>
-	</span>
+<footer id="footer" class="footer">
+	<div class="footer__icon-sprite" aria-hidden="true" set:html={icpSprite}></div>
+
+	<p class="small footer__small">
+		&copy; {footer.copyrightYear} <a href={footer.owner.href} {...ownerLinkAttributes}>{footer.owner.label}</a>
+	</p>
+
+	{
+		footer.icp.enabled && (
+			<p class="small footer__small footer__small--icp">
+				<svg class="icon icon-20 footer__icp-icon" aria-hidden="true">
+					<use xlink:href="#ICP"></use>
+				</svg>
+				<a href={footer.icp.href} {...icpLinkAttributes}>{footer.icp.label}</a>
+			</p>
+		)
+	}
+
+	<p class="small footer__small">
+		{footer.labels.poweredBy}{" "}
+		<a href={footer.poweredBy.href} {...poweredByLinkAttributes}>{footer.poweredBy.label}</a>{" "}
+		<span aria-hidden="true">※</span>{" "}
+		{footer.labels.themeIs}{" "}
+		<a href={footer.theme.href} {...themeLinkAttributes}>{footer.theme.label}</a>
+	</p>
 </footer>

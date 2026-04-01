@@ -1,7 +1,10 @@
 ---
 import { hasPublicSiteUrl } from "../../config";
+import { siteConfig } from "../../config";
+import MainLayout from "../../layouts/MainLayout.astro";
 import { getDictionary, type SiteLocale } from "../../utils/i18n";
 import { getHomePermalink, getRssPermalink } from "../../utils/routing";
+import PageHeader from "../PageHeader.astro";
 
 interface Props {
 	locale: SiteLocale;
@@ -12,30 +15,40 @@ const dictionary = getDictionary(locale);
 const isRssAvailable = hasPublicSiteUrl();
 const homeHref = getHomePermalink(locale);
 const target = getRssPermalink(locale);
+const pageTitle = isRssAvailable ? dictionary.rss.pageTitle : dictionary.rss.unavailableTitle;
+const pageDescription = isRssAvailable
+	? `${dictionary.rss.redirectLabel} ${target}`
+	: dictionary.rss.unavailableDescription;
 ---
 
-<!doctype html>
-<html lang={locale === "en" ? "en" : "zh-CN"}>
-	<head>
-		<meta charset="utf-8" />
-		{isRssAvailable && <meta http-equiv="refresh" content={`0;url=${target}`} />}
-		<title>{isRssAvailable ? dictionary.rss.pageTitle : dictionary.rss.unavailableTitle}</title>
-		{isRssAvailable && <link rel="canonical" href={target} />}
-	</head>
-	<body>
-		<p>
-			{
-				isRssAvailable ? (
-					<>
-						{dictionary.rss.redirectLabel}
-						{" "}
-						<a href={target}>{target}</a>
-					</>
-				) : (
-					<>{dictionary.rss.unavailableDescription}</>
-				)
-			}
-		</p>
-		<p><a href={homeHref}>{dictionary.rss.backHome}</a></p>
-	</body>
-</html>
+<MainLayout title={pageTitle} description={pageDescription} bodyClass="list">
+	{isRssAvailable && <meta slot="head" http-equiv="refresh" content={`0;url=${target}`} />}
+
+	<section class="system-page">
+		<PageHeader title={pageTitle} description={pageDescription} eyebrow={siteConfig.title} />
+
+		<div class="system-card">
+			<p class="system-card__text">
+				{
+					isRssAvailable ? (
+						<>
+							{dictionary.rss.redirectLabel} <a href={target}>{target}</a>
+						</>
+					) : (
+						<>{dictionary.rss.unavailableDescription}</>
+					)
+				}
+			</p>
+			<div class="system-card__actions">
+				{isRssAvailable && (
+					<a class="system-card__link" href={target}>
+						{dictionary.rss.pageTitle}
+					</a>
+				)}
+				<a class="system-card__link" href={homeHref}>
+					{dictionary.rss.backHome}
+				</a>
+			</div>
+		</div>
+	</section>
+</MainLayout>

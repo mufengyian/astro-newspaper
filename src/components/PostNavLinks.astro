@@ -23,7 +23,7 @@ const navigationLabel = dictionary.post.navigationLabel;
 					<strong>{newerPost.data.title}</strong>
 				</a>
 			) : (
-				<span></span>
+				<span class="post-nav__placeholder" aria-hidden="true"></span>
 			)}
 
 			{olderPost ? (
@@ -32,7 +32,7 @@ const navigationLabel = dictionary.post.navigationLabel;
 					<strong>{olderPost.data.title}</strong>
 				</a>
 			) : (
-				<span></span>
+				<span class="post-nav__placeholder" aria-hidden="true"></span>
 			)}
 		</nav>
 	)
